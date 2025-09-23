@@ -22,22 +22,31 @@ async function loadGoogleMapsScript() {
 // Call the function to start the loading process
 loadGoogleMapsScript();
 
-// --- GOOGLE PLACES AUTOCOMPLETE SCRIPT ---
-// This function is in the global scope so the Google Maps script can call it via the callback.
+// --- GOOGLE PLACES AUTOCOMPLETE SCRIPT (MODERN VERSION) ---
+// This function is in the global scope so the Google Maps script can call it.
 function initAutocomplete() {
-  const input = document.getElementById('restaurant-name');
-  if (!input) return;
+  const autocompleteInput = document.getElementById('autocomplete-input');
+  if (!autocompleteInput) return;
 
-  const autocomplete = new google.maps.places.Autocomplete(input, {
-    types: ['establishment'],
-    componentRestrictions: { 'country': 'us' },
-    fields: ['place_id', 'name']
-  });
-
-  autocomplete.addListener('place_changed', () => {
-    const place = autocomplete.getPlace();
-    if (place.place_id) {
+  // Listen for the new 'gmp-placechange' event from the Web Component
+  autocompleteInput.addEventListener('gmp-placechange', () => {
+    const place = autocompleteInput.place;
+    if (place && place.place_id) {
+      // Put the unique Place ID into our hidden form field
       document.getElementById('place_id').value = place.place_id;
+      
+      // Since the <gmp-place-autocomplete> tag doesn't have a `name` attribute that
+      // gets submitted with the form, we need to create a hidden input to hold the
+      // selected restaurant's name for our Netlify Function.
+      let nameInput = document.getElementById('restaurant-name-selected');
+      if (!nameInput) {
+          nameInput = document.createElement('input');
+          nameInput.type = 'hidden';
+          nameInput.name = 'restaurant-name'; // This name must match what your function expects
+          nameInput.id = 'restaurant-name-selected';
+          autocompleteInput.form.appendChild(nameInput);
+      }
+      nameInput.value = place.name;
     }
   });
 }
@@ -49,8 +58,6 @@ const navMenu = document.querySelector(".nav-menu");
 hamburger.addEventListener("click", () => {
     hamburger.classList.toggle("active");
     navMenu.classList.toggle("active");
-
-    // Toggle ARIA attribute for accessibility
     const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
     hamburger.setAttribute("aria-expanded", !isExpanded);
 });
@@ -58,14 +65,14 @@ hamburger.addEventListener("click", () => {
 document.querySelectorAll(".nav-link").forEach(n => n.addEventListener("click", () => {
     hamburger.classList.remove("active");
     navMenu.classList.remove("active");
-    hamburger.setAttribute("aria-expanded", "false"); // Ensure it's closed
+    hamburger.setAttribute("aria-expanded", "false");
 }));
 
 // --- FADE-IN ANIMATION SCRIPT ---
 const sections = document.querySelectorAll('.fade-in-section');
 const options = {
-    root: null, // relative to the viewport
-    threshold: 0.1, // 10% of the item must be visible
+    root: null,
+    threshold: 0.1,
     rootMargin: "0px"
 };
 
@@ -75,7 +82,7 @@ const observer = new IntersectionObserver(function(entries, observer) {
             return;
         }
         entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target); // Stop observing once it's visible
+        observer.unobserve(entry.target);
     });
 }, options);
 
@@ -84,7 +91,6 @@ sections.forEach(section => {
 });
 
 // --- FOOTER SCRIPT ---
-// Automatically update the copyright year
 const yearSpan = document.getElementById("copyright-year");
 if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear();
