@@ -1,111 +1,545 @@
-/* --- Basic Reset & Global Styles --- */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+/* --- CUSTOM FONT DEFINITION --- */
+@font-face {
+    font-family: 'Manrope';
+    src: url('Manrope-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* --- CSS VARIABLES (COLORS & FONTS) --- */
+:root {
+    --primary-color: #005596; /* New confident blue */
+    --primary-dark: #003d6d;  /* Darker shade for hover */
+    --secondary-color: #FFD60A; /* A warm, attention-grabbing yellow/gold */
+    --text-dark: #2d3748; /* Dark gray for text, easier on the eyes than pure black */
+    --text-light: #718096;
+    --background-light: #f7fafc;
+    --white: #ffffff;
+    --border-color: #e2e8f0;
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Lato', sans-serif;
+}
+
+/* --- GLOBAL STYLES & RESETS --- */
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    line-height: 1.6;
-    color: #333;
 }
 
-h1, h2, h3 {
-    line-height: 1.2;
+html {
+    scroll-behavior: smooth;
 }
 
-/* --- Navigation Bar --- */
-nav {
+body {
+    font-family: var(--font-body);
+    line-height: 1.7;
+    color: var(--text-dark);
+    background-color: var(--white);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.25rem; }
+
+p {
+    margin-bottom: 1rem;
+    color: var(--text-light);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* Accessibility Improvement: Add a clear focus indicator */
+a:focus, button:focus, summary:focus, input:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+/* For inputs, we use a box-shadow, so let's blend the two */
+.hero-form-container input[type="text"]:focus,
+.hero-form-container input[type="email"]:focus {
+    outline: none; /* Override the general focus style for a custom one */
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 85, 150, 0.2);
+}
+
+
+section {
+    padding: 60px 20px;
+}
+
+/* --- NAVIGATION BAR --- */
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1rem 1.5rem;
+    background-color: var(--white);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-nav .logo a {
-    font-weight: bold;
-    font-size: 1.5rem;
-    text-decoration: none;
-    color: #333;
-}
-
-nav ul {
+.logo a {
     display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: 2rem;
+    align-items: center;
+    gap: 0.6rem; /* Space between icon and text */
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-dark);
 }
 
-nav a {
-    text-decoration: none;
-    color: #555;
+.logo a .logo-icon {
+    color: var(--primary-color); /* Colors the SVG checkmark */
 }
 
-/* --- Call to Action (CTA) Button --- */
-.cta-button {
-    background-color: #007bff; /* A nice blue */
-    color: #fff;
-    padding: 0.75rem 1.5rem;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-/* --- Hero Section --- */
-.hero {
+.nav-menu {
+    display: flex; 
+    position: fixed;
+    left: -100%;
+    top: 5rem;
+    flex-direction: column;
+    background-color: var(--white);
+    width: 100%;
     text-align: center;
-    padding: 4rem 2rem;
-    background-color: #f4f4f4;
+    transition: 0.3s;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.nav-menu.active {
+    left: 0;
+}
+
+.nav-item {
+    list-style: none;
+    padding: 1.5rem 0;
+}
+
+.nav-link {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--text-dark);
+}
+
+.hamburger {
+    display: block;
+    cursor: pointer;
+    background: none; /* Make button transparent */
+    border: none;     /* Remove button border */
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    transition: all 0.3s ease-in-out;
+    background-color: var(--text-dark);
+}
+
+/* --- HERO SECTION --- */
+.hero {
+    background: linear-gradient(to right, #eaf5ff, #f7fafc); /* Subtle blue fade */
+    text-align: center;
+    padding: 80px 20px;
 }
 
 .hero h1 {
-    font-size: 3rem;
+    margin-bottom: 1rem;
 }
 
-.hero .subtitle {
-    font-size: 1.2rem;
-    color: #666;
+.subtitle {
+    font-size: 1.2rem; /* Slightly larger for better impact */
     max-width: 600px;
-    margin: 1rem auto 2rem;
+    margin: 0 auto 2.5rem; /* More space below */
+    color: var(--text-dark);
+    font-weight: 400;
 }
 
-/* --- How It Works Section --- */
-.how-it-works {
+/* --- STYLING FOR NEW SUBTITLE --- */
+.subtitle .gold-star {
+    color: #FBBC05; /* Google's yellow/gold color */
+    font-size: 1.2em;
+    vertical-align: -0.1em; /* Adjust alignment */
+}
+
+.subtitle .google-logo {
+    font-family: 'Manrope', sans-serif; /* <-- UPDATED FONT */
+    font-weight: 700;
+    white-space: nowrap; /* Prevent line break */
+}
+
+.google-logo .g-blue { color: #4285F4; }
+.google-logo .o-red { color: #EA4335; }
+.google-logo .o-yellow { color: #FBBC05; }
+.google-logo .l-green { color: #34A853; }
+.google-logo .e-red { color: #EA4335; }
+/* --- END NEW SUBTITLE STYLES --- */
+
+
+/* --- HERO FORM STYLES --- */
+.hero-form-container {
+    max-width: 500px;
+    margin: 2.5rem auto 0;
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+.hero-form-container .form-group {
+    margin-bottom: 1.5rem; /* Increased margin for more space */
+}
+
+/* New styles for the visible labels */
+.hero-form-container .form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.hero-form-container input[type="text"],
+.hero-form-container input[type="email"] {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: var(--font-body);
+}
+
+.helper-text {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+.hero-form-container .cta-button {
+    width: 100%;
     text-align: center;
-    padding: 4rem 2rem;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 16px;
+    margin-top: 1rem;
+}
+
+/* --- HERO SOCIAL PROOF STYLES --- */
+.hero-social-proof {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.trusted-by-text {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.hero-stars .gold-star {
+    font-size: 1.2rem;
+    color: #FBBC05;
+    margin: 0 0.1rem;
+}
+
+/* --- BUTTONS --- */
+.cta-button, .cta-button-nav {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover, .cta-button-nav:hover {
+    background-color: var(--primary-dark);
+}
+
+.cta-button-nav {
+    padding: 8px 16px;
+    display: none;
+}
+
+/* --- SECTIONS (Shared Styles) --- */
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    margin-bottom: 0.5rem;
+}
+
+/* --- HOW IT WORKS & BENEFITS SECTIONS --- */
+.feature-section {
+    background-color: var(--white);
+}
+
+.alt-background {
+    background-color: var(--background-light);
 }
 
 .steps-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     gap: 2rem;
-    margin-top: 2rem;
 }
 
 .step {
-    max-width: 300px;
-}
-
-/* --- Testimonials Section --- */
-.testimonials {
-    background-color: #007bff;
-    color: #fff;
     text-align: center;
-    padding: 4rem 2rem;
 }
 
-blockquote {
+.step-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* --- STATISTIC SECTION --- */
+.statistic-section {
+    background-color: var(--primary-color);
+    color: var(--white);
+    text-align: center;
+}
+
+.statistic-content {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.statistic-number {
+    font-family: var(--font-heading);
+    font-size: 6rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.statistic-section h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: var(--white);
+}
+
+.statistic-section p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+}
+
+/* --- PRICING SECTION --- */
+.pricing-section {
+    background-color: var(--background-light);
+}
+
+.single-plan-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.single-plan {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2.5rem;
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    border-top: 5px solid var(--primary-color);
+}
+
+.single-plan h3 {
+    font-family: var(--font-heading);
     font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.single-plan .price {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem;
+    color: var(--text-dark);
+}
+
+.single-plan .price span {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-light);
+}
+
+.single-plan .plan-description {
+    color: var(--text-light);
+    margin-bottom: 2.5rem;
+}
+
+.single-plan .features-list {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 2.5rem;
+}
+
+.single-plan .features-list li {
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.single-plan .cta-button {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
+}
+
+.risk-free-guarantee {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* --- FAQ SECTION --- */
+.faq-section {
+    background-color: var(--white);
+}
+.faq-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+.faq-item {
+    border-bottom: 1px solid var(--border-color);
+}
+.faq-item summary {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 1.5rem 0;
+    cursor: pointer;
+    list-style: none; /* Hide default marker */
+    position: relative;
+    padding-right: 2rem; /* Space for custom marker */
+}
+.faq-item summary::-webkit-details-marker {
+    display: none; /* Hide default marker for Chrome/Safari */
+}
+.faq-item summary::after { /* Custom marker */
+    content: '+';
+    position: absolute;
+    right: 10px;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    transition: transform 0.2s ease-in-out;
+}
+.faq-item[open] summary::after {
+    transform: rotate(45deg);
+}
+.faq-answer {
+    padding: 0 0 1.5rem;
+    color: var(--text-light);
+}
+
+/* --- TESTIMONIAL SECTION --- */
+.testimonial-section {
+    background-color: var(--primary-color);
+    color: var(--white);
+    text-align: center;
+}
+
+.testimonial-content blockquote {
+    font-size: 1.4rem;
     font-style: italic;
+    font-weight: 400;
     max-width: 700px;
     margin: 0 auto 1rem;
     border: none;
 }
 
-/* --- Footer --- */
+.testimonial-content cite {
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* --- FOOTER --- */
 footer {
+    background-color: var(--text-dark);
+    color: var(--background-light);
     text-align: center;
     padding: 2rem;
-    background-color: #333;
-    color: #fff;
+}
+
+/* --- FADE-IN ANIMATION --- */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- DESKTOP STYLES (REVISED) --- */
+@media (min-width: 768px) { 
+    section {
+        padding: 80px 40px;
+    }
+    .navbar {
+        padding: 1rem 2.5rem;
+    }
+    .hamburger {
+        display: none;
+    }
+    .nav-menu {
+        position: static;
+        flex-direction: row;
+        width: auto; 
+        background-color: transparent;
+        box-shadow: none;
+        left: 0;
+        top: 0;
+        align-items: center;
+        gap: 2rem;
+        transition: none; 
+    }
+    .nav-item {
+        padding: 0;
+    }
+    .nav-item.cta-item {
+        margin-left: auto;
+    }
+    .cta-button-nav {
+        display: inline-block;
+    }
+    .steps-container {
+        flex-direction: row;
+        justify-content: center;
+    }
 }

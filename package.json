@@ -1,0 +1,8 @@
+{
+  "name": "restaurant-review-cards-functions",
+  "version": "1.0.0",
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "node-fetch": "^2.6.7"
+  }
+}

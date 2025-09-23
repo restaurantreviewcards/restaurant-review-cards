@@ -4,61 +4,216 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restaurant Review Cards - Get More Google Reviews</title>
+    
+    <meta name="description" content="Turn happy diners into 5-star Google Reviews with custom QR-coded cards. Simple setup, powerful results. Generate your free sample today.">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://restaurantreviewcards.com/">
+    <meta property="og:title" content="Smart Review Cards for Your Restaurant">
+    <meta property="og:description" content="Turn happy diners into 5-star Google Reviews with custom QR-coded cards.">
+    <meta property="og:image" content="https://restaurantreviewcards.com/og-image.png">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://restaurantreviewcards.com/">
+    <meta property="twitter:title" content="Smart Review Cards for Your Restaurant">
+    <meta property="twitter:description" content="Turn happy diners into 5-star Google Reviews with custom QR-coded cards.">
+    <meta property="twitter:image" content="https://restaurantreviewcards.com/twitter-image.png">
+    
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header>
-        <nav>
+        <nav class="navbar">
             <div class="logo">
-                <a href="/">ReviewCards</a>
+                <a href="/">
+                    <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <title>ReviewCards Logo</title>
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>ReviewCards</span>
+                </a>
             </div>
-            <ul>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="/designs">Designs</a></li>
-                <li><a href="/pricing">Pricing</a></li>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li class="nav-item"><a href="#pricing" class="nav-link">Pricing</a></li>
+                <li class="nav-item cta-item"><a href="#hero" class="nav-link cta-button-nav">Get Started</a></li>
             </ul>
-            <a href="/order" class="cta-button">Get Started</a>
+            <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
         </nav>
     </header>
 
     <main>
-        <section class="hero">
-            <h1>Turn Happy Diners into 5-Star Reviews.</h1>
-            <p class="subtitle">We design, print, and ship custom QR-coded cards that send your customers directly to your Google review page.</p>
-            <a href="/order" class="cta-button">See Designs & Pricing</a>
-            </section>
-
-        <section id="how-it-works" class="how-it-works">
-            <h2>It's As Easy As 1, 2, 3</h2>
-            <div class="steps-container">
-                <div class="step">
-                    <h3>1. Choose Your Design</h3>
-                    <p>Select a professional template and add your restaurant's logo.</p>
-                </div>
-                <div class="step">
-                    <h3>2. We Print & Ship</h3>
-                    <p>We print your cards on durable, high-quality stock and ship them to your door.</p>
-                </div>
-                <div class="step">
-                    <h3>3. Boost Your Reviews</h3>
-                    <p>Place cards on tables and watch your Google rating climb.</p>
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h1>Smart Review Cards for Your Restaurant</h1>
+                <p class="subtitle">
+                    Turn Happy Diners into 5-Star 
+                    <span class="google-logo">
+                        <span class="g-blue">G</span><span class="o-red">o</span><span class="o-yellow">o</span><span class="g-blue">g</span><span class="l-green">l</span><span class="e-red">e</span>
+                    </span> 
+                    Reviews
+                </p>
+                <div class="hero-form-container">
+                    <form name="sample-generator" method="POST" action="/.netlify/functions/generate-sample">
+                        <input type="hidden" name="place_id" id="place_id">
+                        <input type="hidden" name="form-name" value="sample-generator" />
+                        <p style="display: none;">
+                            <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+                        </p>
+                        <div class="form-group">
+                            <label for="restaurant-name">Your Restaurant Name</label>
+                            <input type="text" id="restaurant-name" name="restaurant-name" placeholder="Start typing your restaurant name..." required>
+                            <p class="helper-text">Use the name as it appears on your Google Business Profile.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Your Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="you@yourlocalrestaurant.com" required>
+                        </div>
+                        <button type="submit" class="cta-button">Generate My Sample</button>
+                        <div class="hero-social-proof">
+                            <p class="trusted-by-text">Trusted by 50K US Restaurants</p>
+                            <div class="hero-stars">
+                                <span class="gold-star">★</span><span class="gold-star">★</span><span class="gold-star">★</span><span class="gold-star">★</span><span class="gold-star">★</span>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>
 
-        <section class="testimonials">
-            <blockquote>
-                "Our Google rating went from 4.2 to 4.7 in just two months! The process was incredibly simple."
-            </blockquote>
-            <cite>- Owner, The Corner Bistro</cite>
+        <section id="how-it-works" class="feature-section fade-in-section">
+            <div class="section-header">
+                <h2>It's As Easy As 1, 2, 3</h2>
+                <p>No training, no complicated tech. Just results.</p>
+            </div>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-icon">✔</div>
+                    <h3>1. Generate Your Sample</h3>
+                    <p>Enter your restaurant's name and email above to see a preview of your Smart Review Card and All Access Dashboard.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🚀</div>
+                    <h3>2. Activate Your Account</h3>
+                    <p>We'll confirm your details and process your order.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">📦</div>
+                    <h3>3. We Handle The Rest</h3>
+                    <p>That's it! We print and ship your cards right to your door and you get immediate access to your digital toolkit.</p>
+                </div>
+            </div>
         </section>
 
+        <section id="benefits" class="feature-section alt-background fade-in-section">
+            <div class="section-header">
+                <h2>Watch Your Reputation Soar</h2>
+                <p>Our simple process turns happy customers into powerful marketing.</p>
+            </div>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-icon">📱</div>
+                    <h3>Scan</h3>
+                    <p>Simply hand a card to your happy diners. They scan the QR code with their phone, taking them directly to your Google review page—no searching, no hassle.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">📊</div>
+                    <h3>Track</h3>
+                    <p>Log in to your straightforward dashboard to see real-time data. Easily monitor how many scans your cards get and track your review growth over time.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">⭐</div>
+                    <h3>Grow</h3>
+                    <p>Experience the satisfaction of watching your 5-star reviews multiply, climbing local rankings and attracting a new stream of customers to your door.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="statistic" class="statistic-section fade-in-section">
+            <div class="statistic-content">
+                <div class="statistic-number">90%</div>
+                <h2>of diners check Google Reviews before trying a new restaurant.</h2>
+                <p>In today's digital-first world, your online reputation isn't just important—it's everything. Don't let potential customers scroll past you. Take control of your online story today.</p>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing-section fade-in-section">
+            <div class="section-header">
+                <h2>A No-Brainer for Your Restaurant</h2>
+                <p>One simple plan. Everything you need to get more reviews.</p>
+            </div>
+
+            <div class="single-plan-container">
+                <div class="single-plan">
+                    <h3>The All-In-One Plan</h3>
+                    <div class="price">$20<span>/mo</span></div>
+                    <p class="plan-description">Everything you need to succeed, with no hidden fees.</p>
+                    
+                    <ul class="features-list">
+                        <li>✔ 250 Smart Review Cards</li>
+                        <li>✔ 50 Monthly Card Refill Credits</li>
+                        <li>✔ Unlimited QR Code Scans</li>
+                        <li>✔ Smart Review Dashboard</li>
+                        <li>✔ 24/7 phone & email support</li>
+                    </ul>
+
+                    <a href="#hero" class="cta-button">Generate Your Free Sample</a>
+                    <p class="risk-free-guarantee">No contract. Cancel Anytime</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="faq-section fade-in-section">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Have questions? We have answers.</p>
+            </div>
+            <div class="faq-container">
+                <details class="faq-item">
+                    <summary>Is this difficult to set up?</summary>
+                    <p class="faq-answer">Not at all! The entire setup process takes less than 5 minutes. You generate your sample, activate your account, and we handle the rest. We'll ship your cards and your dashboard will be ready to go.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Can I cancel my plan easily?</summary>
+                    <p class="faq-answer">Absolutely. Our service is a simple, no-contract monthly plan. You can cancel anytime directly from your account dashboard, no questions asked.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>What if I have multiple restaurant locations?</summary>
+                    <p class="faq-answer">We love working with restaurant groups! We offer custom enterprise plans with dedicated support and bulk pricing for multiple locations. Please contact us for a custom quote.</p>
+                </details>
+                 <details class="faq-item">
+                    <summary>How do the monthly card refills work?</summary>
+                    <p class="faq-answer">Each month your plan renews, your account is credited with 50 card refills for that month. You can request a new shipment at any time from your dashboard.</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="testimonial-section fade-in-section">
+            <div class="testimonial-content">
+                <blockquote>
+                    "The single best marketing tool we've invested in. Our Google rating went from 4.2 to 4.7 in just two months!"
+                </blockquote>
+                <cite>- Maria, Owner of The Corner Bistro</cite>
+            </div>
+        </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 Restaurant Review Cards. All rights reserved.</p>
+        <p>&copy; <span id="copyright-year">2025</span> Restaurant Review Cards. All rights reserved.</p>
     </footer>
 
+    <script src="script.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYwq72xH9utZpD17k23slq-Y0XGCLbuFM&libraries=places&callback=initAutocomplete" async defer></script>
 </body>
 </html>
