@@ -26,7 +26,8 @@ loadGoogleMapsScript();
 // This function is in the global scope so the Google Maps script can call it.
 function initAutocomplete() {
   const autocompleteInput = document.getElementById('autocomplete-input');
-  if (!autocompleteInput) return;
+  const submitButton = document.getElementById('submit-button'); // Get the button
+  if (!autocompleteInput || !submitButton) return;
 
   // Listen for the new 'gmp-placechange' event from the Web Component
   autocompleteInput.addEventListener('gmp-placechange', () => {
@@ -34,6 +35,9 @@ function initAutocomplete() {
     if (place && place.place_id) {
       // Put the unique Place ID into our hidden form field
       document.getElementById('place_id').value = place.place_id;
+      
+      // Enable the button because a valid place was selected
+      submitButton.disabled = false;
       
       // Since the <gmp-place-autocomplete> tag doesn't have a `name` attribute that
       // gets submitted with the form, we need to create a hidden input to hold the
