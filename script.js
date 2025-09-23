@@ -1,20 +1,42 @@
+// --- DYNAMICALLY LOAD GOOGLE MAPS SCRIPT ---
+async function loadGoogleMapsScript() {
+  try {
+    // Fetch the key from our secure Netlify function
+    const response = await fetch('/.netlify/functions/get-maps-key');
+    const data = await response.json();
+    const apiKey = data.apiKey;
+
+    // Create a new script element
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
+    script.async = true;
+    script.defer = true;
+
+    // Append the script to the page's head to load it
+    document.head.appendChild(script);
+  } catch (error) {
+    console.error('Could not load Google Maps script:', error);
+  }
+}
+
+// Call the function to start the loading process
+loadGoogleMapsScript();
+
 // --- GOOGLE PLACES AUTOCOMPLETE SCRIPT ---
-// This function must be in the global scope so the Google Maps script can call it.
+// This function is in the global scope so the Google Maps script can call it via the callback.
 function initAutocomplete() {
   const input = document.getElementById('restaurant-name');
-  if (!input) return; // Exit if the input isn't on the page
+  if (!input) return;
 
   const autocomplete = new google.maps.places.Autocomplete(input, {
-    types: ['establishment'], // Only show business results
-    componentRestrictions: { 'country': 'us' }, // Restrict search to the United States
-    fields: ['place_id', 'name'] // Only request the data we need to be efficient
+    types: ['establishment'],
+    componentRestrictions: { 'country': 'us' },
+    fields: ['place_id', 'name']
   });
 
-  // Create a listener for when a user selects a place from the dropdown
   autocomplete.addListener('place_changed', () => {
     const place = autocomplete.getPlace();
     if (place.place_id) {
-      // Put the unique Google Place ID into our hidden form field
       document.getElementById('place_id').value = place.place_id;
     }
   });
