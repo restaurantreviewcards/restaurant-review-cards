@@ -31,6 +31,9 @@ function initAutocomplete() {
 
   // Listen for the new 'gmp-placechange' event from the Web Component
   autocompleteInput.addEventListener('gmp-placechange', () => {
+    // --- THIS IS OUR TEST ---
+    console.log("A place was selected! The button should be enabled now.");
+
     const place = autocompleteInput.place;
     if (place && place.place_id) {
       // Put the unique Place ID into our hidden form field
