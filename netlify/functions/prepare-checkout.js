@@ -2,7 +2,17 @@
 const admin = require('firebase-admin');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-if (!admin.apps.length) { /* ... firebase init ... */ }
+// THIS BLOCK WAS MISSING - IT IS NOW CORRECTLY INCLUDED
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    }),
+  });
+}
+
 const db = admin.firestore();
 
 exports.handler = async (event) => {
@@ -59,7 +69,16 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ /* ... response data ... */ }),
+      body: JSON.stringify({
+        clientSecret: clientSecret,
+        businessName: businessName,
+        shippingAddress: {
+            line1: signupData.googleAddressLine1 || '',
+            city: signupData.googleAddressCity || '',
+            state: signupData.googleAddressState || '',
+            postal_code: signupData.googleAddressZip || '',
+        }
+      }),
     };
 
   } catch (error) {
