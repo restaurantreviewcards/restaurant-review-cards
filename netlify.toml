@@ -1,2 +1,9 @@
+# In: netlify.toml
+
 [functions]
   directory = "netlify/functions/"
+
+# This block schedules the daily review update function
+[functions.updateDailyReviews]
+  # This is a cron expression for "At 06:00 UTC every day"
+  schedule = "0 6 * * *"
