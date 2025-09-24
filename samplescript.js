@@ -166,47 +166,65 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- STRIPE CHECKOUT SCRIPT ---
-    const initCheckout = () => {
-        const checkoutButtons = document.querySelectorAll('a[href="/signup"]');
-        const userEmail = params.get('email');
+    const initCheckout = async () => {
+        try {
+            // 1. Securely fetch the Stripe publishable key from our new function
+            const keyResponse = await fetch('/.netlify/functions/get-stripe-key');
+            const keyData = await keyResponse.json();
+            const publishableKey = keyData.publishableKey;
 
-        // Make sure you set this public key in your Netlify environment variables
-        // It should look like: PUBLIC_STRIPE_PUBLISHABLE_KEY = pk_test_...
-        const stripe = Stripe(process.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+            if (!publishableKey) {
+                throw new Error("Stripe public key not found.");
+            }
 
-        checkoutButtons.forEach(button => {
-            button.addEventListener('click', async (event) => {
-                event.preventDefault();
+            // 2. Initialize Stripe with the fetched key
+            const stripe = Stripe(publishableKey);
 
-                if (!placeId || !userEmail) {
-                    alert("Could not find restaurant details. Please try generating a new sample.");
-                    return;
-                }
+            // 3. Set up the button click handlers
+            const checkoutButtons = document.querySelectorAll('a[href="/signup"]');
+            const params = new URLSearchParams(window.location.search);
+            const placeId = params.get('placeid');
+            const userEmail = params.get('email');
 
-                try {
-                    const response = await fetch('/.netlify/functions/create-checkout-session', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ placeId: placeId, email: userEmail }),
-                    });
+            checkoutButtons.forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    event.preventDefault();
 
-                    if (!response.ok) throw new Error('Could not create a checkout session.');
-                    
-                    const session = await response.json();
-
-                    const result = await stripe.redirectToCheckout({
-                        sessionId: session.sessionId,
-                    });
-
-                    if (result.error) {
-                        alert(result.error.message);
+                    if (!placeId || !userEmail) {
+                        alert("Could not find restaurant details. Please try generating a new sample.");
+                        return;
                     }
-                } catch (error) {
-                    console.error("Stripe checkout error:", error);
-                    alert("An error occurred. Please try again.");
-                }
+
+                    try {
+                        const response = await fetch('/.netlify/functions/create-checkout-session', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ placeId: placeId, email: userEmail }),
+                        });
+
+                        if (!response.ok) throw new Error('Could not create a checkout session.');
+                        
+                        const session = await response.json();
+
+                        const result = await stripe.redirectToCheckout({
+                            sessionId: session.sessionId,
+                        });
+
+                        if (result.error) {
+                            alert(result.error.message);
+                        }
+                    } catch (error) {
+                        console.error("Stripe checkout error:", error);
+                        alert("An error occurred. Please try again.");
+                    }
+                });
             });
-        });
+
+        } catch (error) {
+            console.error("Failed to initialize checkout:", error);
+            // If we can't initialize Stripe, hide the checkout buttons to prevent broken links
+            document.querySelectorAll('a[href="/signup"]').forEach(btn => btn.style.display = 'none');
+        }
     };
 
     // Initialize all scripts
