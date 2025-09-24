@@ -48,25 +48,22 @@ exports.handler = async (event) => {
     // Create the Subscription
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
-      // CORRECTED: Uses the environment variable, not a hardcoded string
       items: [{ price: process.env.STRIPE_PRICE_ID }],
-      payment_behavior: 'default_incomplete',
+      // FINAL FIX: This ensures a Payment Intent is created for the first invoice.
+      payment_behavior: 'error_if_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
       expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
     });
 
-    // CORRECTED: Logic to handle both free trials and immediate payments
+    // Logic to handle both free trials and immediate payments
     let clientSecret;
     if (subscription.status === 'trialing' && subscription.pending_setup_intent) {
-        // If there's a free trial, use the client_secret from the pending_setup_intent
         clientSecret = subscription.pending_setup_intent.client_secret;
     } else if (subscription.status === 'incomplete' && subscription.latest_invoice.payment_intent) {
-        // If a payment is required immediately, use the client_secret from the payment_intent
         clientSecret = subscription.latest_invoice.payment_intent.client_secret;
     }
 
     if (!clientSecret) {
-        // This will catch any other unexpected issues.
         console.error("Full subscription object:", JSON.stringify(subscription, null, 2));
         throw new Error('Could not determine the client_secret from the subscription.');
     }
