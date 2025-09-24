@@ -165,6 +165,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- STRIPE CHECKOUT SCRIPT ---
+    const initCheckout = () => {
+        const checkoutButtons = document.querySelectorAll('a[href="/signup"]');
+        const userEmail = params.get('email');
+
+        // Make sure you set this public key in your Netlify environment variables
+        // It should look like: PUBLIC_STRIPE_PUBLISHABLE_KEY = pk_test_...
+        const stripe = Stripe(process.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
+        checkoutButtons.forEach(button => {
+            button.addEventListener('click', async (event) => {
+                event.preventDefault();
+
+                if (!placeId || !userEmail) {
+                    alert("Could not find restaurant details. Please try generating a new sample.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/.netlify/functions/create-checkout-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ placeId: placeId, email: userEmail }),
+                    });
+
+                    if (!response.ok) throw new Error('Could not create a checkout session.');
+                    
+                    const session = await response.json();
+
+                    const result = await stripe.redirectToCheckout({
+                        sessionId: session.sessionId,
+                    });
+
+                    if (result.error) {
+                        alert(result.error.message);
+                    }
+                } catch (error) {
+                    console.error("Stripe checkout error:", error);
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        });
+    };
+
     // Initialize all scripts
     populateSampleData();
     generateQRCodes();
@@ -172,4 +216,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initDashboardTabs();
     initCopyLink();
     initFooter();
+    initCheckout();
 });
