@@ -46,15 +46,13 @@ exports.handler = async (event) => {
         save_default_payment_method: 'on_subscription',
         payment_method_types: ['card'],
       },
-      // We need to expand the pending_setup_intent to get its client_secret
-      expand: ['pending_setup_intent'],
+      expand: ['latest_invoice.payment_intent'],
     });
 
-    // THE FIX: Get the client_secret from the pending_setup_intent instead of the invoice.
-    const clientSecret = subscription.pending_setup_intent.client_secret;
+    const clientSecret = subscription.latest_invoice.payment_intent.client_secret;
 
     if (!clientSecret) {
-      throw new Error('Could not find a client_secret on the subscription.');
+      throw new Error('Could not extract client_secret from subscription invoice.');
     }
 
     return {
