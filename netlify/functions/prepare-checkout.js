@@ -1,69 +1,96 @@
 // In: netlify/functions/prepare-checkout.js
 
+const admin = require('firebase-admin');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const fetch = require('node-fetch');
 
-// Helper function to parse address components from Google API response
-const parseAddress = (addressComponents) => {
-    const get = (type) => addressComponents.find(c => c.types.includes(type))?.long_name || '';
-    return {
-        line1: `${get('street_number')} ${get('route')}`,
-        city: get('locality'),
-        state: get('administrative_area_level_1'),
-        postal_code: get('postal_code'),
-        country: get('country'),
-    };
-};
+// Initialize Firebase Admin SDK
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    }),
+  });
+}
+
+const db = admin.firestore();
 
 exports.handler = async (event) => {
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' };
+  }
+
+  try {
     const { placeId, email } = JSON.parse(event.body);
-    const priceId = 'price_1SAsWjKDZto4bHecz5q7wnwp'; // Your Price ID
 
-    try {
-        const fields = 'name,formatted_address,address_components';
-        const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
-        const googleResponse = await fetch(url);
-        const placeData = await googleResponse.json();
-
-        if (!placeData.result) throw new Error('Could not fetch Google Place details.');
-
-        const shippingAddress = parseAddress(placeData.result.address_components);
-        const businessName = placeData.result.name;
-
-        const customer = await stripe.customers.create({
-            email: email,
-            name: businessName,
-            address: shippingAddress,
-        });
-
-        const subscription = await stripe.subscriptions.create({
-            customer: customer.id,
-            items: [{ price: priceId }],
-            payment_behavior: 'default_incomplete',
-            payment_settings: { save_default_payment_method: 'on_subscription' },
-            expand: ['latest_invoice.payment_intent'],
-            metadata: {
-                placeId: placeId,
-                email: email
-            }
-        });
-
-        // THIS IS THE NEW, SAFER CHECK
-        if (!subscription.latest_invoice?.payment_intent?.client_secret) {
-            throw new Error('Could not extract client_secret from subscription. This can happen if the product has a free trial.');
-        }
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                clientSecret: subscription.latest_invoice.payment_intent.client_secret,
-                shippingAddress: shippingAddress,
-                businessName: businessName,
-            }),
-        };
-
-    } catch (error) {
-        console.error('Error preparing checkout:', error);
-        return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    if (!placeId || !email) {
+      return { statusCode: 400, body: 'Missing placeId or email.' };
     }
+
+    // Find the corresponding signup document to get business details
+    const signupsRef = db.collection('signups');
+    const snapshot = await signupsRef.where('googlePlaceId', '==', placeId).where('email', '==', email).limit(1).get();
+
+    if (snapshot.empty) {
+      throw new Error('No matching signup found for the provided details.');
+    }
+
+    const signupData = snapshot.docs[0].data();
+    const businessName = signupData.googlePlaceName || 'Customer';
+    
+    // Create a Stripe Customer
+    const customer = await stripe.customers.create({
+      email: email,
+      name: businessName,
+    });
+    
+    // Create the Subscription
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      // CORRECTED: Uses the environment variable, not a hardcoded string
+      items: [{ price: process.env.STRIPE_PRICE_ID }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
+    });
+
+    // CORRECTED: Logic to handle both free trials and immediate payments
+    let clientSecret;
+    if (subscription.status === 'trialing' && subscription.pending_setup_intent) {
+        // If there's a free trial, use the client_secret from the pending_setup_intent
+        clientSecret = subscription.pending_setup_intent.client_secret;
+    } else if (subscription.status === 'incomplete' && subscription.latest_invoice.payment_intent) {
+        // If a payment is required immediately, use the client_secret from the payment_intent
+        clientSecret = subscription.latest_invoice.payment_intent.client_secret;
+    }
+
+    if (!clientSecret) {
+        // This will catch any other unexpected issues.
+        console.error("Full subscription object:", JSON.stringify(subscription, null, 2));
+        throw new Error('Could not determine the client_secret from the subscription.');
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        clientSecret: clientSecret,
+        businessName: businessName,
+        // You would populate this from the signupData or Google Places API if needed
+        shippingAddress: {
+            line1: signupData.googleAddressLine1 || '', // Example field
+            city: signupData.googleAddressCity || '',   // Example field
+            state: signupData.googleAddressState || '', // Example field
+            postal_code: signupData.googleAddressZip || '', // Example field
+        }
+      }),
+    };
+
+  } catch (error) {
+    console.error('Error preparing checkout:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message }),
+    };
+  }
 };
