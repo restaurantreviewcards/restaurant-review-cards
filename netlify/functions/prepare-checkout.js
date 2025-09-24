@@ -20,7 +20,6 @@ exports.handler = async (event) => {
     const priceId = 'price_1SAsWjKDZto4bHecz5q7wnwp'; // Your Price ID
 
     try {
-        // 1. Fetch address and name from Google Places API
         const fields = 'name,formatted_address,address_components';
         const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
         const googleResponse = await fetch(url);
@@ -31,27 +30,29 @@ exports.handler = async (event) => {
         const shippingAddress = parseAddress(placeData.result.address_components);
         const businessName = placeData.result.name;
 
-        // 2. Create a Stripe Customer
         const customer = await stripe.customers.create({
             email: email,
             name: businessName,
             address: shippingAddress,
         });
 
-        // 3. Create a Subscription, which will generate the first invoice and a Payment Intent
         const subscription = await stripe.subscriptions.create({
             customer: customer.id,
             items: [{ price: priceId }],
             payment_behavior: 'default_incomplete',
             payment_settings: { save_default_payment_method: 'on_subscription' },
             expand: ['latest_invoice.payment_intent'],
-            metadata: { // Pass metadata for the webhook
+            metadata: {
                 placeId: placeId,
                 email: email
             }
         });
 
-        // 4. Return the client secret, the fetched address, and the business name
+        // THIS IS THE NEW, SAFER CHECK
+        if (!subscription.latest_invoice?.payment_intent?.client_secret) {
+            throw new Error('Could not extract client_secret from subscription. This can happen if the product has a free trial.');
+        }
+
         return {
             statusCode: 200,
             body: JSON.stringify({
