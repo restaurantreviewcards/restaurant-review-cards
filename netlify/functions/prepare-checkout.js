@@ -28,7 +28,6 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: 'Missing placeId or email.' };
     }
 
-    // Find the corresponding signup document to get business details
     const signupsRef = db.collection('signups');
     const snapshot = await signupsRef.where('googlePlaceId', '==', placeId).where('email', '==', email).limit(1).get();
 
@@ -39,37 +38,25 @@ exports.handler = async (event) => {
     const signupData = snapshot.docs[0].data();
     const businessName = signupData.googlePlaceName || 'Customer';
     
-    // Create a Stripe Customer
     const customer = await stripe.customers.create({
       email: email,
       name: businessName,
     });
     
-    // Create the Subscription
+    // CORRECTED: This subscription logic now matches your working project's code.
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: process.env.STRIPE_PRICE_ID }],
-      // FINAL FIX: This combination correctly prepares the subscription 
-      // to be confirmed on the client-side.
       payment_behavior: 'default_incomplete',
-      payment_settings: {
-        save_default_payment_method: 'on_subscription',
-        payment_method_types: ['card'], // Tell Stripe to expect a card payment
-      },
-      expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
     });
 
-    // Logic to handle both free trials and immediate payments
-    let clientSecret;
-    if (subscription.status === 'trialing' && subscription.pending_setup_intent) {
-        clientSecret = subscription.pending_setup_intent.client_secret;
-    } else if (subscription.status === 'incomplete' && subscription.latest_invoice.payment_intent) {
-        clientSecret = subscription.latest_invoice.payment_intent.client_secret;
-    }
+    const clientSecret = subscription.latest_invoice.payment_intent.client_secret;
 
     if (!clientSecret) {
-        console.error("Full subscription object:", JSON.stringify(subscription, null, 2));
-        throw new Error('Could not determine the client_secret from the subscription.');
+      // This will now only trigger if Stripe fails to create the payment intent.
+      throw new Error('Could not extract client_secret from subscription invoice.');
     }
 
     return {
