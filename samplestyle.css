@@ -392,13 +392,12 @@ section { padding: 40px 20px; }
 .mockup-stars svg {
     width: 36px;
     height: 36px;
-    fill: #d8dbdf; /* Google's empty star color */
+    fill: var(--google-yellow);
     cursor: pointer;
     transition: transform 0.1s ease-out;
 }
 .mockup-stars svg:hover {
     transform: scale(1.15);
-    fill: var(--google-yellow);
 }
 
 .mockup-textarea {
@@ -448,6 +447,19 @@ section { padding: 40px 20px; }
     background-color: #1a73e8; /* Darker Google blue */
 }
 
+.mockup-disclaimer {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 0.75rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.5s ease-out forwards;
+    animation-delay: 0.4s; /* Delay slightly more than the mockup itself */
+}
 
 /* --- DASHBOARD PREVIEW MODULE --- */
 .dashboard-preview-container {
