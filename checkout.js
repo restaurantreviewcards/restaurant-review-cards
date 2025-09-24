@@ -14,8 +14,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const messageContainer = document.getElementById('payment-message');
     
     // --- INITIALIZE STRIPE ---
-    const { publishableKey } = await fetch('/.netlify/functions/get-stripe-key').then(r => r.json());
-    const stripe = Stripe(publishableKey);
+    let stripe;
+    try {
+        const { publishableKey } = await fetch('/.netlify/functions/get-stripe-key').then(r => r.json());
+        if (!publishableKey) throw new Error("Stripe public key not found.");
+        stripe = Stripe(publishableKey);
+    } catch (error) {
+        console.error("Stripe Initialization Error:", error);
+        messageContainer.textContent = "Could not connect to payment processor.";
+        return;
+    }
 
     // --- FETCH CHECKOUT DATA AND POPULATE PAGE ---
     let elements;
