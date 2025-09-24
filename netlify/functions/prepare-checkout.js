@@ -43,20 +43,24 @@ exports.handler = async (event) => {
       name: businessName,
     });
     
-    // CORRECTED: This subscription logic now matches your working project's code.
+    // THE DEFINITIVE FIX:
+    // This combination correctly creates an incomplete subscription AND
+    // the payment_intent needed to collect payment on the frontend.
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: process.env.STRIPE_PRICE_ID }],
       payment_behavior: 'default_incomplete',
-      payment_settings: { save_default_payment_method: 'on_subscription' },
+      payment_settings: {
+        save_default_payment_method: 'on_subscription',
+        payment_method_types: ['card'], // This forces the creation of a payment_intent
+      },
       expand: ['latest_invoice.payment_intent'],
     });
 
     const clientSecret = subscription.latest_invoice.payment_intent.client_secret;
 
     if (!clientSecret) {
-      // This will now only trigger if Stripe fails to create the payment intent.
-      throw new Error('Could not extract client_secret from subscription invoice.');
+      throw new Error('Stripe failed to create a payment intent for the subscription.');
     }
 
     return {
