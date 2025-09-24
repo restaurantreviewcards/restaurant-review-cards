@@ -34,7 +34,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    // 3. With the Place ID, we skip the search and go straight to getting details.
+    // 3. With the Place ID, we go straight to getting details.
     const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,user_ratings_total,url&key=${googleApiKey}`;
     const detailsResponse = await fetch(detailsUrl);
     const placeData = await detailsResponse.json();
@@ -56,8 +56,9 @@ exports.handler = async (event) => {
       timestamp: new Date(),
     });
 
-    // 5. Build the redirect URL for the sample.html page with the live data.
-    const redirectUrl = `/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}`;
+    // 5. Build the redirect URL with the live data, including the placeId.
+    // --- THIS LINE IS UPDATED ---
+    const redirectUrl = `/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}&placeid=${placeId}`;
 
     // 6. Send the user to their personalized sample page.
     return {
