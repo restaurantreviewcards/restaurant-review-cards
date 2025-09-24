@@ -1,0 +1,29 @@
+# Node.js dependencies
+# This directory contains all downloaded packages and can be very large.
+# It should never be committed; always reinstall using 'npm install'.
+node_modules/
+
+# Environment Variables
+# This is the MOST IMPORTANT rule for security. It prevents you from
+# accidentally committing your secret API keys (Stripe, Google, Firebase).
+.env
+.env.*
+!.env.example
+
+# Log files
+# These are generated during debugging and are not needed in the repository.
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Netlify local development state
+# This directory is created by Netlify Dev and stores local configuration.
+.netlify/
+
+# Build output directories (Good practice for the future)
+dist/
+public/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
