@@ -49,9 +49,13 @@ exports.handler = async (event) => {
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: process.env.STRIPE_PRICE_ID }],
-      // FINAL FIX: This ensures a Payment Intent is created for the first invoice.
-      payment_behavior: 'error_if_incomplete',
-      payment_settings: { save_default_payment_method: 'on_subscription' },
+      // FINAL FIX: This combination correctly prepares the subscription 
+      // to be confirmed on the client-side.
+      payment_behavior: 'default_incomplete',
+      payment_settings: {
+        save_default_payment_method: 'on_subscription',
+        payment_method_types: ['card'], // Tell Stripe to expect a card payment
+      },
       expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
     });
 
@@ -73,12 +77,11 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         clientSecret: clientSecret,
         businessName: businessName,
-        // You would populate this from the signupData or Google Places API if needed
         shippingAddress: {
-            line1: signupData.googleAddressLine1 || '', // Example field
-            city: signupData.googleAddressCity || '',   // Example field
-            state: signupData.googleAddressState || '', // Example field
-            postal_code: signupData.googleAddressZip || '', // Example field
+            line1: signupData.googleAddressLine1 || '',
+            city: signupData.googleAddressCity || '',
+            state: signupData.googleAddressState || '',
+            postal_code: signupData.googleAddressZip || '',
         }
       }),
     };
