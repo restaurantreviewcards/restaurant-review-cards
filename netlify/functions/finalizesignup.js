@@ -37,7 +37,7 @@ exports.handler = async (event) => {
   switch (stripeEvent.type) {
     case 'checkout.session.completed':
       const session = stripeEvent.data.object;
-      // Extract metadata we passed during checkout creation
+      // Extract metadata we passed during subscription creation
       const { placeId, email } = session.subscription_data.metadata;
       const userId = session.customer; // Use the Stripe Customer ID as our unique ID
 

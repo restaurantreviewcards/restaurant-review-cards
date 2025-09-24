@@ -1,11 +1,8 @@
 // In: netlify/functions/generate-sample.js
 
-// In: netlify/functions/generate-sample.js
-
 const admin = require('firebase-admin');
 const fetch = require('node-fetch');
 
-// This block initializes the Firebase Admin SDK
 // This block initializes the Firebase Admin SDK
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -24,7 +21,6 @@ exports.handler = async (event) => {
   const formData = new URLSearchParams(event.body);
   const placeId = formData.get('place_id');
   const email = formData.get('email');
-  const submittedName = formData.get('restaurant-name');
   const submittedName = formData.get('restaurant-name');
 
   if (!placeId || !email || !googleApiKey) {
@@ -46,7 +42,6 @@ exports.handler = async (event) => {
     const { name, rating, user_ratings_total, url } = placeData.result;
 
     // Save the lead data to your 'signups' collection in Firestore.
-    // Save the lead data to your 'signups' collection in Firestore.
     await db.collection('signups').add({
       email: email,
       submittedName: submittedName,
@@ -62,9 +57,7 @@ exports.handler = async (event) => {
     const redirectUrl = `/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}&placeid=${placeId}&email=${encodeURIComponent(email)}`;
 
     // Send the user to their personalized sample page.
-    // Send the user to their personalized sample page.
     return {
-      statusCode: 302,
       statusCode: 302,
       headers: {
         'Location': redirectUrl,

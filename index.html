@@ -222,10 +222,8 @@
                 fields: ['place_id', 'name'] 
             };
             
-            // Using the classic constructor from your working project
             const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, options);
 
-            // Using the 'place_changed' event from your working project
             autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace();
 

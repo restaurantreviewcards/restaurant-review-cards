@@ -84,10 +84,7 @@ body {
 
 #payment-form h3 {
     font-family: var(--font-heading);
-<<<<<<< HEAD
     font-size: 1.3rem;
-=======
->>>>>>> bf3e31938eb5ac17b673d4e98e54f9f76a39dbb2
     margin-bottom: 8px;
 }
 
@@ -126,7 +123,6 @@ hr {
     margin: 24px 0;
 }
 
-<<<<<<< HEAD
 /* --- SHIPPING DISPLAY & EDIT --- */
 .hidden {
     display: none;
@@ -162,8 +158,6 @@ hr {
     text-decoration: underline;
 }
 
-=======
->>>>>>> bf3e31938eb5ac17b673d4e98e54f9f76a39dbb2
 /* --- STRIPE PAYMENT ELEMENT --- */
 #payment-element {
     margin-bottom: 24px;
