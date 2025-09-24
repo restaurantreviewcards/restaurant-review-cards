@@ -2,7 +2,7 @@
 const admin = require('firebase-admin');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-// THIS BLOCK WAS MISSING - IT IS NOW CORRECTLY INCLUDED
+// Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -12,22 +12,17 @@ if (!admin.apps.length) {
     }),
   });
 }
-
 const db = admin.firestore();
 
 exports.handler = async (event) => {
-  console.log("--- prepare-checkout function started ---");
-
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
     const { placeId, email } = JSON.parse(event.body);
-    console.log(`Received placeId: ${placeId}, email: ${email}`);
 
     if (!placeId || !email) {
-      console.error("Missing placeId or email.");
       return { statusCode: 400, body: 'Missing placeId or email.' };
     }
 
@@ -40,31 +35,26 @@ exports.handler = async (event) => {
 
     const signupData = snapshot.docs[0].data();
     const businessName = signupData.googlePlaceName || 'Customer';
-    console.log(`Found business: ${businessName}`);
     
     const customer = await stripe.customers.create({ email, name: businessName });
-    console.log(`Stripe customer created: ${customer.id}`);
     
-    const priceId = process.env.STRIPE_PRICE_ID;
-    console.log(`Attempting to create subscription with Price ID: ${priceId}`);
-
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
-      items: [{ price: priceId }],
+      items: [{ price: process.env.STRIPE_PRICE_ID }],
       payment_behavior: 'default_incomplete',
       payment_settings: {
         save_default_payment_method: 'on_subscription',
         payment_method_types: ['card'],
       },
-      expand: ['latest_invoice.payment_intent'],
+      // We need to expand the pending_setup_intent to get its client_secret
+      expand: ['pending_setup_intent'],
     });
-    console.log(`Subscription created successfully: ${subscription.id}`);
 
-    const clientSecret = subscription.latest_invoice.payment_intent.client_secret;
-    console.log("Successfully extracted client_secret.");
+    // THE FIX: Get the client_secret from the pending_setup_intent instead of the invoice.
+    const clientSecret = subscription.pending_setup_intent.client_secret;
 
     if (!clientSecret) {
-      throw new Error('Stripe failed to create a payment intent for the subscription.');
+      throw new Error('Could not find a client_secret on the subscription.');
     }
 
     return {
@@ -82,8 +72,7 @@ exports.handler = async (event) => {
     };
 
   } catch (error) {
-    console.error('--- ERROR in prepare-checkout ---');
-    console.error("Full error object:", error); // This will log the entire error object
+    console.error('Error preparing checkout:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),
