@@ -1,12 +1,26 @@
 // Wait for the DOM to be fully loaded before running any scripts
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Define the review URL once to be used by QR generation and the copy button
-    // Note: This will be static for the sample page. The dynamic link would be handled post-signup.
-    const reviewUrl = "https://restaurantreviewcards.com/review/charleston-oyster-house";
+    // --- DYNAMICALLY GENERATE THE GOOGLE REVIEW URL ---
+    const params = new URLSearchParams(window.location.search);
+    const placeId = params.get('placeid');
+    let reviewUrl = ''; // Initialize the variable
+
+    const copyLinkButton = document.getElementById('copy-link-btn');
+
+    if (placeId) {
+        // Construct the correct Google Review link if we have a placeId
+        reviewUrl = `https://search.google.com/local/writereview?placeid=${placeId}`;
+    } else {
+        // If no placeId is found, log an error and disable the copy button
+        console.error("Place ID missing from URL. QR codes and copy link will not function correctly.");
+        if (copyLinkButton) {
+            copyLinkButton.textContent = 'Link Unavailable';
+            copyLinkButton.disabled = true;
+        }
+    }
 
     const populateSampleData = () => {
-        const params = new URLSearchParams(window.location.search);
         const name = params.get('name');
         const rating = parseFloat(params.get('rating'));
         const reviews = parseInt(params.get('reviews'));
@@ -18,28 +32,30 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.business-name-preview').textContent = name;
         document.getElementById('google-rating-value').textContent = rating.toFixed(1);
         document.getElementById('google-review-count').textContent = `(${reviews.toLocaleString()})`;
+        document.getElementById('mockup-business-name').textContent = name; // Update mockup name
 
         // Dynamically generate the star rating
         const starContainer = document.getElementById('star-rating-container');
         if (starContainer) {
             starContainer.innerHTML = ''; // Clear existing static stars
             const fullStars = Math.floor(rating);
-            const halfStar = rating % 1 >= 0.5; // Placeholder for future half-star logic
             
-            for (let i = 0; i < fullStars; i++) {
-                starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Star Rating</title><path fill="#fbbc05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
-            }
-            
-            // This simplified logic just adds empty stars for the remainder
-            for (let i = 0; i < 5 - fullStars; i++) {
-                 starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d8d8d8" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    // Filled star
+                    starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Star Rating</title><path fill="#fbbc05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+                } else {
+                    // Empty star
+                    starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d8d8d8" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+                }
             }
         }
     };
 
-    // --- QR CODE GENERATION SCRIPT (NEW) ---
+    // --- QR CODE GENERATION SCRIPT (NOW USES DYNAMIC URL) ---
     const generateQRCodes = () => {
-        // Generate card QR code if the container exists
+        if (!reviewUrl) return; // Don't generate QR codes without a valid URL
+
         const cardQrContainer = document.getElementById('card-qr-code-container');
         if (cardQrContainer) {
             new QRCode(cardQrContainer, {
@@ -52,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Generate bonus stand QR code if the container exists
         const bonusQrContainer = document.getElementById('bonus-qr-code-container');
         if (bonusQrContainer) {
             new QRCode(bonusQrContainer, {
@@ -66,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- COUNTDOWN TIMER SCRIPT (REFACTORED) ---
+    // --- COUNTDOWN TIMER SCRIPT ---
     const initCountdown = () => {
         const hoursEl = document.getElementById('hours');
         const minutesEl = document.getElementById('minutes');
@@ -74,10 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!hoursEl || !minutesEl || !secondsEl) return;
 
         const formatTimeUnit = (unit) => String(unit).padStart(2, '0');
-        const MS_IN_SECOND = 1000;
-        const MS_IN_MINUTE = MS_IN_SECOND * 60;
-        const MS_IN_HOUR = MS_IN_MINUTE * 60;
-        const twelveHoursFromNow = Date.now() + 12 * MS_IN_HOUR;
+        const twelveHoursFromNow = Date.now() + 12 * 60 * 60 * 1000;
 
         const updateTimer = setInterval(() => {
             const distance = twelveHoursFromNow - Date.now();
@@ -88,9 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 secondsEl.textContent = '00';
                 return;
             }
-            const hours = Math.floor(distance / MS_IN_HOUR);
-            const minutes = Math.floor((distance % MS_IN_HOUR) / MS_IN_MINUTE);
-            const seconds = Math.floor((distance % MS_IN_MINUTE) / MS_IN_SECOND);
+            const hours = Math.floor(distance / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             hoursEl.textContent = formatTimeUnit(hours);
             minutesEl.textContent = formatTimeUnit(minutes);
@@ -98,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     };
     
-    // --- DASHBOARD TABS SCRIPT (REFACTORED WITH EVENT DELEGATION) ---
+    // --- DASHBOARD TABS SCRIPT ---
     const initDashboardTabs = () => {
         const tabsContainer = document.querySelector('.dashboard-tabs');
         if (!tabsContainer) return;
@@ -122,17 +134,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- COPY LINK SCRIPT (MODERNIZED AND UPDATED) ---
+    // --- COPY LINK SCRIPT (NOW USES DYNAMIC URL) ---
     const initCopyLink = () => {
-        const copyLinkButton = document.getElementById('copy-link-btn');
-        if (!copyLinkButton) return;
+        if (!copyLinkButton || !reviewUrl) return;
 
         copyLinkButton.addEventListener('click', async () => {
-            const urlToCopy = reviewUrl;
-            if (!urlToCopy) return;
-
             try {
-                await navigator.clipboard.writeText(urlToCopy);
+                await navigator.clipboard.writeText(reviewUrl);
                 
                 const originalText = copyLinkButton.textContent;
                 copyLinkButton.textContent = 'Copied!';
@@ -145,15 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (err) {
                 console.error('Failed to copy text: ', err);
-                copyLinkButton.textContent = 'Copy Failed';
-                 setTimeout(() => {
-                    copyLinkButton.textContent = 'Copy Link to Test';
-                }, 2000);
             }
         });
     };
 
-    // --- FOOTER SCRIPT (NEW) ---
+    // --- FOOTER SCRIPT ---
     const initFooter = () => {
         const yearSpan = document.getElementById('copyright-year');
         if (yearSpan) {
@@ -161,11 +165,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- CHECKOUT LINK SCRIPT ---
+    const initCheckoutLinks = () => {
+        // Find ALL buttons with the class '.js-get-started-link'
+        const checkoutButtons = document.querySelectorAll('.js-get-started-link');
+
+        if (checkoutButtons.length > 0) {
+            // Get the necessary parameters from the current URL
+            const params = new URLSearchParams(window.location.search);
+            const placeId = params.get('placeId');
+            const email = params.get('email');
+
+            // Construct the correct destination URL
+            const checkoutUrl = `/checkout.html?placeId=${placeId}&email=${encodeURIComponent(email)}`;
+
+            // Update each button to point to the new URL
+            checkoutButtons.forEach(button => {
+                button.href = checkoutUrl;
+            });
+        }
+    };
+
     // Initialize all scripts
-    populateSampleData(); // Run this first to populate the page
+    populateSampleData();
     generateQRCodes();
     initCountdown();
     initDashboardTabs();
     initCopyLink();
     initFooter();
+    initCheckoutLinks();
 });

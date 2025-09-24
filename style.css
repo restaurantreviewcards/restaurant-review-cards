@@ -4,6 +4,7 @@
     src: url('Manrope-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 /* --- CSS VARIABLES (COLORS & FONTS) --- */
@@ -63,14 +64,6 @@ a:focus, button:focus, summary:focus, input:focus {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }
-/* For inputs, we use a box-shadow, so let's blend the two */
-.hero-form-container input[type="text"]:focus,
-.hero-form-container input[type="email"]:focus {
-    outline: none; /* Override the general focus style for a custom one */
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 85, 150, 0.2);
-}
-
 
 section {
     padding: 60px 20px;
@@ -104,7 +97,7 @@ section {
 }
 
 .nav-menu {
-    display: flex; 
+    display: flex;  
     position: fixed;
     left: -100%;
     top: 5rem;
@@ -135,8 +128,8 @@ section {
 .hamburger {
     display: block;
     cursor: pointer;
-    background: none; /* Make button transparent */
-    border: none;     /* Remove button border */
+    background: none;
+    border: none;
 }
 
 .bar {
@@ -175,8 +168,8 @@ section {
 }
 
 .subtitle .google-logo {
-    font-family: 'Manrope', sans-serif; /* <-- UPDATED FONT */
     font-weight: 700;
+    font-family: 'Manrope', sans-serif; /* Use Manrope with a fallback */
     white-space: nowrap; /* Prevent line break */
 }
 
@@ -231,6 +224,13 @@ section {
     border-radius: 8px;
     font-size: 1rem;
     font-family: var(--font-body);
+}
+
+.hero-form-container input[type="text"]:focus,
+.hero-form-container input[type="email"]:focus {
+    outline: none; /* Override the general focus style for a custom one */
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 85, 150, 0.2);
 }
 
 .helper-text {

@@ -67,20 +67,21 @@
                 <div class="hero-form-container">
                     <form name="sample-generator" method="POST" action="/.netlify/functions/generate-sample">
                         <input type="hidden" name="place_id" id="place_id">
+                        <input type="hidden" name="restaurant-name" id="restaurant-name-selected">
                         <input type="hidden" name="form-name" value="sample-generator" />
                         <p style="display: none;">
                             <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
                         </p>
                         <div class="form-group">
-                            <label for="restaurant-name">Your Restaurant Name</label>
-                            <input type="text" id="restaurant-name" name="restaurant-name" placeholder="Start typing your restaurant name..." required>
+                            <label for="autocomplete-input">Your Restaurant Name</label>
+                            <input type="text" id="autocomplete-input" placeholder="Start typing your restaurant name..." required>
                             <p class="helper-text">Use the name as it appears on your Google Business Profile.</p>
                         </div>
                         <div class="form-group">
                             <label for="email">Your Email Address</label>
                             <input type="email" id="email" name="email" placeholder="you@yourlocalrestaurant.com" required>
                         </div>
-                        <button type="submit" class="cta-button">Generate My Sample</button>
+                        <button type="submit" class="cta-button" id="submit-button" disabled>Generate My Sample</button>
                         <div class="hero-social-proof">
                             <p class="trusted-by-text">Trusted by 50K US Restaurants</p>
                             <div class="hero-stars">
@@ -115,7 +116,6 @@
                 </div>
             </div>
         </section>
-
         <section id="benefits" class="feature-section alt-background fade-in-section">
             <div class="section-header">
                 <h2>Watch Your Reputation Soar</h2>
@@ -139,7 +139,6 @@
                 </div>
             </div>
         </section>
-        
         <section id="statistic" class="statistic-section fade-in-section">
             <div class="statistic-content">
                 <div class="statistic-number">90%</div>
@@ -147,19 +146,16 @@
                 <p>In today's digital-first world, your online reputation isn't just important—it's everything. Don't let potential customers scroll past you. Take control of your online story today.</p>
             </div>
         </section>
-
         <section id="pricing" class="pricing-section fade-in-section">
             <div class="section-header">
                 <h2>A No-Brainer for Your Restaurant</h2>
                 <p>One simple plan. Everything you need to get more reviews.</p>
             </div>
-
             <div class="single-plan-container">
                 <div class="single-plan">
                     <h3>The All-In-One Plan</h3>
                     <div class="price">$20<span>/mo</span></div>
                     <p class="plan-description">Everything you need to succeed, with no hidden fees.</p>
-                    
                     <ul class="features-list">
                         <li>✔ 250 Smart Review Cards</li>
                         <li>✔ 50 Monthly Card Refill Credits</li>
@@ -167,13 +163,11 @@
                         <li>✔ Smart Review Dashboard</li>
                         <li>✔ 24/7 phone & email support</li>
                     </ul>
-
                     <a href="#hero" class="cta-button">Generate Your Free Sample</a>
                     <p class="risk-free-guarantee">No contract. Cancel Anytime</p>
                 </div>
             </div>
         </section>
-
         <section id="faq" class="faq-section fade-in-section">
             <div class="section-header">
                 <h2>Frequently Asked Questions</h2>
@@ -198,7 +192,6 @@
                 </details>
             </div>
         </section>
-
         <section class="testimonial-section fade-in-section">
             <div class="testimonial-content">
                 <blockquote>
@@ -213,7 +206,124 @@
         <p>&copy; <span id="copyright-year">2025</span> Restaurant Review Cards. All rights reserved.</p>
     </footer>
 
-    <script src="script.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYwq72xH9utZpD17k23slq-Y0XGCLbuFM&libraries=places&callback=initAutocomplete" async defer></script>
+    <script>
+        // --- GOOGLE AUTOCOMPLETE INITIALIZATION ---
+        // This function will be called by the Google script once it loads
+        function initAutocomplete() {
+            const autocompleteInput = document.getElementById('autocomplete-input');
+            const submitButton = document.getElementById('submit-button');
+            const placeIdInput = document.getElementById('place_id');
+            const restaurantNameInput = document.getElementById('restaurant-name-selected');
+
+            if (!autocompleteInput) return;
+
+            const options = {
+                types: ['establishment'],
+                fields: ['place_id', 'name'] 
+            };
+            
+            // Using the classic constructor from your working project
+            const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, options);
+
+            // Using the 'place_changed' event from your working project
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+
+                if (place && place.place_id) {
+                    placeIdInput.value = place.place_id;
+                    restaurantNameInput.value = place.name;
+                    submitButton.disabled = false; // Enable the button
+                } else {
+                    // If user clears the input, disable the button again
+                    submitButton.disabled = true;
+                }
+            });
+
+            // Re-disable button if user types after selecting, forcing a new selection
+            autocompleteInput.addEventListener('input', () => {
+                submitButton.disabled = true;
+            });
+        }
+
+        // --- MASTER SCRIPT LOADER ---
+        // This function fetches the key and then loads the Google script.
+        async function loadScripts() {
+            try {
+                // 1. Fetch the API key from the Netlify function
+                const response = await fetch('/.netlify/functions/get-maps-key');
+                if (!response.ok) throw new Error('Failed to fetch API key.');
+                
+                const data = await response.json();
+                const apiKey = data.apiKey;
+                
+                // 2. Create the script tag
+                const script = document.createElement('script');
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
+                script.async = true;
+                script.defer = true;
+                
+                // 3. Append the script to the page to load it
+                document.head.appendChild(script);
+
+            } catch (error) {
+                console.error('Could not load Google Maps script:', error);
+                // Optionally, inform the user that the address lookup is unavailable
+                const input = document.getElementById('autocomplete-input');
+                if (input) {
+                    input.placeholder = "Address lookup is unavailable.";
+                    input.disabled = true;
+                }
+            }
+        }
+
+        // --- RUN ALL INITIALIZATION LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load the Google script first
+            loadScripts();
+
+            // --- MOBILE MENU SCRIPT ---
+            const hamburger = document.querySelector(".hamburger");
+            const navMenu = document.querySelector(".nav-menu");
+
+            hamburger.addEventListener("click", () => {
+                hamburger.classList.toggle("active");
+                navMenu.classList.toggle("active");
+                const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
+                hamburger.setAttribute("aria-expanded", !isExpanded);
+            });
+
+            document.querySelectorAll(".nav-link").forEach(n => n.addEventListener("click", () => {
+                hamburger.classList.remove("active");
+                navMenu.classList.remove("active");
+                hamburger.setAttribute("aria-expanded", "false");
+            }));
+
+            // --- FADE-IN ANIMATION SCRIPT ---
+            const sections = document.querySelectorAll('.fade-in-section');
+            const options = {
+                root: null,
+                threshold: 0.1,
+                rootMargin: "0px"
+            };
+
+            const observer = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                });
+            }, options);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- FOOTER SCRIPT ---
+            const yearSpan = document.getElementById("copyright-year");
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
 </body>
 </html>

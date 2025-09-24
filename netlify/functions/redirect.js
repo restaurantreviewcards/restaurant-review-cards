@@ -36,6 +36,10 @@ exports.handler = async (event) => {
     // 2. THE "OFF SWITCH": Check if the customer's subscription is active
     if (customerData.subscriptionStatus !== 'active') {
       // Redirect to a page explaining the link is inactive.
+<<<<<<< HEAD
+=======
+      // You should create this page (e.g., /link-inactive.html)
+>>>>>>> bf3e31938eb5ac17b673d4e98e54f9f76a39dbb2
       console.log(`Redirect blocked for inactive customer: ${customerId}`);
       return {
         statusCode: 302, // 302 is a temporary redirect
@@ -44,6 +48,10 @@ exports.handler = async (event) => {
     }
 
     // 3. THE COUNTER: Atomically increment the invite count.
+<<<<<<< HEAD
+=======
+    // This is safer than reading the number, adding 1, and saving it back.
+>>>>>>> bf3e31938eb5ac17b673d4e98e54f9f76a39dbb2
     await customerRef.update({
       reviewInvitesSent: admin.firestore.FieldValue.increment(1),
     });

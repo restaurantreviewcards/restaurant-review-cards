@@ -335,6 +335,132 @@ section { padding: 40px 20px; }
     color: var(--text-light);
 }
 
+/* --- Google Review Mockup --- */
+.google-review-mockup {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1rem;
+    max-width: 400px;
+    margin: 2rem auto 0;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    text-align: left;
+    font-family: var(--font-google);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: 0.2s; /* Start animation slightly after page load */
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mockup-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+}
+.mockup-header img {
+    width: 24px;
+    height: 24px;
+}
+.mockup-header-text {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+.mockup-business-name {
+    font-weight: 700;
+    color: var(--text-dark);
+    display: block;
+}
+
+.mockup-section {
+    padding: 1rem 0.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.mockup-stars {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.mockup-stars svg {
+    width: 36px;
+    height: 36px;
+    fill: var(--google-yellow);
+    cursor: pointer;
+    transition: transform 0.1s ease-out;
+}
+.mockup-stars svg:hover {
+    transform: scale(1.15);
+}
+
+.mockup-textarea {
+    background-color: var(--background-light);
+    border-radius: 8px;
+    padding: 1rem;
+    min-height: 80px;
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+.mockup-aspects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+.mockup-aspect {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+.mockup-aspect:hover {
+    background-color: #e8f0fe; /* Google's blue hover color */
+    border-color: #d2e3fc;
+}
+
+.mockup-buttons {
+    text-align: right;
+    padding: 1rem 0.5rem 0.5rem;
+}
+.mockup-button-action {
+    background-color: var(--google-blue);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-family: var(--font-heading);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.mockup-button-action:hover {
+    background-color: #1a73e8; /* Darker Google blue */
+}
+
+.mockup-disclaimer {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 0.75rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.5s ease-out forwards;
+    animation-delay: 0.4s; /* Delay slightly more than the mockup itself */
+}
+
 /* --- DASHBOARD PREVIEW MODULE --- */
 .dashboard-preview-container {
     background: linear-gradient(145deg, var(--white) 0%, #fcfdff 100%);
