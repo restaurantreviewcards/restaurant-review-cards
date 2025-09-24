@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.business-name-preview').textContent = name;
         document.getElementById('google-rating-value').textContent = rating.toFixed(1);
         document.getElementById('google-review-count').textContent = `(${reviews.toLocaleString()})`;
+        document.getElementById('mockup-business-name').textContent = name; // Update mockup name
 
         // Dynamically generate the star rating
         const starContainer = document.getElementById('star-rating-container');
