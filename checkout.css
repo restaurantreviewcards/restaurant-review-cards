@@ -1,210 +1,172 @@
-/* --- GOOGLE FONTS --- */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap');
+/* In: checkout.css */
 
-/* --- CSS VARIABLES (from your main site) --- */
-:root {
-    --primary-color: #005596;
-    --primary-dark: #003d6d;
-    --text-dark: #2d3748;
-    --text-light: #718096;
-    --background-light: #f7fafc;
-    --white: #ffffff;
-    --border-color: #e2e8f0;
-    --error-red: #dc3545;
-    --font-heading: 'Poppins', sans-serif;
-    --font-body: 'Lato', sans-serif;
-}
-
-/* --- GLOBAL STYLES --- */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
+/* --- General & Font Styles --- */
 body {
-    font-family: var(--font-body);
-    line-height: 1.6;
-    color: var(--text-dark);
-    background-color: #eef2f7; /* A slightly darker gray to make panels pop */
-    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f6f9fc;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    min-height: 100vh;
+    margin: 0;
+    box-sizing: border-box;
 }
 
-/* --- CHECKOUT LAYOUT --- */
-.checkout-container {
-    display: grid;
-    gap: 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.summary-panel,
-.payment-panel {
-    padding: 24px;
-    border-radius: 12px;
-}
-
-/* --- SUMMARY PANEL (Order Details) --- */
-.summary-panel {
-    background-color: var(--background-light);
-    border: 1px solid var(--border-color);
-}
-
-.summary-panel h2 {
-    font-family: var(--font-heading);
-    margin-bottom: 20px;
-}
-
-.summary-panel .product-info h3 {
-    font-size: 1.2rem;
-}
-
-.summary-panel .price {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 20px;
-}
-
-.summary-panel ul {
-    list-style: none;
-    padding-left: 0;
-    color: var(--text-light);
-}
-
-.summary-panel ul li {
-    margin-bottom: 10px;
-}
-
-/* --- PAYMENT PANEL (Forms & Stripe Element) --- */
-.payment-panel {
-    background-color: var(--white);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-#payment-form h3 {
-    font-family: var(--font-heading);
-    font-size: 1.3rem;
-    margin-bottom: 8px;
-}
-
-#payment-form p {
-    color: var(--text-light);
-    margin-bottom: 24px;
-}
-
-#payment-form label {
-    display: block;
-    font-weight: 700;
-    font-size: 0.9rem;
-    margin-bottom: 6px;
-}
-
-#payment-form input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: var(--font-body);
-    margin-bottom: 16px;
-    transition: box-shadow 0.2s, border-color 0.2s;
-}
-
-#payment-form input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 85, 150, 0.2);
+h2, h3 {
+    color: #32325d;
+    font-weight: 600;
 }
 
 hr {
     border: none;
-    border-top: 1px solid var(--border-color);
-    margin: 24px 0;
+    border-top: 1px solid #e6ebf1;
+    margin: 30px 0;
 }
 
-/* --- SHIPPING DISPLAY & EDIT --- */
-.hidden {
-    display: none;
+/* --- Main Layout --- */
+.checkout-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    width: 100%;
+    max-width: 960px;
 }
 
+.summary-panel {
+    flex: 1;
+    min-width: 300px;
+}
+
+.payment-panel {
+    flex: 2;
+    min-width: 320px;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Summary Panel Styles --- */
+.product-info {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e6ebf1;
+}
+
+.product-info .price {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #32325d;
+    margin-top: 4px;
+}
+
+.product-info ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+.product-info li {
+    padding: 8px 0;
+    color: #525f7f;
+    border-bottom: 1px solid #f6f9fc;
+}
+
+.product-info li:last-child {
+    border-bottom: none;
+}
+
+/* --- Shipping & Form Styles --- */
 #shipping-display {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 16px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background-color: var(--background-light);
-    margin-bottom: 24px;
+    background-color: #f6f9fc;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e6ebf1;
 }
 
-#shipping-display p {
+.shipping-address-content p {
     margin: 4px 0 0;
-    color: var(--text-dark);
+    color: #525f7f;
 }
 
 #edit-shipping-btn {
     background: none;
     border: none;
-    color: var(--primary-color);
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 4px;
-}
-
-#edit-shipping-btn:hover {
-    text-decoration: underline;
-}
-
-/* --- STRIPE PAYMENT ELEMENT --- */
-#payment-element {
-    margin-bottom: 24px;
-}
-
-#submit-button {
-    background-color: var(--primary-color);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    width: 100%;
-    padding: 16px;
-    font-family: var(--font-heading);
+    color: #0d6efd;
     font-weight: 600;
-    font-size: 1.1rem;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-size: 0.9em;
 }
 
-#submit-button:hover {
-    background-color: var(--primary-dark);
+#shipping-edit-form {
+    padding: 15px;
+    border: 1px solid #e6ebf1;
+    border-radius: 6px;
+    margin-top: 10px;
 }
 
-#submit-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+#shipping-edit-form.hidden {
+    display: none;
 }
 
-/* --- MESSAGES & ERRORS --- */
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #525f7f;
+    font-size: 0.9em;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+    font-size: 1em;
+}
+
+/* --- New "Save Changes" Button --- */
+.btn-save {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px; /* Adds some space above the button */
+  background-color: #0d6efd; /* A modern blue */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-save:hover {
+  background-color: #0b5ed7; /* A slightly darker blue on hover */
+}
+
+/* --- Message & Alert Styles --- */
 #payment-message {
-    color: var(--error-red);
-    font-size: 0.9rem;
-    margin-top: 16px;
-    text-align: center;
+    margin-top: 20px;
+    color: #fa755a; /* Stripe's error color */
+    font-weight: 500;
 }
 
-/* --- RESPONSIVE DESKTOP LAYOUT --- */
-@media (min-width: 768px) {
+/* --- Responsive Layout for Mobile --- */
+@media (max-width: 768px) {
     body {
-        padding: 40px;
+        padding: 20px 10px;
     }
+
     .checkout-container {
-        grid-template-columns: 1fr 1.5fr; /* Two columns on desktop */
-        gap: 40px;
-    }
-    .summary-panel,
-    .payment-panel {
-        padding: 40px;
+        flex-direction: column;
     }
 }
