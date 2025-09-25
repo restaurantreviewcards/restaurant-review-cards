@@ -1,5 +1,6 @@
 // In: netlify/functions/prepare-checkout.js
 const admin = require('firebase-admin');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
@@ -34,20 +35,44 @@ exports.handler = async (event) => {
 
     const signupData = snapshot.docs[0].data();
     
-    // --- ALL STRIPE CODE HAS BEEN REMOVED ---
+    // --- START: STRIPE LOGIC ---
 
-    // We only return the business name and a constructed shipping address.
+    // 1. Create a new Stripe Customer
+    const customer = await stripe.customers.create({
+      email: email,
+      name: signupData.googlePlaceName,
+      metadata: {
+        googlePlaceId: placeId,
+      }
+    });
+
+    // 2. Create the Subscription
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{ price: process.env.STRIPE_PRICE_ID }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+      // Add metadata so our webhook knows which user this is
+      metadata: {
+        email: email,
+        placeId: placeId,
+      }
+    });
+    
+    // --- END: STRIPE LOGIC ---
+    
     return {
       statusCode: 200,
       body: JSON.stringify({
+        // This client_secret is the key for the frontend
+        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
         businessName: signupData.googlePlaceName || 'N/A',
-        // NOTE: You'll need to make sure your 'signups' collection has address fields.
-        // I'm using placeholder names here like 'googleAddressLine1'.
         shippingAddress: {
-            line1:       signupData.googleAddressLine1 || '123 Example St',
-            city:        signupData.googleAddressCity  || 'Anytown',
-            state:       signupData.googleAddressState || 'CA',
-            postal_code: signupData.googleAddressZip   || '12345',
+          line1:       signupData.googleAddressLine1 || '123 Example St',
+          city:        signupData.googleAddressCity  || 'Anytown',
+          state:       signupData.googleAddressState || 'CA',
+          postal_code: signupData.googleAddressZip   || '12345',
         }
       }),
     };
