@@ -43,34 +43,38 @@ exports.handler = async (event) => {
       }
     });
 
+    // --- START: MODIFIED LOGIC ---
+
+    // Step 1: Create the subscription WITHOUT the 'expand' parameter.
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: process.env.STRIPE_PRICE_ID }],
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
       metadata: {
         email: email,
         placeId: placeId,
       }
     });
-    
-    // --- DIAGNOSTIC LOGGING LINE ---
-    // This will print the full Stripe object to your Netlify logs
-    console.log("Stripe Subscription Object:", JSON.stringify(subscription, null, 2));
-    
-    // This logic now correctly handles both trials and immediate payments.
-    let clientSecret;
-    if (subscription.pending_setup_intent) {
-        // This handles the free trial case
-        clientSecret = subscription.pending_setup_intent.client_secret;
-    } else if (subscription.latest_invoice.payment_intent) {
-        // This handles the immediate payment case
-        clientSecret = subscription.latest_invoice.payment_intent.client_secret;
-    } else {
-        // As a fallback, throw an error if neither is found.
-        throw new Error('Could not find a client_secret for the subscription.');
+
+    // Step 2: Get the ID of the invoice that was just created.
+    const latestInvoiceId = subscription.latest_invoice;
+    if (!latestInvoiceId) {
+      throw new Error("Subscription created without a valid invoice.");
     }
+    
+    // Step 3: Explicitly retrieve that invoice and expand its payment_intent.
+    // This is a more reliable way to get the details we need.
+    const invoice = await stripe.invoices.retrieve(latestInvoiceId, {
+        expand: ['payment_intent']
+    });
+
+    const clientSecret = invoice.payment_intent.client_secret;
+    if (!clientSecret) {
+        throw new Error("Could not find client_secret on the retrieved invoice.");
+    }
+
+    // --- END: MODIFIED LOGIC ---
 
     return {
       statusCode: 200,
