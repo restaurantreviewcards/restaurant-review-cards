@@ -2,7 +2,7 @@
   "name": "restaurant-review-cards-functions",
   "version": "1.0.0",
   "dependencies": {
-    "firebase-admin": "^11.10.1",
+    "firebase-admin": "^13.5.0",
     "node-fetch": "^2.6.7",
     "stripe": "^18.5.0"
   }
