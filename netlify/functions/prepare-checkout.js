@@ -43,9 +43,6 @@ exports.handler = async (event) => {
       }
     });
 
-    // --- START: MODIFIED LOGIC ---
-
-    // Step 1: Create the subscription WITHOUT the 'expand' parameter.
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: process.env.STRIPE_PRICE_ID }],
@@ -57,24 +54,24 @@ exports.handler = async (event) => {
       }
     });
 
-    // Step 2: Get the ID of the invoice that was just created.
     const latestInvoiceId = subscription.latest_invoice;
     if (!latestInvoiceId) {
       throw new Error("Subscription created without a valid invoice.");
     }
     
-    // Step 3: Explicitly retrieve that invoice and expand its payment_intent.
-    // This is a more reliable way to get the details we need.
     const invoice = await stripe.invoices.retrieve(latestInvoiceId, {
         expand: ['payment_intent']
     });
 
-    const clientSecret = invoice.payment_intent.client_secret;
-    if (!clientSecret) {
-        throw new Error("Could not find client_secret on the retrieved invoice.");
-    }
+    // --- NEW LOGGING LINE ---
+    // This is the most important log. We need to see what this object looks like.
+    console.log("Retrieved Stripe Invoice Object:", JSON.stringify(invoice, null, 2));
 
-    // --- END: MODIFIED LOGIC ---
+    if (!invoice.payment_intent || !invoice.payment_intent.client_secret) {
+        throw new Error("The retrieved invoice does not contain a valid payment_intent with a client_secret.");
+    }
+    
+    const clientSecret = invoice.payment_intent.client_secret;
 
     return {
       statusCode: 200,
