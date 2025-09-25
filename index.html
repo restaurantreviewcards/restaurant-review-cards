@@ -229,7 +229,7 @@
                 if (place && place.place_id) {
                     placeIdInput.value = place.place_id;
                     restaurantNameInput.value = place.name;
-                    submitButton.disabled = false; // Enable the button
+                    submitButton.disabled = false;
                 } else {
                     submitButton.disabled = true;
                 }
@@ -286,6 +286,6 @@
             }
         });
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDugm-Rcp-LsmNYWPnNnt5N72XfAyIn3Bc&libraries=places&callback=initAutocomplete"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=__GOOGLE_API_KEY__&libraries=places&callback=initAutocomplete"></script>
 </body>
 </html>

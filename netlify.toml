@@ -1,5 +1,4 @@
-# In: netlify.toml
-
+# This section defines your serverless functions
 [functions]
   directory = "netlify/functions/"
 
@@ -7,3 +6,12 @@
 [functions.updateDailyReviews]
   # This is a cron expression for "At 06:00 UTC every day"
   schedule = "0 6 * * *"
+
+# NEW SECTION: This tells Netlify to process files during the build
+[build.processing]
+  [build.processing.html]
+    pretty_urls = true
+  [build.processing.files]
+    # This rule finds all HTML files and replaces the placeholder
+    # with the value of the environment variable.
+    "/**/*.html" = { "PUBLIC_GOOGLE_MAPS_API_KEY" = "__GOOGLE_API_KEY__" }
