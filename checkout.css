@@ -1,12 +1,14 @@
 /* --- Global Styles & Variables --- */
 :root {
     --primary-color: #005596;
+    --success-green: #28a745;
+    --bonus-background: #eef6ff;
+    --bonus-border: #bde0fe;
     --background-color: #f4f7f9;
     --panel-background: #ffffff;
     --text-dark: #2d3748;
     --text-light: #718096;
     --border-color: #e2e8f0;
-    --success-color: #28a745;
 }
 
 body {
@@ -22,20 +24,11 @@ body {
     box-sizing: border-box;
 }
 
-h2, h3 {
-    font-weight: 600;
-}
-
-hr {
-    border: none;
-    border-top: 1px solid var(--border-color);
-    margin: 2rem 0;
-}
-
 /* --- Main Layout --- */
-.checkout-container {
+.container {
     display: flex;
-    max-width: 1000px;
+    gap: 2rem;
+    max-width: 900px;
     width: 100%;
     background-color: var(--panel-background);
     border-radius: 12px;
@@ -44,212 +37,135 @@ hr {
 }
 
 .summary-panel {
-    background-color: #f9fafb;
     padding: 2.5rem;
-    width: 40%;
+    width: 45%;
     box-sizing: border-box;
-    border-right: 1px solid var(--border-color);
 }
 
-.payment-panel {
+.pricing-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 2.5rem;
-    width: 60%;
+    width: 55%;
     box-sizing: border-box;
+    background-color: #f9fafb;
 }
 
 /* --- Summary Panel Styles --- */
-.summary-panel h2 {
+.summary-panel h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
     margin-top: 0;
-    font-size: 1.5rem;
 }
 
-.product-info h3 {
-    margin: 1.5rem 0 0.5rem;
-}
-
-.product-info .price {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-}
-
-.product-info ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.summary-panel p {
     color: var(--text-light);
+    line-height: 1.6;
 }
 
-.product-info li {
-    margin-bottom: 0.75rem;
+/* START: Updated Social Proof Styles */
+.social-proof {
     display: flex;
+    justify-content: center;
     align-items: center;
-}
-
-.product-info li::before {
-    content: '✔';
-    color: var(--success-color);
-    margin-right: 0.75rem;
-    font-weight: bold;
-}
-
-
-/* --- Payment Panel & Form Styles --- */
-.payment-panel h3 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.5rem;
-}
-
-#payment-form label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: #333;
-}
-
-#payment-form input[type="text"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease-in-out;
-}
-
-#payment-form input[type="text"]:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(0, 85, 150, 0.25);
-}
-
-
-/* --- Shipping Info Section --- */
-#shipping-display {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background-color: #f9fafb;
-}
-
-#shipping-display p {
-    margin: 0;
-    line-height: 1.5;
-    color: var(--text-light);
-}
-
-#shipping-display strong {
-    color: var(--text-dark);
-}
-
-#edit-shipping-btn {
-    background: none;
-    border: none;
-    color: var(--primary-color);
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: 0.9rem;
-}
-
-#shipping-edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-#shipping-edit-form.hidden {
-    display: none;
-}
-
-
-/* --- Static Payment Form Styles --- */
-.payment-form-static {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.payment-form-static .form-row {
-    display: flex;
-    gap: 1rem;
-}
-
-.payment-form-static .form-group {
-    flex: 1;
-}
-
-
-/* --- Buttons --- */
-.btn-save, .btn-submit {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.btn-save {
-    background-color: #eee;
-    color: #333;
-}
-
-.btn-save:hover {
-    background-color: #ddd;
-}
-
-.btn-submit {
-    background-color: var(--primary-color);
-    color: white;
-    margin-top: 1.5rem;
-}
-
-.btn-submit:hover {
-    background-color: #003d6d;
-}
-
-
-/* --- Messages & Utilities --- */
-#payment-message {
-    margin-top: 1rem;
-    color: #dc3545;
-    text-align: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0 2rem 0;
+    color: var(--text-light); /* Lighter, more subtle text */
+    font-size: 0.85rem;
     font-weight: 500;
 }
 
+.social-proof svg {
+    color: var(--success-green);
+    flex-shrink: 0;
+}
+/* END: Updated Social Proof Styles */
+
+.list-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.features-list li {
+    font-weight: 500;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.features-list li svg {
+    width: 20px;
+    height: 20px;
+    color: var(--success-green);
+    flex-shrink: 0;
+}
+
+.features-list li strong {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.bonus-box {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px solid var(--bonus-border);
+    border-radius: 8px;
+    background-color: var(--bonus-background);
+    text-align: center;
+}
+
+.bonus-header {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
+.bonus-box p {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.bonus-box strong {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.guarantee-box {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.guarantee-box strong {
+    color: var(--text-dark);
+}
+
+.guarantee-box p {
+    margin: 0.25rem 0 0;
+}
 
 /* --- Responsive Styles --- */
-@media (max-width: 900px) {
-    body {
-        padding: 0;
-        align-items: flex-start;
-    }
-    
-    .checkout-container {
+@media (max-width: 768px) {
+    .container {
         flex-direction: column;
-        border-radius: 0;
-        box-shadow: none;
     }
-
-    .summary-panel, .payment-panel {
+    .summary-panel, .pricing-panel {
         width: 100%;
         padding: 1.5rem;
-    }
-
-    .summary-panel {
-        border-right: none;
-        border-bottom: 1px solid var(--border-color);
     }
 }
