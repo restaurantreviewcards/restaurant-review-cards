@@ -4,28 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - ReviewCards</title>
-    
     <link rel="stylesheet" href="checkout.css">
-    
-    <script src="https://js.stripe.com/v3/"></script>
     <script src="checkout.js" defer></script>
 </head>
 <body>
     <div class="checkout-container">
         <div class="summary-panel">
             <h2>Your Order</h2>
-            <div class="product-info">
-                <h3>ReviewCards Pro Plan</h3>
-                <p class="price">$20.00 / month</p>
-                <ul>
-                    <li>✔ 250 Smart Review Cards</li>
-                    <li>✔ Smart Review Dashboard</li>
-                    <li>✔ Unlimited QR Code Scans</li>
-                    <li>✔ 50 Monthly Card Refill Credits</li>
-                    <li>✔ 24/7 Phone & Email Support</li>
-                </ul>
             </div>
-        </div>
         <div class="payment-panel">
             <form id="payment-form">
                 <h3>1. Shipping Information</h3>
@@ -33,8 +19,8 @@
                 <div id="shipping-display">
                     <div class="shipping-address-content">
                         <strong>Ships to:</strong>
-                        <p id="shipping-name-display">The Charleston Oyster House</p>
-                        <p id="shipping-address-display">123 King Street, Charleston, SC 29401</p>
+                        <p id="shipping-name-display">Loading...</p>
+                        <p id="shipping-address-display">Loading...</p>
                     </div>
                     <button type="button" id="edit-shipping-btn">Edit</button>
                 </div>
@@ -59,13 +45,6 @@
                 
                 <hr>
 
-                <h3>2. Payment Details</h3>
-                <div id="payment-element"></div>
-                
-                <button id="submit-button">
-                    <span id="button-text">Pay Now</span>
-                </button>
-                
                 <div id="payment-message" role="alert"></div>
             </form>
         </div>

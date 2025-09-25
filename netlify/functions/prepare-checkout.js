@@ -1,6 +1,5 @@
 // In: netlify/functions/prepare-checkout.js
 const admin = require('firebase-admin');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
@@ -34,37 +33,21 @@ exports.handler = async (event) => {
     }
 
     const signupData = snapshot.docs[0].data();
-    const businessName = signupData.googlePlaceName || 'Customer';
     
-    const customer = await stripe.customers.create({ email, name: businessName });
-    
-    const subscription = await stripe.subscriptions.create({
-      customer: customer.id,
-      items: [{ price: process.env.STRIPE_PRICE_ID }],
-      payment_behavior: 'default_incomplete',
-      payment_settings: {
-        save_default_payment_method: 'on_subscription',
-        payment_method_types: ['card'],
-      },
-      expand: ['latest_invoice.payment_intent'],
-    });
+    // --- ALL STRIPE CODE HAS BEEN REMOVED ---
 
-    const clientSecret = subscription.latest_invoice.payment_intent.client_secret;
-
-    if (!clientSecret) {
-      throw new Error('Could not extract client_secret from subscription invoice.');
-    }
-
+    // We only return the business name and a constructed shipping address.
     return {
       statusCode: 200,
       body: JSON.stringify({
-        clientSecret: clientSecret,
-        businessName: businessName,
+        businessName: signupData.googlePlaceName || 'N/A',
+        // NOTE: You'll need to make sure your 'signups' collection has address fields.
+        // I'm using placeholder names here like 'googleAddressLine1'.
         shippingAddress: {
-            line1: signupData.googleAddressLine1 || '',
-            city: signupData.googleAddressCity || '',
-            state: signupData.googleAddressState || '',
-            postal_code: signupData.googleAddressZip || '',
+            line1:       signupData.googleAddressLine1 || '123 Example St',
+            city:        signupData.googleAddressCity  || 'Anytown',
+            state:       signupData.googleAddressState || 'CA',
+            postal_code: signupData.googleAddressZip   || '12345',
         }
       }),
     };
