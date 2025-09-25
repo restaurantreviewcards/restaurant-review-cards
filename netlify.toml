@@ -1,17 +1,19 @@
-# This section defines your serverless functions
+# This section tells Netlify where your serverless functions are located.
 [functions]
   directory = "netlify/functions/"
 
-# This block schedules the daily review update function
+# This block schedules your 'updateDailyReviews' function to run automatically.
+# The cron expression "0 6 * * *" means it will run at 06:00 UTC every day.
 [functions.updateDailyReviews]
-  # This is a cron expression for "At 06:00 UTC every day"
   schedule = "0 6 * * *"
 
-# NEW SECTION: This tells Netlify to process files during the build
+# This section tells Netlify to perform a "find and replace" during deployment.
+# It is the key to securely handling your API key and fixing the error.
 [build.processing]
   [build.processing.html]
     pretty_urls = true
   [build.processing.files]
-    # This rule finds all HTML files and replaces the placeholder
-    # with the value of the environment variable.
+    # This rule looks through all HTML files in your site.
+    # It finds the text "__GOOGLE_API_KEY__" and replaces it with the
+    # value you stored in Netlify's UI under the name "PUBLIC_GOOGLE_MAPS_API_KEY".
     "/**/*.html" = { "PUBLIC_GOOGLE_MAPS_API_KEY" = "__GOOGLE_API_KEY__" }
