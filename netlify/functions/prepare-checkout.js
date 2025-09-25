@@ -59,15 +59,14 @@ exports.handler = async (event) => {
       throw new Error("Subscription created without a valid invoice.");
     }
     
-    // --- FINAL FIX: Manually finalize the invoice ---
-    // This bypasses any grace period and forces the PaymentIntent to be created.
-    const finalizedInvoice = await stripe.invoices.finalizeInvoice(latestInvoiceId, {
+    // Retrieve the invoice, which is now finalized automatically by Stripe.
+    const invoice = await stripe.invoices.retrieve(latestInvoiceId, {
         expand: ['payment_intent']
     });
 
-    const clientSecret = finalizedInvoice.payment_intent.client_secret;
+    const clientSecret = invoice.payment_intent.client_secret;
     if (!clientSecret) {
-        throw new Error("Could not find client_secret after finalizing the invoice.");
+        throw new Error("Could not find client_secret on the retrieved invoice.");
     }
 
     return {
