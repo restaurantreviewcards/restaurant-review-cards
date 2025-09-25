@@ -78,21 +78,19 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    // This will now throw the specific error from the function
                     throw new Error(data.error || 'An unknown error occurred.');
                 }
 
-                const customerId = data.customerId;
-                const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?id=${customerId}`;
+                // Use the placeId returned from our function.
+                const placeId = data.placeId;
+                const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${placeId}`;
                 
                 dashboardLink.href = dashboardUrl;
                 linkContainer.style.display = 'block';
                 statusMessage.style.display = 'none';
 
             } catch (error) {
-                // This will now log the real error to your browser console
                 console.error("Failed to generate dashboard link. Specific error:", error.message);
-                
                 statusMessage.textContent = 'There was an issue creating your link. Please check your email for a direct link to your dashboard, or contact support.';
                 statusMessage.style.color = 'red';
             }
@@ -100,3 +98,4 @@
     </script>
 </body>
 </html>
+

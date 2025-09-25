@@ -1,6 +1,8 @@
+// In: netlify/functions/get-customer-data.js
+
 const admin = require('firebase-admin');
 
-// Initialize Firebase Admin SDK if it hasn't been already
+// Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -14,33 +16,34 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 exports.handler = async (event) => {
-  // Get the customer's Stripe ID from the URL query parameter (e.g., ?id=cus_xxxx)
-  const { customerId } = event.queryStringParameters;
+  // THE FIX: The URL parameter is now 'placeId'
+  const { placeId } = event.queryStringParameters;
 
-  if (!customerId) {
+  if (!placeId) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Customer ID is required.' }),
+      body: JSON.stringify({ error: 'Place ID is required.' }),
     };
   }
 
   try {
-    // Fetch the customer document directly by its ID
-    const customerRef = db.collection('customers').doc(customerId);
-    const doc = await customerRef.get();
+    // THE FIX: Query the collection to find the customer with the matching placeId.
+    const customersRef = db.collection('customers');
+    const snapshot = await customersRef.where('googlePlaceId', '==', placeId).limit(1).get();
 
-    if (!doc.exists) {
+    if (snapshot.empty) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: 'Customer not found.' }),
+        body: JSON.stringify({ error: 'Customer not found for this Place ID.' }),
       };
     }
 
-    // Return the customer's data
+    const customerDoc = snapshot.docs[0];
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(doc.data()),
+      body: JSON.stringify(customerDoc.data()),
     };
   } catch (error) {
     console.error('Error fetching customer data:', error);
