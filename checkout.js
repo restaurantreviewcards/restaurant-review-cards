@@ -1,5 +1,8 @@
 // In: checkout.js
 document.addEventListener('DOMContentLoaded', () => {
+    // The publishable key is now hardcoded here.
+    const publishableKey = 'pk_live_51S8RCEKDZto4bHecq0hENGuWcyuGbjbbPzEc9qINe7041tQ0sd6MGFdDakm6Wc3VZteTypDbqtDQj7TKtLAxFxZ100z16Dzfso';
+
     const params = new URLSearchParams(window.location.search);
     const placeId = params.get('placeId');
     const email = params.get('email');
@@ -22,27 +25,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function initialize() {
         try {
-            // Fetch both keys from our backend in parallel
-            const [keyResponse, checkoutResponse] = await Promise.all([
-                fetch('/.netlify/functions/get-stripe-key').then(res => res.json()),
-                fetch('/.netlify/functions/prepare-checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ placeId, email }),
-                }).then(res => res.json())
-            ]);
+            // We've removed the fetch for the key and now only fetch the checkout data.
+            const checkoutResponse = await fetch('/.netlify/functions/prepare-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ placeId, email }),
+            }).then(res => res.json());
 
             if (checkoutResponse.error) {
                 throw new Error(checkoutResponse.error);
             }
 
-            const { publishableKey } = keyResponse;
             const { clientSecret, shippingAddress, businessName } = checkoutResponse;
 
             // --- Populate Shipping Info ---
             populateShippingDetails(businessName, shippingAddress);
 
-            // --- Initialize Stripe ---
+            // --- Initialize Stripe with the hardcoded key ---
             stripe = Stripe(publishableKey);
             elements = stripe.elements({ clientSecret });
             const paymentElement = elements.create('payment');
@@ -57,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- EVENT LISTENERS ---
     
-    // Shipping form logic (no changes)
     editShippingBtn.addEventListener('click', () => {
         shippingEditForm.classList.remove('hidden');
         editShippingBtn.classList.add('hidden');
@@ -77,19 +75,16 @@ document.addEventListener('DOMContentLoaded', () => {
         editShippingBtn.classList.remove('hidden');
     });
 
-    // Handle payment form submission
     paymentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        // Get updated shipping details from the display fields
         const finalName = shippingNameDisplay.textContent;
         const finalAddress = shippingAddressDisplay.textContent.split(', ');
 
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                // IMPORTANT: This is the URL where Stripe will redirect the user after payment
                 return_url: `${window.location.origin}/success.html`,
                 shipping: {
                     name: finalName,
@@ -104,9 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
             },
         });
 
-        // This point will only be reached if there is an immediate error when
-        // confirming the payment. Otherwise, your customer will be redirected to
-        // the `return_url`.
         if (error) {
             if (error.type === "card_error" || error.type === "validation_error") {
                 showMessage(error.message);
@@ -141,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             submitBtn.disabled = false;
             document.getElementById('spinner').classList.add('hidden');
-            document.getElementById('button-text').classList.remove('hidden');
+            document.getElementById('button-text').remove('hidden');
         }
     }
 
