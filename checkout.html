@@ -18,7 +18,7 @@
             <p>You're just one step away from receiving your welcome kit and activating your account.</p>
 
             <div class="social-proof">
-                <svg xmlns="http://www.w.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
                 <span>Trusted by 50,000+ US Restaurants</span>
@@ -57,15 +57,13 @@
         </div>
 
         <div class="pricing-panel" id="pricing-table-section">
-            <stripe-pricing-table 
-                pricing-table-id="prctbl_1SBHqKKDZto4bHecRi1XWHtN"
+            <stripe-pricing-table pricing-table-id="prctbl_1SBMhDKDZto4bHeckCUHCfHA"
                 publishable-key="pk_live_51S8RCEKDZto4bHecq0hENGuWcyuGbjbbPzEc9qINe7041tQ0sd6MGFdDakm6Wc3VZteTypDbqtDQj7TKtLAxFxZ100z16Dzfso">
             </stripe-pricing-table>
         </div>
     </div>
 
     <script>
-        // --- This script should now be in its own file, e.g., /js/checkout.js ---
         const pricingTable = document.querySelector('stripe-pricing-table');
         const params = new URLSearchParams(window.location.search);
         const email = params.get('email');
