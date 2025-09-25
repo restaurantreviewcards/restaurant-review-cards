@@ -1,6 +1,5 @@
 // In: checkout.js
 document.addEventListener('DOMContentLoaded', () => {
-    // The publishable key is now hardcoded here.
     const publishableKey = 'pk_live_51S8RCEKDZto4bHecq0hENGuWcyuGbjbbPzEc9qINe7041tQ0sd6MGFdDakm6Wc3VZteTypDbqtDQj7TKtLAxFxZ100z16Dzfso';
 
     const params = new URLSearchParams(window.location.search);
@@ -25,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function initialize() {
         try {
-            // We've removed the fetch for the key and now only fetch the checkout data.
             const checkoutResponse = await fetch('/.netlify/functions/prepare-checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -41,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Populate Shipping Info ---
             populateShippingDetails(businessName, shippingAddress);
 
-            // --- Initialize Stripe with the hardcoded key ---
+            // --- Initialize Stripe ---
             stripe = Stripe(publishableKey);
             elements = stripe.elements({ clientSecret });
             const paymentElement = elements.create('payment');
@@ -79,25 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         setLoading(true);
 
-        const finalName = shippingNameDisplay.textContent;
-        const finalAddress = shippingAddressDisplay.textContent.split(', ');
-
+        // --- MODIFICATION START ---
+        // The 'shipping' block has been removed from this call.
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
                 return_url: `${window.location.origin}/success.html`,
-                shipping: {
-                    name: finalName,
-                    address: {
-                        line1: finalAddress[0],
-                        city: finalAddress[1],
-                        state: finalAddress[2].split(' ')[0],
-                        postal_code: finalAddress[2].split(' ')[1],
-                        country: 'US',
-                    }
-                }
             },
         });
+        // --- MODIFICATION END ---
 
         if (error) {
             if (error.type === "card_error" || error.type === "validation_error") {
@@ -109,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setLoading(false);
     });
-
 
     // --- HELPER FUNCTIONS ---
     
