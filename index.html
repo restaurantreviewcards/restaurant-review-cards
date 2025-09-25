@@ -93,7 +93,6 @@
             </div>
         </section>
 
-        <!-- ... rest of your main content ... -->
         <section id="how-it-works" class="feature-section fade-in-section">
             <div class="section-header">
                 <h2>It's As Easy As 1, 2, 3</h2>
@@ -208,7 +207,7 @@
     </footer>
 
     <script>
-        // --- GOOGLE AUTOCOMPLETE INITIALIZATION (Reverted to original, working version) ---
+        // --- GOOGLE AUTOCOMPLETE INITIALIZATION ---
         function initAutocomplete() {
             const autocompleteInput = document.getElementById('autocomplete-input');
             const submitButton = document.getElementById('submit-button');
@@ -243,7 +242,7 @@
             });
         }
 
-        // --- RUN ALL OTHER INITIALIZATION LOGIC ---
+        // --- RUN ALL INITIALIZATION LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             // --- MOBILE MENU SCRIPT ---
             const hamburger = document.querySelector(".hamburger");
@@ -289,8 +288,6 @@
             }
         });
     </script>
-    <!-- This script tag is now correct. The placeholder will be replaced by Netlify. -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=__GOOGLE_API_KEY__&libraries=places&callback=initAutocomplete"></script>
 </body>
 </html>
-
