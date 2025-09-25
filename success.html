@@ -37,6 +37,33 @@
         }
         h1 { font-size: 2rem; margin-bottom: 1rem; }
         p { color: #718096; line-height: 1.6; }
+        .dashboard-link-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .dashboard-link-container p {
+            margin-bottom: 1rem;
+        }
+        .dashboard-link {
+            display: inline-block;
+            background-color: #005596;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .dashboard-link:hover {
+            background-color: #003d6d;
+        }
+        /* Hide elements by default */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -44,6 +71,74 @@
         <div class="checkmark">✓</div>
         <h1>Thank You!</h1>
         <p>Your order is complete and your welcome kit is being prepared. Please check your email for your receipt and instructions on how to access your new dashboard.</p>
+
+        <!-- Dynamic Dashboard Link Section -->
+        <div class="dashboard-link-container">
+            <!-- Loading State -->
+            <div id="loading-state">
+                <p>Generating your personal dashboard link...</p>
+            </div>
+            <!-- Success State -->
+            <div id="success-state" class="hidden">
+                <p><strong>Bookmark this link!</strong> This is your unique, permanent link to your dashboard:</p>
+                <a href="#" id="dashboard-link" class="dashboard-link">Go to My Dashboard</a>
+            </div>
+            <!-- Error State -->
+            <div id="error-state" class="hidden">
+                <p><strong>There was an issue creating your link.</strong> Please check your email for a direct link to your dashboard, or contact support.</p>
+            </div>
+        </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Get references to the state containers
+            const loadingState = document.getElementById('loading-state');
+            const successState = document.getElementById('success-state');
+            const errorState = document.getElementById('error-state');
+            const dashboardLink = document.getElementById('dashboard-link');
+
+            // 1. Get the session_id from the URL
+            const params = new URLSearchParams(window.location.search);
+            const sessionId = params.get('session_id');
+
+            if (!sessionId) {
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                console.error('No session_id found in URL.');
+                return;
+            }
+
+            try {
+                // 2. Fetch the customer ID from our new Netlify function
+                const response = await fetch(`/.netlify/functions/get-session-details?session_id=${sessionId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch customer details.');
+                }
+                const data = await response.json();
+                const customerId = data.customerId;
+
+                if (!customerId) {
+                    throw new Error('Customer ID was not returned from the function.');
+                }
+
+                // 3. Construct the dashboard URL and update the link
+                // NOTE: We are linking to `sample.html` as a stand-in for a real dashboard.
+                // In a real application, this would point to your actual dashboard page.
+                const dashboardUrl = `https://restaurantreviewcards.com/sample.html?id=${customerId}`;
+                dashboardLink.href = dashboardUrl;
+
+                // 4. Show the success state
+                loadingState.classList.add('hidden');
+                successState.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error creating dashboard link:', error);
+                // Show the error state if anything goes wrong
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+            }
+        });
+    </script>
 </body>
 </html>
