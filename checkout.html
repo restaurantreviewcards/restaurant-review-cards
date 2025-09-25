@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - ReviewCards</title>
     <link rel="stylesheet" href="checkout.css">
-    <script src="https://js.stripe.com/v3/"></script>
     <script src="checkout.js" defer></script>
 </head>
 <body>
@@ -25,7 +24,7 @@
             </div>
         </div>
         <div class="payment-panel">
-             <form id="payment-form">
+            <form id="payment-form">
                 <h3>1. Shipping Information</h3>
                 
                 <div id="shipping-display">
@@ -60,11 +59,29 @@
                 <hr>
 
                 <h3>2. Payment Details</h3>
-                <div id="payment-element">
-                  </div>
+                <div class="payment-form-static">
+                    <label for="card-number">Card Number</label>
+                    <input type="text" id="card-number" placeholder="0000 0000 0000 0000">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry-date">Expiry Date</label>
+                            <input type="text" id="expiry-date" placeholder="MM / YY">
+                        </div>
+                        <div class="form-group">
+                            <label for="cvc">CVC</label>
+                            <input type="text" id="cvc" placeholder="CVC">
+                        </div>
+                    </div>
+
+                    <label for="cardholder-name">Cardholder Name</label>
+                    <input type="text" id="cardholder-name" placeholder="Name on card">
+
+                    <label for="billing-zip">Billing ZIP Code</label>
+                    <input type="text" id="billing-zip" placeholder="ZIP Code">
+                </div>
                 <button id="submit-btn" class="btn-submit">
-                    <span id="button-text">Pay Now</span>
-                    <span id="spinner" class="hidden">Processing...</span>
+                    <span id="button-text">Submit Order</span>
                 </button>
                 <div id="payment-message" role="alert"></div>
             </form>
