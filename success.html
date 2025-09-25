@@ -15,54 +15,36 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
+            padding: 20px;
         }
         .container {
             background: #fff;
-            padding: 3rem;
+            padding: 2rem 3rem;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-width: 500px;
+            max-width: 550px;
         }
         .checkmark {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: #28a745;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 1.5rem;
-            color: white;
-            font-size: 3rem;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: #28a745; display: flex;
+            justify-content: center; align-items: center;
+            margin: 0 auto 1.5rem; color: white; font-size: 2.5rem;
         }
         h1 { font-size: 2rem; margin-bottom: 1rem; }
         p { color: #718096; line-height: 1.6; }
-        .dashboard-link-container {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background-color: #f9fafb;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-        .dashboard-link-container p {
-            margin-bottom: 1rem;
-        }
         .dashboard-link {
             display: inline-block;
             background-color: #005596;
             color: white;
             padding: 12px 24px;
+            margin-top: 1.5rem;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
-            transition: background-color 0.2s;
         }
-        .dashboard-link:hover {
-            background-color: #003d6d;
-        }
-        /* Hide elements by default */
-        .hidden {
-            display: none;
+        #status-message {
+            margin-top: 1rem;
+            font-style: italic;
         }
     </style>
 </head>
@@ -70,73 +52,49 @@
     <div class="container">
         <div class="checkmark">✓</div>
         <h1>Thank You!</h1>
-        <p>Your order is complete and your welcome kit is being prepared. Please check your email for your receipt and instructions on how to access your new dashboard.</p>
-
-        <!-- Dynamic Dashboard Link Section -->
-        <div class="dashboard-link-container">
-            <!-- Loading State -->
-            <div id="loading-state">
-                <p>Generating your personal dashboard link...</p>
-            </div>
-            <!-- Success State -->
-            <div id="success-state" class="hidden">
-                <p><strong>Bookmark this link!</strong> This is your unique, permanent link to your dashboard:</p>
-                <a href="#" id="dashboard-link" class="dashboard-link">Go to My Dashboard</a>
-            </div>
-            <!-- Error State -->
-            <div id="error-state" class="hidden">
-                <p><strong>There was an issue creating your link.</strong> Please check your email for a direct link to your dashboard, or contact support.</p>
-            </div>
+        <p>Your order is complete and your welcome kit is being prepared. Please use the link below to access your new dashboard.</p>
+        <div id="link-container" style="display: none;">
+            <a id="dashboard-link" href="#" class="dashboard-link">Go to My Dashboard</a>
         </div>
+        <p id="status-message">Generating your custom link...</p>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // Get references to the state containers
-            const loadingState = document.getElementById('loading-state');
-            const successState = document.getElementById('success-state');
-            const errorState = document.getElementById('error-state');
+            const statusMessage = document.getElementById('status-message');
+            const linkContainer = document.getElementById('link-container');
             const dashboardLink = document.getElementById('dashboard-link');
 
-            // 1. Get the session_id from the URL
             const params = new URLSearchParams(window.location.search);
             const sessionId = params.get('session_id');
 
             if (!sessionId) {
-                loadingState.classList.add('hidden');
-                errorState.classList.remove('hidden');
-                console.error('No session_id found in URL.');
+                statusMessage.textContent = "Error: Checkout session ID not found.";
                 return;
             }
 
             try {
-                // 2. Fetch the customer ID from our new Netlify function
                 const response = await fetch(`/.netlify/functions/get-session-details?session_id=${sessionId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch customer details.');
-                }
                 const data = await response.json();
-                const customerId = data.customerId;
 
-                if (!customerId) {
-                    throw new Error('Customer ID was not returned from the function.');
+                if (!response.ok) {
+                    // This will now throw the specific error from the function
+                    throw new Error(data.error || 'An unknown error occurred.');
                 }
 
-                // 3. Construct the dashboard URL and update the link
-                // NOTE: We are linking to `sample.html` as a stand-in for a real dashboard.
-                // In a real application, this would point to your actual dashboard page.
+                const customerId = data.customerId;
                 const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?id=${customerId}`;
+                
                 dashboardLink.href = dashboardUrl;
-
-                // 4. Show the success state
-                loadingState.classList.add('hidden');
-                successState.classList.remove('hidden');
+                linkContainer.style.display = 'block';
+                statusMessage.style.display = 'none';
 
             } catch (error) {
-                console.error('Error creating dashboard link:', error);
-                // Show the error state if anything goes wrong
-                loadingState.classList.add('hidden');
-                errorState.classList.remove('hidden');
+                // This will now log the real error to your browser console
+                console.error("Failed to generate dashboard link. Specific error:", error.message);
+                
+                statusMessage.textContent = 'There was an issue creating your link. Please check your email for a direct link to your dashboard, or contact support.';
+                statusMessage.style.color = 'red';
             }
         });
     </script>

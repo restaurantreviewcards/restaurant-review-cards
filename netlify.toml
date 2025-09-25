@@ -2,18 +2,7 @@
 [functions]
   directory = "netlify/functions/"
 
-# This block schedules your 'updateDailyReviews' function to run automatically.
+# This schedules your 'updateDailyReviews' function to run automatically.
 # The cron expression "0 6 * * *" means it will run at 06:00 UTC every day.
 [functions.updateDailyReviews]
   schedule = "0 6 * * *"
-
-# This section tells Netlify to perform a "find and replace" during deployment.
-# It is the key to securely handling your API key and fixing the error.
-[build.processing]
-  [build.processing.html]
-    pretty_urls = true
-  [build.processing.files]
-    # This rule looks through all HTML files in your site.
-    # It finds the text "__GOOGLE_API_KEY__" and replaces it with the
-    # value you stored in Netlify's UI under the name "PUBLIC_GOOGLE_MAPS_API_KEY".
-    "/**/*.html" = { "PUBLIC_GOOGLE_MAPS_API_KEY" = "__GOOGLE_API_KEY__" }
