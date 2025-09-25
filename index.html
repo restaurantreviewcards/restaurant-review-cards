@@ -208,7 +208,6 @@
 
     <script>
         // --- GOOGLE AUTOCOMPLETE INITIALIZATION ---
-        // This function will be called by the Google script once it loads
         function initAutocomplete() {
             const autocompleteInput = document.getElementById('autocomplete-input');
             const submitButton = document.getElementById('submit-button');
@@ -232,53 +231,17 @@
                     restaurantNameInput.value = place.name;
                     submitButton.disabled = false; // Enable the button
                 } else {
-                    // If user clears the input, disable the button again
                     submitButton.disabled = true;
                 }
             });
 
-            // Re-disable button if user types after selecting, forcing a new selection
             autocompleteInput.addEventListener('input', () => {
                 submitButton.disabled = true;
             });
         }
 
-        // --- MASTER SCRIPT LOADER ---
-        // This function fetches the key and then loads the Google script.
-        async function loadScripts() {
-            try {
-                // 1. Fetch the API key from the Netlify function
-                const response = await fetch('/.netlify/functions/get-maps-key');
-                if (!response.ok) throw new Error('Failed to fetch API key.');
-                
-                const data = await response.json();
-                const apiKey = data.apiKey;
-                
-                // 2. Create the script tag
-                const script = document.createElement('script');
-                script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
-                script.async = true;
-                script.defer = true;
-                
-                // 3. Append the script to the page to load it
-                document.head.appendChild(script);
-
-            } catch (error) {
-                console.error('Could not load Google Maps script:', error);
-                // Optionally, inform the user that the address lookup is unavailable
-                const input = document.getElementById('autocomplete-input');
-                if (input) {
-                    input.placeholder = "Address lookup is unavailable.";
-                    input.disabled = true;
-                }
-            }
-        }
-
         // --- RUN ALL INITIALIZATION LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Load the Google script first
-            loadScripts();
-
             // --- MOBILE MENU SCRIPT ---
             const hamburger = document.querySelector(".hamburger");
             const navMenu = document.querySelector(".nav-menu");
@@ -323,5 +286,6 @@
             }
         });
     </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDugm-Rcp-LsmNYWPnNnt5N72XfAyIn3Bc&libraries=places&callback=initAutocomplete"></script>
 </body>
 </html>

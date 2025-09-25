@@ -1,8 +1,9 @@
+// In: samplescript.js
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- DYNAMICALLY GENERATE THE GOOGLE REVIEW URL ---
     const params = new URLSearchParams(window.location.search);
-    const placeId = params.get('placeid'); // Corrected to lowercase 'd'
+    const placeId = params.get('placeId'); 
     let reviewUrl = ''; // Initialize the variable
 
     const copyLinkButton = document.getElementById('copy-link-btn');
@@ -166,22 +167,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CHECKOUT LINK SCRIPT ---
     const initCheckoutLinks = () => {
-        // Find ALL buttons with the class '.js-get-started-link'
         const checkoutButtons = document.querySelectorAll('.js-get-started-link');
 
         if (checkoutButtons.length > 0) {
-            // Get the necessary parameters from the current URL
             const params = new URLSearchParams(window.location.search);
             
-            // This is the corrected line
-            const placeId = params.get('placeid'); // Changed 'placeId' to 'placeid'
+            const placeId = params.get('placeId'); 
             
             const email = params.get('email');
 
-            // Construct the correct destination URL
             const checkoutUrl = `/checkout.html?placeId=${placeId}&email=${encodeURIComponent(email)}`;
 
-            // Update each button to point to the new URL
             checkoutButtons.forEach(button => {
                 button.href = checkoutUrl;
             });

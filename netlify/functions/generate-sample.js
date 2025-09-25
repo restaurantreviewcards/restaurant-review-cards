@@ -80,7 +80,7 @@ exports.handler = async (event) => {
       timestamp: new Date(),
     });
 
-    const redirectUrl = `/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}&placeid=${placeId}&email=${encodeURIComponent(email)}`;
+    const redirectUrl = `/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}&placeId=${placeId}&email=${encodeURIComponent(email)}`;
 
     return {
       statusCode: 302,

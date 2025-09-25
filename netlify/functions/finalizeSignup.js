@@ -16,7 +16,6 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
-const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
 
 exports.handler = async (event) => {
   const sig = event.headers['stripe-signature'];
@@ -33,8 +32,6 @@ exports.handler = async (event) => {
     case 'checkout.session.completed':
       const session = stripeEvent.data.object;
       
-      // --- MODIFICATION ---
-      // Get the placeId and email from the checkout session object
       const placeId = session.client_reference_id;
       const email = session.customer_details.email;
       const userId = session.customer;
@@ -45,14 +42,23 @@ exports.handler = async (event) => {
       }
 
       try {
-        const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,user_ratings_total&key=${googleApiKey}`;
-        const response = await fetch(url);
-        const data = await response.json();
+        // Query the 'signups' collection to find the original data
+        const signupsRef = db.collection('signups');
+        const snapshot = await signupsRef
+            .where('googlePlaceId', '==', placeId)
+            .where('email', '==', email)
+            .orderBy('timestamp', 'desc')
+            .limit(1)
+            .get();
 
-        if (!data.result) throw new Error('Could not fetch Google details for webhook.');
+        if (snapshot.empty) {
+            throw new Error(`No matching signup document found for placeId: ${placeId}`);
+        }
+
+        const signupData = snapshot.docs[0].data();
         
-        const initialReviewCount = data.result.user_ratings_total || 0;
-        const placeName = data.result.name;
+        const initialReviewCount = signupData.googleReviewCount || 0;
+        const placeName = signupData.googlePlaceName;
 
         const customerData = {
           userId: userId,
