@@ -59,19 +59,16 @@ exports.handler = async (event) => {
       throw new Error("Subscription created without a valid invoice.");
     }
     
-    const invoice = await stripe.invoices.retrieve(latestInvoiceId, {
+    // --- FINAL FIX: Manually finalize the invoice ---
+    // This bypasses any grace period and forces the PaymentIntent to be created.
+    const finalizedInvoice = await stripe.invoices.finalizeInvoice(latestInvoiceId, {
         expand: ['payment_intent']
     });
 
-    // --- NEW LOGGING LINE ---
-    // This is the most important log. We need to see what this object looks like.
-    console.log("Retrieved Stripe Invoice Object:", JSON.stringify(invoice, null, 2));
-
-    if (!invoice.payment_intent || !invoice.payment_intent.client_secret) {
-        throw new Error("The retrieved invoice does not contain a valid payment_intent with a client_secret.");
+    const clientSecret = finalizedInvoice.payment_intent.client_secret;
+    if (!clientSecret) {
+        throw new Error("Could not find client_secret after finalizing the invoice.");
     }
-    
-    const clientSecret = invoice.payment_intent.client_secret;
 
     return {
       statusCode: 200,
