@@ -74,10 +74,7 @@
                         </p>
                         <div class="form-group">
                             <label for="autocomplete-input">Your Restaurant Name</label>
-                            <!-- UPDATED: This input is now inside the new custom element -->
-                            <gmp-place-picker for="place_id" country="us" place-types="restaurant" id="place-picker">
-                                <input type="text" id="autocomplete-input" placeholder="Start typing your restaurant name..." required>
-                            </gmp-place-picker>
+                            <input type="text" id="autocomplete-input" placeholder="Start typing your restaurant name..." required>
                             <p class="helper-text">Use the name as it appears on your Google Business Profile.</p>
                         </div>
                         <div class="form-group">
@@ -211,31 +208,36 @@
     </footer>
 
     <script>
-        // --- GOOGLE AUTOCOMPLETE INITIALIZATION ---
-        // This function is still called by the Google script, but its contents are updated.
+        // --- GOOGLE AUTOCOMPLETE INITIALIZATION (Reverted to original, working version) ---
         function initAutocomplete() {
-            const placePicker = document.getElementById('place-picker');
+            const autocompleteInput = document.getElementById('autocomplete-input');
             const submitButton = document.getElementById('submit-button');
             const placeIdInput = document.getElementById('place_id');
             const restaurantNameInput = document.getElementById('restaurant-name-selected');
-            const autocompleteInput = document.getElementById('autocomplete-input');
 
-            if (!placePicker) return;
+            if (!autocompleteInput) return;
 
-            // The new event listener is 'gmp-placeselect'
-            placePicker.addEventListener('gmp-placeselect', (event) => {
-                const place = event.place;
-                if (place && place.id) {
-                    placeIdInput.value = place.id; // Google uses 'id' for the place ID here
-                    restaurantNameInput.value = place.displayName;
+            const options = {
+                types: ['establishment'],
+                fields: ['place_id', 'name'] 
+            };
+            
+            const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, options);
+
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+
+                if (place && place.place_id) {
+                    placeIdInput.value = place.place_id;
+                    restaurantNameInput.value = place.name;
                     submitButton.disabled = false;
+                } else {
+                    submitButton.disabled = true;
                 }
             });
 
-            // Re-disable button if user types after selecting, forcing a new selection
             autocompleteInput.addEventListener('input', () => {
                 submitButton.disabled = true;
-                // Clear the hidden fields if the user starts typing again
                 placeIdInput.value = '';
                 restaurantNameInput.value = '';
             });
@@ -288,7 +290,7 @@
         });
     </script>
     <!-- This script tag is now correct. The placeholder will be replaced by Netlify. -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=__GOOGLE_API_KEY__&libraries=places&callback=initAutocomplete&loading=async"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=__GOOGLE_API_KEY__&libraries=places&callback=initAutocomplete"></script>
 </body>
 </html>
 
