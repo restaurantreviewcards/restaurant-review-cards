@@ -17,6 +17,25 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
 
+// Helper function to parse Google's address components array
+function parseAddressComponents(components) {
+  const address = {};
+  components.forEach(component => {
+    const types = component.types;
+    if (types.includes('street_number')) address.streetNumber = component.long_name;
+    if (types.includes('route')) address.streetName = component.long_name;
+    if (types.includes('locality')) address.city = component.long_name;
+    if (types.includes('administrative_area_level_1')) address.state = component.short_name;
+    if (types.includes('postal_code')) address.zip = component.long_name;
+  });
+  return {
+    line1: `${address.streetNumber || ''} ${address.streetName || ''}`.trim(),
+    city: address.city || '',
+    state: address.state || '',
+    zip: address.zip || '',
+  };
+}
+
 exports.handler = async (event) => {
   const formData = new URLSearchParams(event.body);
   const placeId = formData.get('place_id');
@@ -24,24 +43,27 @@ exports.handler = async (event) => {
   const submittedName = formData.get('restaurant-name');
 
   if (!placeId || !email || !googleApiKey) {
-    console.error('Missing form data or API key.');
-    return {
-      statusCode: 400,
-      body: 'Missing required information. Please try again.',
-    };
+    // ... error handling
+    return { statusCode: 400, body: 'Missing required information.' };
   }
 
   try {
-    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,user_ratings_total,url&key=${googleApiKey}`;
+    // UPDATED: Added 'address_components' to the fields we request from Google
+    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,user_ratings_total,url,address_components&key=${googleApiKey}`;
+    
     const detailsResponse = await fetch(detailsUrl);
     const placeData = await detailsResponse.json();
 
     if (!placeData.result) {
       throw new Error('Could not retrieve restaurant details from Google.');
     }
-    const { name, rating, user_ratings_total, url } = placeData.result;
+    
+    const { name, rating, user_ratings_total, url, address_components } = placeData.result;
+    
+    // UPDATED: Parse the address components into a usable format
+    const parsedAddress = parseAddressComponents(address_components);
 
-    // Save the lead data to your 'signups' collection in Firestore.
+    // UPDATED: Save the new address fields to your 'signups' collection in Firestore.
     await db.collection('signups').add({
       email: email,
       submittedName: submittedName,
@@ -50,13 +72,16 @@ exports.handler = async (event) => {
       googleRating: rating || 'N/A',
       googleReviewCount: user_ratings_total || 0,
       googleMapsUrl: url || 'N/A',
+      // New address fields
+      googleAddressLine1: parsedAddress.line1,
+      googleAddressCity: parsedAddress.city,
+      googleAddressState: parsedAddress.state,
+      googleAddressZip: parsedAddress.zip,
       timestamp: new Date(),
     });
 
-    // The redirect URL now includes the email, which is needed for the checkout process.
     const redirectUrl = `/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}&placeid=${placeId}&email=${encodeURIComponent(email)}`;
 
-    // Send the user to their personalized sample page.
     return {
       statusCode: 302,
       headers: {
