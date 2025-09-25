@@ -24,6 +24,10 @@ body {
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth; /* For the sticky button anchor link */
+}
+
 /* --- Main Layout --- */
 .container {
     display: flex;
@@ -64,14 +68,13 @@ body {
     line-height: 1.6;
 }
 
-/* START: Updated Social Proof Styles */
 .social-proof {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
     margin: 1.5rem 0 2rem 0;
-    color: var(--text-light); /* Lighter, more subtle text */
+    color: var(--text-light);
     font-size: 0.85rem;
     font-weight: 500;
 }
@@ -80,7 +83,6 @@ body {
     color: var(--success-green);
     flex-shrink: 0;
 }
-/* END: Updated Social Proof Styles */
 
 .list-header {
     font-size: 1.1rem;
@@ -89,12 +91,7 @@ body {
     margin-bottom: 1rem;
 }
 
-.features-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
+.features-list { list-style: none; padding: 0; margin: 0; }
 .features-list li {
     font-weight: 500;
     margin-bottom: 1rem;
@@ -102,18 +99,8 @@ body {
     align-items: center;
     gap: 0.75rem;
 }
-
-.features-list li svg {
-    width: 20px;
-    height: 20px;
-    color: var(--success-green);
-    flex-shrink: 0;
-}
-
-.features-list li strong {
-    font-weight: 600;
-    color: var(--text-dark);
-}
+.features-list li svg { width: 20px; height: 20px; color: var(--success-green); flex-shrink: 0; }
+.features-list li strong { font-weight: 600; color: var(--text-dark); }
 
 .bonus-box {
     margin-top: 2rem;
@@ -123,23 +110,9 @@ body {
     background-color: var(--bonus-background);
     text-align: center;
 }
-
-.bonus-header {
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--primary-color);
-}
-
-.bonus-box p {
-    margin: 0.5rem 0 0;
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
-
-.bonus-box strong {
-    font-weight: 600;
-    color: var(--text-dark);
-}
+.bonus-header { font-weight: 700; font-size: 1rem; color: var(--primary-color); }
+.bonus-box p { margin: 0.5rem 0 0; font-size: 0.9rem; line-height: 1.5; }
+.bonus-box strong { font-weight: 600; color: var(--text-dark); }
 
 .guarantee-box {
     margin-top: 1rem;
@@ -150,22 +123,68 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 8px;
 }
+.guarantee-box strong { color: var(--text-dark); }
+.guarantee-box p { margin: 0.25rem 0 0; }
 
-.guarantee-box strong {
+
+/* --- START: New Mobile CTA Bar Styles --- */
+.mobile-cta-bar {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--panel-background);
+    padding: 1rem;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.mobile-cta-bar .price-display {
+    font-size: 1.1rem;
+    font-weight: 700;
     color: var(--text-dark);
 }
 
-.guarantee-box p {
-    margin: 0.25rem 0 0;
+.mobile-cta-bar .btn-mobile-cta {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
 }
+/* --- END: New Mobile CTA Bar Styles --- */
+
 
 /* --- Responsive Styles --- */
 @media (max-width: 768px) {
     .container {
-        flex-direction: column;
+        /* Recommendation 2: Reverse panel order on mobile */
+        flex-direction: column-reverse; 
+        box-shadow: none;
+        border-radius: 0;
     }
     .summary-panel, .pricing-panel {
         width: 100%;
         padding: 1.5rem;
+    }
+
+    /* Recommendation 3: Fine-tune typography */
+    .summary-panel h1 {
+        font-size: 1.6rem; 
+    }
+
+    /* Recommendation 1: Show the sticky bar and add padding to body */
+    .mobile-cta-bar {
+        display: flex;
+    }
+    body {
+        /* Add padding to the bottom to prevent the bar from covering content */
+        padding-bottom: 100px;
     }
 }
