@@ -34,10 +34,7 @@ exports.handler = async (event) => {
     }
 
     const signupData = snapshot.docs[0].data();
-    
-    // --- START: STRIPE LOGIC ---
 
-    // 1. Create a new Stripe Customer
     const customer = await stripe.customers.create({
       email: email,
       name: signupData.googlePlaceName,
@@ -46,27 +43,38 @@ exports.handler = async (event) => {
       }
     });
 
-    // 2. Create the Subscription
+    // We now need to expand the 'pending_setup_intent' as well
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: process.env.STRIPE_PRICE_ID }],
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.payment_intent'],
-      // Add metadata so our webhook knows which user this is
+      expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
       metadata: {
         email: email,
         placeId: placeId,
       }
     });
     
-    // --- END: STRIPE LOGIC ---
-    
+    // --- START: MODIFIED LOGIC ---
+    // This logic now correctly handles both trials and immediate payments.
+    let clientSecret;
+    if (subscription.pending_setup_intent) {
+        // This handles the free trial case
+        clientSecret = subscription.pending_setup_intent.client_secret;
+    } else if (subscription.latest_invoice.payment_intent) {
+        // This handles the immediate payment case
+        clientSecret = subscription.latest_invoice.payment_intent.client_secret;
+    } else {
+        // As a fallback, throw an error if neither is found.
+        throw new Error('Could not find a client_secret for the subscription.');
+    }
+    // --- END: MODIFIED LOGIC ---
+
     return {
       statusCode: 200,
       body: JSON.stringify({
-        // This client_secret is the key for the frontend
-        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+        clientSecret: clientSecret, // Use the dynamically found client_secret
         businessName: signupData.googlePlaceName || 'N/A',
         shippingAddress: {
           line1:       signupData.googleAddressLine1 || '123 Example St',
