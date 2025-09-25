@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const editShippingBtn = document.getElementById('edit-shipping-btn');
     const shippingEditForm = document.getElementById('shipping-edit-form');
     const messageContainer = document.getElementById('payment-message');
+    // Reference for the new button
+    const saveShippingBtn = document.getElementById('save-shipping-btn');
     
-    // --- ALL STRIPE INITIALIZATION CODE HAS BEEN REMOVED ---
-
     // --- FETCH CHECKOUT DATA AND POPULATE PAGE ---
     try {
         const response = await fetch('/.netlify/functions/prepare-checkout', {
@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error(errorData.error || 'Server error preparing checkout.');
         }
 
-        // We only expect businessName and shippingAddress now
         const { shippingAddress, businessName } = await response.json();
 
         // Populate the display box
@@ -56,5 +55,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         editShippingBtn.classList.add('hidden');
     });
 
-    // --- PAYMENT SUBMISSION LOGIC HAS BEEN REMOVED ---
+    // --- NEW: Handle the "Save Changes" button click ---
+    saveShippingBtn.addEventListener('click', () => {
+        // Read the new values from the input fields
+        const newName = document.getElementById('name').value;
+        const newLine1 = document.getElementById('address-line1').value;
+        const newCity = document.getElementById('city').value;
+        const newState = document.getElementById('state').value;
+        const newPostalCode = document.getElementById('postal-code').value;
+
+        // Update the display text with the new values
+        shippingNameDisplay.textContent = newName;
+        shippingAddressDisplay.textContent = `${newLine1}, ${newCity}, ${newState} ${newPostalCode}`;
+
+        // Hide the edit form
+        shippingEditForm.classList.add('hidden');
+        // Show the "Edit" button again
+        editShippingBtn.classList.remove('hidden');
+    });
 });

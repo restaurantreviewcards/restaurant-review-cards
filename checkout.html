@@ -11,7 +11,18 @@
     <div class="checkout-container">
         <div class="summary-panel">
             <h2>Your Order</h2>
+            <div class="product-info">
+                <h3>ReviewCards Pro Plan</h3>
+                <p class="price">$20.00 / month</p>
+                <ul>
+                    <li>✔ 250 Smart Review Cards</li>
+                    <li>✔ Smart Review Dashboard</li>
+                    <li>✔ Unlimited QR Code Scans</li>
+                    <li>✔ 50 Monthly Card Refill Credits</li>
+                    <li>✔ 24/7 Phone & Email Support</li>
+                </ul>
             </div>
+        </div>
         <div class="payment-panel">
             <form id="payment-form">
                 <h3>1. Shipping Information</h3>
@@ -41,10 +52,12 @@
 
                     <label for="postal-code">ZIP Code</label>
                     <input type="text" id="postal-code" required>
+
+                    <button type="button" id="save-shipping-btn">Save Changes</button>
                 </div>
                 
                 <hr>
-
+                
                 <div id="payment-message" role="alert"></div>
             </form>
         </div>
