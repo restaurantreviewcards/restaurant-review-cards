@@ -1,6 +1,5 @@
 // In: netlify/functions/prepare-checkout.js
 const admin = require('firebase-admin');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
@@ -27,58 +26,26 @@ exports.handler = async (event) => {
     }
 
     const signupsRef = db.collection('signups');
+    // This query is the critical step. It must find exactly one document.
     const snapshot = await signupsRef.where('googlePlaceId', '==', placeId).where('email', '==', email).limit(1).get();
 
     if (snapshot.empty) {
+      // If the log shows this error, it means the placeId/email combo was not found.
       throw new Error('No matching signup found for the provided details.');
     }
 
     const signupData = snapshot.docs[0].data();
-
-    const customer = await stripe.customers.create({
-      email: email,
-      name: signupData.googlePlaceName,
-      metadata: {
-        googlePlaceId: placeId,
-      }
-    });
-
-    const subscription = await stripe.subscriptions.create({
-      customer: customer.id,
-      items: [{ price: process.env.STRIPE_PRICE_ID }],
-      payment_behavior: 'default_incomplete',
-      payment_settings: { save_default_payment_method: 'on_subscription' },
-      metadata: {
-        email: email,
-        placeId: placeId,
-      }
-    });
-
-    const latestInvoiceId = subscription.latest_invoice;
-    if (!latestInvoiceId) {
-      throw new Error("Subscription created without a valid invoice.");
-    }
     
-    // Retrieve the invoice, which is now finalized automatically by Stripe.
-    const invoice = await stripe.invoices.retrieve(latestInvoiceId, {
-        expand: ['payment_intent']
-    });
-
-    const clientSecret = invoice.payment_intent.client_secret;
-    if (!clientSecret) {
-        throw new Error("Could not find client_secret on the retrieved invoice.");
-    }
-
+    // We only return the business name and shipping address.
     return {
       statusCode: 200,
       body: JSON.stringify({
-        clientSecret: clientSecret,
         businessName: signupData.googlePlaceName || 'N/A',
         shippingAddress: {
-          line1:       signupData.googleAddressLine1 || '123 Example St',
-          city:        signupData.googleAddressCity  || 'Anytown',
-          state:       signupData.googleAddressState || 'CA',
-          postal_code: signupData.googleAddressZip   || '12345',
+          line1:       signupData.googleAddressLine1 || 'Address Line 1 Missing',
+          city:        signupData.googleAddressCity  || 'City Missing',
+          state:       signupData.googleAddressState || 'State Missing',
+          postal_code: signupData.googleAddressZip   || 'ZIP Missing',
         }
       }),
     };
