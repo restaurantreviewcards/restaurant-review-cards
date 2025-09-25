@@ -43,7 +43,6 @@ exports.handler = async (event) => {
       }
     });
 
-    // We now need to expand the 'pending_setup_intent' as well
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: process.env.STRIPE_PRICE_ID }],
@@ -56,7 +55,10 @@ exports.handler = async (event) => {
       }
     });
     
-    // --- START: MODIFIED LOGIC ---
+    // --- DIAGNOSTIC LOGGING LINE ---
+    // This will print the full Stripe object to your Netlify logs
+    console.log("Stripe Subscription Object:", JSON.stringify(subscription, null, 2));
+    
     // This logic now correctly handles both trials and immediate payments.
     let clientSecret;
     if (subscription.pending_setup_intent) {
@@ -69,12 +71,11 @@ exports.handler = async (event) => {
         // As a fallback, throw an error if neither is found.
         throw new Error('Could not find a client_secret for the subscription.');
     }
-    // --- END: MODIFIED LOGIC ---
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        clientSecret: clientSecret, // Use the dynamically found client_secret
+        clientSecret: clientSecret,
         businessName: signupData.googlePlaceName || 'N/A',
         shippingAddress: {
           line1:       signupData.googleAddressLine1 || '123 Example St',
