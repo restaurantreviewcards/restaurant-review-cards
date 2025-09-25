@@ -3,67 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - ReviewCards</title>
-    <script src="https://js.stripe.com/v3/"></script>
-    <link rel="stylesheet" href="checkout.css">
-    <script src="checkout.js" defer></script>
+    <title>Complete Your Order - ReviewCards</title>
+    <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f7f9;
+            color: #2d3748;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            display: flex;
+            gap: 2rem;
+            max-width: 900px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .summary-panel {
+            padding: 2.5rem;
+            width: 45%;
+            box-sizing: border-box;
+        }
+        .pricing-panel {
+            padding: 2.5rem;
+            width: 55%;
+            box-sizing: border-box;
+            background-color: #f9fafb;
+        }
+        h1 { font-size: 1.8rem; font-weight: 700; margin-top: 0; }
+        ul { list-style: none; padding: 0; margin: 1.5rem 0; color: #718096; }
+        li { margin-bottom: 0.75rem; display: flex; align-items: flex-start; }
+        li::before { content: '✔'; color: #28a745; margin-right: 0.75rem; font-weight: bold; line-height: 1.5rem; }
+        .trust-badge { margin-top: 2rem; text-align: center; font-size: 0.9rem; color: #718096; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px;}
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .summary-panel, .pricing-panel { width: 100%; }
+        }
+    </style>
 </head>
 <body>
-    <div class="checkout-container">
+    <div class="container">
         <div class="summary-panel">
-            <h2>Your Order</h2>
-            <div class="product-info">
-                <h3>ReviewCards Pro Plan</h3>
-                <p class="price">$20.00 / month</p>
-                <ul>
-                    <li>250 Smart Review Cards</li>
-                    <li>Smart Review Dashboard</li>
-                    <li>Unlimited QR Code Scans</li>
-                    <li>50 Monthly Card Refill Credits</li>
-                    <li>24/7 Phone & Email Support</li>
-                </ul>
+            <h1>You're almost there!</h1>
+            <p>Complete your order to receive your welcome kit and activate your account.</p>
+            <ul>
+                <li><strong>The Welcome Kit:</strong> 2 Stands & 250 Cards</li>
+                <li><strong>Monthly Refills:</strong> 50 Free Card Credits Every Month</li>
+                <li><strong>Full Access:</strong> Dashboard, Sharing Tools & Support</li>
+            </ul>
+            <div class="trust-badge">
+                <strong>✓ 30-Day Money-Back Guarantee.</strong><br>
+                No contracts, cancel anytime.
             </div>
         </div>
-        <div class="payment-panel">
-            <form id="payment-form">
-                <h3>1. Shipping Information</h3>
-                
-                <div id="shipping-display">
-                    <div class="shipping-address-content">
-                        <strong>Ships to:</strong>
-                        <p id="shipping-name-display">Loading...</p>
-                        <p id="shipping-address-display">Loading...</p>
-                    </div>
-                    <button type="button" id="edit-shipping-btn">Edit</button>
-                </div>
-
-                <div id="shipping-edit-form" class="hidden">
-                    <p>Please confirm or update your shipping details below.</p>
-                    <label for="name">Business / Recipient Name</label>
-                    <input type="text" id="name" required>
-                    <label for="address-line1">Address</label>
-                    <input type="text" id="address-line1" required>
-                    <label for="city">City</label>
-                    <input type="text" id="city" required>
-                    <label for="state">State</label>
-                    <input type="text" id="state" required>
-                    <label for="postal-code">ZIP Code</label>
-                    <input type="text" id="postal-code" required>
-                    <button type="button" id="save-shipping-btn" class="btn-save">Save Changes</button>
-                </div>
-                
-                <hr>
-
-                <h3>2. Payment Details</h3>
-                <div id="payment-element">
-                  </div>
-                <button id="submit-btn" class="btn-submit">
-                    <span id="button-text">Get Started</span>
-                    <span id="spinner" class="hidden">Processing...</span>
-                </button>
-                <div id="payment-message" role="alert"></div>
-            </form>
+        <div class="pricing-panel">
+            <stripe-pricing-table 
+                pricing-table-id="prctbl_1SBGC9KDZto4bHecObIK7Jtt"
+                publishable-key="pk_live_51S8RCEKDZto4bHecq0hENGuWcyuGbjbbPzEc9qINe7041tQ0sd6MGFdDakm6Wc3VZteTypDbqtDQj7TKtLAxFxZ100z16Dzfso">
+            </stripe-pricing-table>
         </div>
     </div>
+
+    <script>
+        const pricingTable = document.querySelector('stripe-pricing-table');
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get('email');
+        const placeId = params.get('placeId');
+
+        if (email) {
+            pricingTable.customerEmail = email;
+        }
+        // This passes the placeId to the webhook so we know which business signed up
+        if (placeId) {
+            pricingTable.clientReferenceId = placeId;
+        }
+    </script>
 </body>
 </html>
