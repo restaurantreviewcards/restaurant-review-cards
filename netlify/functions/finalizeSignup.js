@@ -2,8 +2,18 @@ const admin = require('firebase-admin');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// Initialize Firebase Admin SDK...
-// ... (same as before)
+// Initialize Firebase Admin SDK
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    }),
+  });
+}
+
+const db = admin.firestore();
 
 exports.handler = async (event) => {
     const sig = event.headers['stripe-signature'];
@@ -12,22 +22,30 @@ exports.handler = async (event) => {
     try {
         stripeEvent = stripe.webhooks.constructEvent(event.body, sig, webhookSecret);
     } catch (err) {
-        // ... (error handling same as before)
+        console.log(`Webhook signature verification failed.`, err.message);
+        return { statusCode: 400, body: `Webhook Error: ${err.message}`};
     }
 
     switch (stripeEvent.type) {
-        case 'payment_intent.succeeded': // **NEW EVENT TYPE**
-            const paymentIntent = stripeEvent.data.object;
-            
-            const { placeId, email } = paymentIntent.metadata; // Get data from metadata
-            const userId = paymentIntent.customer; // Stripe Customer ID
+        // **THIS IS THE NEW CASE TO HANDLE SUBSCRIPTIONS FROM ELEMENTS**
+        case 'customer.subscription.created':
+            const subscription = stripeEvent.data.object;
+            const { placeId, email } = subscription.metadata;
+            const userId = subscription.customer;
 
             if (!placeId || !email || !userId) {
-                console.error("Webhook missing essential metadata.");
+                console.error("Webhook missing essential metadata from subscription.");
                 return { statusCode: 400, body: 'Webhook Error: Missing required metadata.' };
             }
 
             try {
+                // Check if a customer document already exists to prevent duplicates
+                const customerDoc = await db.collection('customers').doc(userId).get();
+                if (customerDoc.exists) {
+                    console.log(`Customer ${userId} already exists. Skipping creation.`);
+                    break;
+                }
+
                 const signupsRef = db.collection('signups');
                 const snapshot = await signupsRef
                     .where('googlePlaceId', '==', placeId)
@@ -56,15 +74,27 @@ exports.handler = async (event) => {
                 };
                 
                 await db.collection('customers').doc(userId).set(customerData);
-                console.log(`Successfully created customer profile via Payment Intent for ${userId}`);
+                console.log(`Successfully created customer profile via Subscription for ${userId}`);
             } catch (error) {
-                console.error('Error in webhook fulfillment:', error);
+                console.error('Error in subscription webhook fulfillment:', error);
                 return { statusCode: 500, body: `Fulfillment Error: ${error.message}` };
             }
             break;
 
         case 'customer.subscription.deleted':
-            // ... (this part remains exactly the same)
+            const deletedSubscription = stripeEvent.data.object;
+            const canceledUserId = deletedSubscription.customer;
+            
+            try {
+                const customerRef = db.collection('customers').doc(canceledUserId);
+                await customerRef.update({
+                    subscriptionStatus: 'canceled'
+                });
+                console.log(`Successfully marked subscription as canceled for customer ${canceledUserId}`);
+            } catch (error) {
+                console.error('Error updating subscription status to canceled:', error);
+                return { statusCode: 500, body: 'Error handling subscription deletion.' };
+            }
             break;
 
         default:
