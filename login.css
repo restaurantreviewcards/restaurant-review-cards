@@ -1,47 +1,124 @@
+/*
+    login.css - Redesigned for a professional look
+*/
+
+/* Use variables from the main style.css for consistency */
+@import url('style.css');
+
 body {
+    background-color: #f0f2f5; /* A subtle, modern off-white/gray */
+    background-image:
+        radial-gradient(circle at 1px 1px, #d1d5db 1px, transparent 0);
+    background-size: 25px 25px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.login-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: var(--background-light);
+    width: 100%;
+    padding: 20px;
 }
 
 .login-container {
     width: 100%;
-    max-width: 450px;
-    padding: 20px;
+    max-width: 420px;
 }
 
 .login-container .logo {
     display: flex;
     justify-content: center;
     margin-bottom: 2rem;
+    transform: scale(1.1); /* Make logo slightly larger */
 }
 
 .login-box {
     background: var(--white);
     padding: 2.5rem;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    text-align: left;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    text-align: center;
+    border: 1px solid var(--border-color);
 }
 
 .login-box h2 {
+    font-family: var(--font-heading);
+    color: var(--text-dark);
+    font-size: 1.75rem;
     margin-top: 0;
-    text-align: center;
+    margin-bottom: 0.75rem;
 }
 
 .login-box p {
-    text-align: center;
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+/* Form Group specific to login page */
+.login-box .form-group {
+    text-align: left;
     margin-bottom: 1.5rem;
 }
 
+.login-box .form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.login-box input[type="email"] {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-box input[type="email"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 85, 150, 0.2);
+}
+
+/* CTA Button specific to login page */
+.login-box .cta-button {
+    width: 100%;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.login-box .cta-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 85, 150, 0.2);
+}
+
+.login-box .cta-button:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+}
+
+
+/* Message Styles */
 .login-message {
     text-align: center;
-    margin-top: 1rem;
-    font-weight: 600;
-    padding: 0.75rem;
+    margin-top: 1.5rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 1rem;
     border-radius: 8px;
+    line-height: 1.5;
 }
 .login-message.success {
     background-color: #e6fffa;
