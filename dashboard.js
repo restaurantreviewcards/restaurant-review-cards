@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrcodeContainer = document.getElementById('qrcode-container');
     const downloadQrBtn = document.getElementById('download-qr-btn');
     const printQrBtn = document.getElementById('print-qr-btn');
+    const redeemCardsBtn = document.getElementById('redeem-cards-btn'); // New Button
 
     // --- MAIN FUNCTION TO INITIALIZE DASHBOARD ---
     const initDashboard = async () => {
@@ -38,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const smartLink = `https://restaurantreviewcards.com/.netlify/functions/redirect?id=${data.userId}`;
             smartLinkInput.value = smartLink;
             
-            setupInteractivity(smartLink);
+            // Pass the full customer data object to setupInteractivity
+            setupInteractivity(smartLink, data);
 
             loader.classList.add('hidden');
             mainContent.classList.remove('hidden');
@@ -57,14 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
         newReviewsEl.textContent = `+${newReviews.toLocaleString()}`;
         invitesSentEl.textContent = data.reviewInvitesSent.toLocaleString();
 
-        // Update link to Google Business Profile
         const googleProfileLink = document.getElementById('google-profile-link');
         if (googleProfileLink && data.googlePlaceId) {
             googleProfileLink.href = `https://search.google.com/local/writereview?placeid=${data.googlePlaceId}`;
         }
     };
 
-    const setupInteractivity = (link) => {
+    const setupInteractivity = (link, customerData) => {
         // Copy button functionality
         copyLinkBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(link).then(() => {
@@ -140,18 +141,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 manageBillingBtn.disabled = true;
 
                 try {
-                    // Get the userId from the smart link
                     const smartLinkParams = new URLSearchParams(smartLinkInput.value.split('?')[1]);
                     const userId = smartLinkParams.get('id');
-
-                    // Get the placeId from the current page's URL
                     const pageParams = new URLSearchParams(window.location.search);
                     const placeId = pageParams.get('placeId');
 
                     const response = await fetch('/.netlify/functions/create-portal-link', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: userId, placeId: placeId }), // Send both IDs
+                        body: JSON.stringify({ userId: userId, placeId: placeId }),
                     });
 
                     if (!response.ok) {
@@ -182,23 +180,42 @@ document.addEventListener('DOMContentLoaded', () => {
         if(shareEmailBtn) {
             shareEmailBtn.href = `mailto:?subject=Review for ${restaurantName}&body=${encodeURIComponent(shareMessage)}`;
         }
-
         if(shareTextBtn) {
             shareTextBtn.href = `sms:?&body=${encodeURIComponent(shareMessage)}`;
         }
-
         if(shareWhatsappBtn) {
             shareWhatsappBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
             shareWhatsappBtn.target = '_blank';
         }
-        
         if(shareMessengerBtn) {
             shareMessengerBtn.href = `fb-messenger://share?link=${encodeURIComponent(link)}`;
-            shareMessengerBtn.addEventListener('click', (e) => {
+            shareMessengerBtn.addEventListener('click', () => {
                  navigator.clipboard.writeText(shareMessage).then(() => {
                     alert('Your review link and message have been copied to the clipboard to easily paste into Messenger!');
                  });
             });
+        }
+        
+        // Card Redemption Logic
+        if (redeemCardsBtn) {
+            const now = new Date();
+            let lastRedemption = null;
+
+            if (customerData.lastRedemptionDate && customerData.lastRedemptionDate._seconds) {
+                lastRedemption = new Date(customerData.lastRedemptionDate._seconds * 1000);
+            }
+            
+            if (lastRedemption && lastRedemption.getMonth() === now.getMonth() && lastRedemption.getFullYear() === now.getFullYear()) {
+                redeemCardsBtn.textContent = 'Credits Redeemed This Month';
+                redeemCardsBtn.disabled = true;
+            } else {
+                redeemCardsBtn.addEventListener('click', () => {
+                    const subject = "Card Refill Request";
+                    const body = `Please process the monthly 50 card refill for:\n\nRestaurant: ${customerData.googlePlaceName}\nCustomer ID: ${customerData.userId}\nPlace ID: ${customerData.googlePlaceId}\n\nShipping Address on File:\n${customerData.googleAddressLine1 || '(Not on file)'}\n${customerData.googleAddressCity || ''}, ${customerData.googleAddressState || ''} ${customerData.googleAddressZip || ''}\n\nThank you!`;
+                    
+                    window.location.href = `mailto:jake@restaurantreviewcards.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                });
+            }
         }
     };
 

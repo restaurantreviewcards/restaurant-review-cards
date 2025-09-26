@@ -100,15 +100,15 @@ main { padding: 2rem; }
     background-color: transparent; color: var(--primary-color);
     border: 1px solid var(--border-color); border-radius: 8px;
     padding: 0.75rem 1rem; font-weight: 600; text-decoration: none;
-    display: inline-flex; /* Changed to inline-flex for icon alignment */
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem; /* Space between icon and text */
+    gap: 0.5rem;
     margin-right: 0.5rem; margin-top: 0.5rem;
-    cursor: pointer; /* Ensure button has pointer cursor */
+    cursor: pointer;
 }
 .button-secondary:hover { background-color: var(--background-light); }
 .button-secondary svg {
-    width: 18px; /* Icon size for secondary buttons */
+    width: 18px;
     height: 18px;
 }
 
@@ -130,7 +130,7 @@ main { padding: 2rem; }
 .modal-content {
     background: var(--white); padding: 2rem; border-radius: 12px;
     text-align: center; position: relative;
-    max-width: 90%; /* Ensure modal is responsive */
+    max-width: 90%;
     width: 400px;
 }
 .close-button {
@@ -138,7 +138,7 @@ main { padding: 2rem; }
     border: none; font-size: 2rem; cursor: pointer; color: var(--text-light);
 }
 #qrcode-container { margin: 1.5rem 0; }
-#qrcode-container img { /* Style for the actual QR code image */
+#qrcode-container img {
     max-width: 100%;
     height: auto;
     border: 1px solid var(--border-color);
@@ -150,10 +150,9 @@ main { padding: 2rem; }
     margin-top: 1.5rem;
     display: flex;
     justify-content: center;
-    gap: 1rem; /* Space between action buttons */
-    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+    gap: 1rem;
+    flex-wrap: wrap;
 }
-
 
 /* --- GOOGLE SNAPSHOT CARD STYLES --- */
 .google-snapshot-card {
@@ -219,7 +218,6 @@ main { padding: 2rem; }
     gap: 1rem;
     margin-top: 1.5rem;
 }
-
 .share-button {
     display: flex;
     align-items: center;
@@ -234,25 +232,71 @@ main { padding: 2rem; }
     text-decoration: none;
     transition: all 0.2s ease;
 }
-
 .share-button:hover {
     border-color: var(--primary-color);
     background-color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
-
 .share-button svg {
     width: 20px;
     height: 20px;
 }
-
 .share-button.whatsapp { color: #25D366; }
 .share-button.whatsapp:hover { border-color: #25D366; }
-
 .share-button.messenger { color: #0078FF; }
 .share-button.messenger:hover { border-color: #0078FF; }
 
+/* --- CARD REFILL STYLES --- */
+.refill-status {
+    margin: 1.5rem 0;
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--background-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+.refill-credits {
+    display: block;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--primary-color);
+    font-family: var(--font-heading);
+}
+.refill-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-top: 0.5rem;
+}
+.button-primary {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+.button-primary:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+}
+.button-primary:disabled {
+    background-color: #a0aec0; /* A neutral gray */
+    border-color: #a0aec0;
+    cursor: not-allowed;
+}
+.refill-note {
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 1rem;
+    color: var(--text-light);
+}
 
 /* --- RESPONSIVE STYLES --- */
 @media (max-width: 768px) {
@@ -289,14 +333,14 @@ main { padding: 2rem; }
         text-align: center;
     }
     .share-buttons-container {
-        grid-template-columns: 1fr; /* Stack buttons on very small screens */
+        grid-template-columns: 1fr;
     }
     .qr-actions {
-        flex-direction: column; /* Stack QR action buttons vertically */
+        flex-direction: column;
         gap: 0.75rem;
     }
     .modal-content {
-        width: 95%; /* Make modal fill more of the screen on mobile */
+        width: 95%;
         padding: 1.5rem;
     }
 }
