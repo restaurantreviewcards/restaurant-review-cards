@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DYNAMICALLY GENERATE THE GOOGLE REVIEW URL ---
     const params = new URLSearchParams(window.location.search);
-    const placeId = params.get('placeId');
+    const placeId = params.get('placeId'); 
     let reviewUrl = ''; // Initialize the variable
 
     const copyLinkButton = document.getElementById('copy-link-btn');
@@ -165,46 +165,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- **UPDATED** CHECKOUT LINK SCRIPT ---
+    // --- CHECKOUT LINK SCRIPT ---
     const initCheckoutLinks = () => {
         const checkoutButtons = document.querySelectorAll('.js-get-started-link');
-        
+
         if (checkoutButtons.length > 0) {
             const params = new URLSearchParams(window.location.search);
-            const placeId = params.get('placeId');
+            
+            const placeId = params.get('placeId'); 
+            
             const email = params.get('email');
 
+            const checkoutUrl = `/checkout.html?placeId=${placeId}&email=${encodeURIComponent(email)}`;
+
             checkoutButtons.forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    event.preventDefault(); // Stop the link from navigating normally
-
-                    const originalText = button.textContent;
-                    button.textContent = 'Creating Link...';
-                    button.disabled = true;
-
-                    try {
-                        const response = await fetch('/.netlify/functions/create-checkout-link', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ placeId: placeId, email: email }),
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Server error. Could not create link.');
-                        }
-
-                        const data = await response.json();
-                        
-                        // Redirect the user directly to the Stripe checkout page
-                        window.location.href = data.checkoutUrl;
-
-                    } catch (error) {
-                        console.error('Checkout Error:', error);
-                        alert('Could not create a checkout link. Please try again.');
-                        button.textContent = originalText;
-                        button.disabled = false;
-                    }
-                });
+                button.href = checkoutUrl;
             });
         }
     };

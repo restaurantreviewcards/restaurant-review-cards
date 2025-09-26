@@ -60,42 +60,27 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const statusMessage = document.getElementById('status-message');
             const linkContainer = document.getElementById('link-container');
             const dashboardLink = document.getElementById('dashboard-link');
 
             const params = new URLSearchParams(window.location.search);
-            const sessionId = params.get('session_id');
+            const placeId = params.get('placeId'); // The only param we need now
 
-            if (!sessionId) {
-                statusMessage.textContent = "Error: Checkout session ID not found.";
+            if (!placeId) {
+                statusMessage.textContent = "Error: Could not find your account details.";
+                statusMessage.style.color = 'red';
                 return;
             }
 
-            try {
-                const response = await fetch(`/.netlify/functions/get-session-details?session_id=${sessionId}`);
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'An unknown error occurred.');
-                }
-
-                // Use the placeId returned from our function.
-                const placeId = data.placeId;
-                const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${placeId}`;
-                
-                dashboardLink.href = dashboardUrl;
-                linkContainer.style.display = 'block';
-                statusMessage.style.display = 'none';
-
-            } catch (error) {
-                console.error("Failed to generate dashboard link. Specific error:", error.message);
-                statusMessage.textContent = 'There was an issue creating your link. Please check your email for a direct link to your dashboard, or contact support.';
-                statusMessage.style.color = 'red';
-            }
+            // We have the placeId, so we can build the dashboard link directly
+            const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${placeId}`;
+            
+            dashboardLink.href = dashboardUrl;
+            linkContainer.style.display = 'block';
+            statusMessage.style.display = 'none';
         });
     </script>
 </body>
 </html>
-

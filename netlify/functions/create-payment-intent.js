@@ -1,5 +1,3 @@
-// In: netlify/functions/create-payment-intent.js
-
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
@@ -8,22 +6,24 @@ exports.handler = async (event) => {
   }
 
   try {
-    // In a real-world scenario, you might pass an amount or product ID.
-    // For this subscription, we get the price from the Price ID.
+    const { email, placeId } = JSON.parse(event.body); // Now receiving email and placeId
     const priceId = process.env.STRIPE_PRICE_ID;
-    if (!priceId) {
-        throw new Error('Stripe Price ID is not configured.');
+
+    if (!priceId || !email || !placeId) {
+        throw new Error('Stripe Price ID, email, or Place ID is missing.');
     }
 
-    // We fetch the price details to get the amount and currency.
     const price = await stripe.prices.retrieve(priceId);
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: price.unit_amount, // Amount in cents from the Price object
+      amount: price.unit_amount,
       currency: price.currency,
-      automatic_payment_methods: {
-        enabled: true,
-      },
+      automatic_payment_methods: { enabled: true },
+      // **CRITICAL STEP**: Attach metadata to the payment
+      metadata: {
+        placeId: placeId,
+        email: email
+      }
     });
 
     return {
