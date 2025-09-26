@@ -33,9 +33,15 @@
         <nav class="navbar">
             <div class="logo">
                 <a href="/">
-                    <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <title>ReviewCards Logo</title>
-                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4285F4;" />
+                                <stop offset="100%" style="stop-color:#005596;" />
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#logoGradient)" d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91c4.59-1.15 8-5.86 8-10.91V5l-8-3zm-1.06 13.5L7.4 12.03l1.41-1.41l2.12 2.12l4.24-4.24l1.41 1.41l-5.65 5.65z"/>
                     </svg>
                     <span>ReviewCards</span>
                 </a>
@@ -116,6 +122,7 @@
                 </div>
             </div>
         </section>
+        
         <section id="benefits" class="feature-section alt-background fade-in-section">
             <div class="section-header">
                 <h2>Watch Your Reputation Soar</h2>
@@ -139,6 +146,7 @@
                 </div>
             </div>
         </section>
+
         <section id="statistic" class="statistic-section fade-in-section">
             <div class="statistic-content">
                 <div class="statistic-number">90%</div>
@@ -146,6 +154,7 @@
                 <p>In today's digital-first world, your online reputation isn't just important—it's everything. Don't let potential customers scroll past you. Take control of your online story today.</p>
             </div>
         </section>
+
         <section id="pricing" class="pricing-section fade-in-section">
             <div class="section-header">
                 <h2>A No-Brainer for Your Restaurant</h2>
@@ -168,6 +177,7 @@
                 </div>
             </div>
         </section>
+
         <section id="faq" class="faq-section fade-in-section">
             <div class="section-header">
                 <h2>Frequently Asked Questions</h2>
@@ -192,6 +202,7 @@
                 </details>
             </div>
         </section>
+
         <section class="testimonial-section fade-in-section">
             <div class="testimonial-content">
                 <blockquote>
@@ -208,7 +219,6 @@
 
     <script>
         // --- GOOGLE AUTOCOMPLETE INITIALIZATION ---
-        // This function will be called by the Google script once it loads
         function initAutocomplete() {
             const autocompleteInput = document.getElementById('autocomplete-input');
             const submitButton = document.getElementById('submit-button');
@@ -230,42 +240,35 @@
                 if (place && place.place_id) {
                     placeIdInput.value = place.place_id;
                     restaurantNameInput.value = place.name;
-                    submitButton.disabled = false; // Enable the button
+                    submitButton.disabled = false;
                 } else {
-                    // If user clears the input, disable the button again
                     submitButton.disabled = true;
                 }
             });
 
-            // Re-disable button if user types after selecting, forcing a new selection
             autocompleteInput.addEventListener('input', () => {
                 submitButton.disabled = true;
             });
         }
 
         // --- MASTER SCRIPT LOADER ---
-        // This function fetches the key and then loads the Google script.
         async function loadScripts() {
             try {
-                // 1. Fetch the API key from the Netlify function
                 const response = await fetch('/.netlify/functions/get-maps-key');
                 if (!response.ok) throw new Error('Failed to fetch API key.');
                 
                 const data = await response.json();
                 const apiKey = data.apiKey;
                 
-                // 2. Create the script tag
                 const script = document.createElement('script');
                 script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
                 script.async = true;
                 script.defer = true;
                 
-                // 3. Append the script to the page to load it
                 document.head.appendChild(script);
 
             } catch (error) {
                 console.error('Could not load Google Maps script:', error);
-                // Optionally, inform the user that the address lookup is unavailable
                 const input = document.getElementById('autocomplete-input');
                 if (input) {
                     input.placeholder = "Address lookup is unavailable.";
@@ -276,7 +279,6 @@
 
         // --- RUN ALL INITIALIZATION LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Load the Google script first
             loadScripts();
 
             // --- MOBILE MENU SCRIPT ---
@@ -325,4 +327,3 @@
     </script>
 </body>
 </html>
-

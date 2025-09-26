@@ -13,7 +13,16 @@
     <header class="dashboard-header">
         <div class="logo">
             <a href="/">
-                <svg class="logo-icon" width="24" height="24" viewBox="0 0 24 24"><path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg class="logo-icon" xmlns="http://www.w.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <title>ReviewCards Logo</title>
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4285F4;" />
+                            <stop offset="100%" style="stop-color:#005596;" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#logoGradient)" d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91c4.59-1.15 8-5.86 8-10.91V5l-8-3zm-1.06 13.5L7.4 12.03l1.41-1.41l2.12 2.12l4.24-4.24l1.41 1.41l-5.65 5.65z"/>
+                </svg>
                 <span>ReviewCards</span>
             </a>
         </div>
@@ -27,7 +36,7 @@
             
             <div class="card google-snapshot-card">
                 <div class="card-header">
-                    <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12,24.5c0-1.56-0.14-3.06-0.4-4.5H24v8.51h11.84c-0.51,2.75-2.06,5.08-4.39,6.64v5.52h7.11C42.84,40.45,45.12,33.19,45.12,24.5z"/><path fill="#34A853" d="M24,46c6.44,0,11.84-2.13,15.79-5.79l-7.11-5.52c-2.13,1.44-4.86,2.3-7.68,2.3c-5.88,0-10.86-3.98-12.64-9.31H4.04v5.69C7.96,40.16,15.4,46,24,46z"/><path fill="#FBBC05" d="M11.36,27.32c-0.77-2.3-0.77-4.84,0-7.14v-5.69H4.04c-3.53,6.97-3.53,15.25,0,22.22L11.36,27.32z"/><path fill="#EA4335" d="M24,10.13c3.49,0,6.58,1.2,9.01,3.52l6.33-6.33C35.84,2.86,29.98,0,24,0C15.4,0,7.96,5.84,4.04,14.49l7.32,5.69C13.14,14.11,18.12,10.13,24,10.13z"/></svg>
+                    <svg class="google-icon" xmlns="http://www.w.org/2000/svg" viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12,24.5c0-1.56-0.14-3.06-0.4-4.5H24v8.51h11.84c-0.51,2.75-2.06,5.08-4.39,6.64v5.52h7.11C42.84,40.45,45.12,33.19,45.12,24.5z"/><path fill="#34A853" d="M24,46c6.44,0,11.84-2.13,15.79-5.79l-7.11-5.52c-2.13,1.44-4.86,2.3-7.68,2.3c-5.88,0-10.86-3.98-12.64-9.31H4.04v5.69C7.96,40.16,15.4,46,24,46z"/><path fill="#FBBC05" d="M11.36,27.32c-0.77-2.3-0.77-4.84,0-7.14v-5.69H4.04c-3.53,6.97-3.53,15.25,0,22.22L11.36,27.32z"/><path fill="#EA4335" d="M24,10.13c3.49,0,6.58,1.2,9.01,3.52l6.33-6.33C35.84,2.86,29.98,0,24,0C15.4,0,7.96,5.84,4.04,14.49l7.32,5.69C13.14,14.11,18.12,10.13,24,10.13z"/></svg>
                     <h2>Google Reputation Snapshot</h2>
                 </div>
                 <div class="metrics-container">
@@ -42,15 +51,6 @@
                     <div class="metric-item">
                         <span class="metric-value" id="invites-sent-val">--</span>
                         <span class="metric-label">Review Invites Sent</span>
-                    </div>
-                </div>
-                <div class="progress-section">
-                    <div class="progress-labels">
-                        <span class="progress-label">Goal: 50 New Reviews</span>
-                        <span class="progress-percent" id="progress-percent-val">0%</span>
-                    </div>
-                    <div class="progress-bar-background">
-                        <div class="progress-bar-foreground" id="progress-bar"></div>
                     </div>
                 </div>
                 <div class="card-footer">
