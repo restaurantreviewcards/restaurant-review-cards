@@ -39,7 +39,7 @@ exports.handler = async (event) => {
       console.log(`Redirect blocked for inactive customer: ${customerId}`);
       return {
         statusCode: 302, // 302 is a temporary redirect
-        headers: { 'Location': 'https://your-site.com/link-inactive.html' },
+        headers: { 'Location': 'https://restaurantreviewcards.com/link-inactive.html' },
       };
     }
 
