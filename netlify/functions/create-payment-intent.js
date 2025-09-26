@@ -1,3 +1,5 @@
+// In: netlify/functions/create-payment-intent.js
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
@@ -6,20 +8,26 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { email, placeId } = JSON.parse(event.body); // Now receiving email and placeId
+    const { email, placeId } = JSON.parse(event.body);
     const priceId = process.env.STRIPE_PRICE_ID;
 
     if (!priceId || !email || !placeId) {
-        throw new Error('Stripe Price ID, email, or Place ID is missing.');
+      throw new Error('Stripe Price ID, email, or Place ID is missing.');
     }
 
-    const price = await stripe.prices.retrieve(priceId);
+    // First, create a Stripe Customer
+    const customer = await stripe.customers.create({
+      email: email,
+    });
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: price.unit_amount,
-      currency: price.currency,
-      automatic_payment_methods: { enabled: true },
-      // **CRITICAL STEP**: Attach metadata to the payment
+    // Now, create the subscription
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{ price: priceId }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+      // **CRITICAL STEP**: Attach metadata to the subscription
       metadata: {
         placeId: placeId,
         email: email
@@ -28,10 +36,14 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ clientSecret: paymentIntent.client_secret }),
+      body: JSON.stringify({
+        subscriptionId: subscription.id,
+        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+      }),
     };
+    
   } catch (error) {
-    console.error('Stripe Payment Intent Error:', error);
+    console.error('Stripe Subscription Error:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),
