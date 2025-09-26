@@ -14,11 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrModal = document.getElementById('qr-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
     const qrcodeContainer = document.getElementById('qrcode-container');
-    
-    // New QR action buttons
     const downloadQrBtn = document.getElementById('download-qr-btn');
     const printQrBtn = document.getElementById('print-qr-btn');
-
 
     // --- MAIN FUNCTION TO INITIALIZE DASHBOARD ---
     const initDashboard = async () => {
@@ -82,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!qrCodeGenerated) {
                 new QRCode(qrcodeContainer, {
                     text: link,
-                    width: 250, // Slightly larger for better download quality
+                    width: 250,
                     height: 250,
                     correctLevel: QRCode.CorrectLevel.H
                 });
@@ -134,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-
         // Manage Billing button functionality
         const manageBillingBtn = document.getElementById('manage-billing-btn');
         if(manageBillingBtn) {
@@ -144,14 +140,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 manageBillingBtn.disabled = true;
 
                 try {
-                    // Get the userId from the smart link input for simplicity
-                    const params = new URLSearchParams(smartLinkInput.value.split('?')[1]);
-                    const userId = params.get('id');
+                    // Get the userId from the smart link
+                    const smartLinkParams = new URLSearchParams(smartLinkInput.value.split('?')[1]);
+                    const userId = smartLinkParams.get('id');
+
+                    // Get the placeId from the current page's URL
+                    const pageParams = new URLSearchParams(window.location.search);
+                    const placeId = pageParams.get('placeId');
 
                     const response = await fetch('/.netlify/functions/create-portal-link', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: userId }),
+                        body: JSON.stringify({ userId: userId, placeId: placeId }), // Send both IDs
                     });
 
                     if (!response.ok) {
@@ -159,8 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     const data = await response.json();
-
-                    // Redirect the user to the Stripe Customer Portal
                     window.location.href = data.portalUrl;
 
                 } catch (error) {
@@ -173,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Share buttons functionality
-        const restaurantName = restaurantNameEl.textContent; // Ensure this is available
+        const restaurantName = restaurantNameEl.textContent;
         const shareMessage = `Here's a link to leave a review for ${restaurantName}. We'd love to hear your feedback!\n\n${link}`;
 
         const shareEmailBtn = document.getElementById('share-email-btn');

@@ -8,22 +8,20 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { userId } = JSON.parse(event.body);
+    const { userId, placeId } = JSON.parse(event.body); // Now receiving placeId
 
-    if (!userId) {
-      return { statusCode: 400, body: 'Missing customer User ID.' };
+    if (!userId || !placeId) {
+      return { statusCode: 400, body: 'Missing required IDs.' };
     }
 
-    // This is the URL the user will be sent back to after they are done
-    // managing their subscription in the portal.
-    const returnUrl = 'https://restaurantreviewcards.com/dashboard.html';
+    // This is the dynamic URL that sends the user back to their specific dashboard
+    const returnUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${placeId}`;
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: userId,
       return_url: returnUrl,
     });
 
-    // Return the unique portal URL to the front-end
     return {
       statusCode: 200,
       body: JSON.stringify({ portalUrl: portalSession.url }),
