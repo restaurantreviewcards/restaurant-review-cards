@@ -83,17 +83,23 @@ section {
 }
 
 .logo a {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.6rem; /* Space between icon and text */
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 1.5rem;
+    gap: 0.5rem;
+    text-decoration: none;
     color: var(--text-dark);
 }
 
-.logo a .logo-icon {
-    color: var(--primary-color); /* Colors the SVG checkmark */
+.logo .logo-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.logo span {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
 }
 
 .nav-menu {
@@ -125,6 +131,18 @@ section {
     color: var(--text-dark);
 }
 
+/* New Login Button Style */
+.nav-link-button {
+    background: none;
+    border: none;
+    color: var(--text-dark);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+}
+
 .hamburger {
     display: block;
     cursor: pointer;
@@ -153,24 +171,23 @@ section {
 }
 
 .subtitle {
-    font-size: 1.2rem; /* Slightly larger for better impact */
+    font-size: 1.2rem;
     max-width: 600px;
-    margin: 0 auto 2.5rem; /* More space below */
+    margin: 0 auto 2.5rem;
     color: var(--text-dark);
     font-weight: 400;
 }
 
-/* --- STYLING FOR NEW SUBTITLE --- */
 .subtitle .gold-star {
-    color: #FBBC05; /* Google's yellow/gold color */
+    color: #FBBC05;
     font-size: 1.2em;
-    vertical-align: -0.1em; /* Adjust alignment */
+    vertical-align: -0.1em;
 }
 
 .subtitle .google-logo {
     font-weight: 700;
-    font-family: 'Manrope', sans-serif; /* Use Manrope with a fallback */
-    white-space: nowrap; /* Prevent line break */
+    font-family: 'Manrope', sans-serif;
+    white-space: nowrap;
 }
 
 .google-logo .g-blue { color: #4285F4; }
@@ -178,8 +195,6 @@ section {
 .google-logo .o-yellow { color: #FBBC05; }
 .google-logo .l-green { color: #34A853; }
 .google-logo .e-red { color: #EA4335; }
-/* --- END NEW SUBTITLE STYLES --- */
-
 
 /* --- HERO FORM STYLES --- */
 .hero-form-container {
@@ -193,27 +208,15 @@ section {
 }
 
 .hero-form-container .form-group {
-    margin-bottom: 1.5rem; /* Increased margin for more space */
+    margin-bottom: 1.5rem;
 }
 
-/* New styles for the visible labels */
 .hero-form-container .form-group label {
     display: block;
     font-weight: 600;
     color: var(--text-dark);
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
-}
-
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
 }
 
 .hero-form-container input[type="text"],
@@ -228,7 +231,7 @@ section {
 
 .hero-form-container input[type="text"]:focus,
 .hero-form-container input[type="email"]:focus {
-    outline: none; /* Override the general focus style for a custom one */
+    outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(0, 85, 150, 0.2);
 }
@@ -506,8 +509,74 @@ footer {
     transform: translateY(0);
 }
 
+/* --- LOGIN MODAL STYLES --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    position: relative;
+    text-align: left;
+}
+.modal-content h2 {
+    margin-top: 0;
+    text-align: center;
+}
+.modal-content p {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.modal-content .close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-light);
+}
+.login-message {
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: 600;
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+.login-message.success {
+    background-color: #e6fffa;
+    color: #2c7a7b;
+}
+.login-message.error {
+    background-color: #fed7d7;
+    color: #c53030;
+}
+.hidden {
+    display: none;
+}
+
 /* --- DESKTOP STYLES (REVISED) --- */
-@media (min-width: 768px) { 
+@media (min-width: 768px) {  
     section {
         padding: 80px 40px;
     }
@@ -520,20 +589,23 @@ footer {
     .nav-menu {
         position: static;
         flex-direction: row;
-        width: auto; 
+        width: auto;  
         background-color: transparent;
         box-shadow: none;
         left: 0;
         top: 0;
         align-items: center;
         gap: 2rem;
-        transition: none; 
+        transition: none;  
     }
     .nav-item {
         padding: 0;
     }
+    .nav-link-button {
+        font-size: 1rem;
+    }
     .nav-item.cta-item {
-        margin-left: auto;
+        margin-left: 0; /* Adjusted from auto */
     }
     .cta-button-nav {
         display: inline-block;
