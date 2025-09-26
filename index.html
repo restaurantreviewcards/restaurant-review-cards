@@ -49,7 +49,7 @@
             <ul class="nav-menu">
                 <li class="nav-item"><a href="#how-it-works" class="nav-link">How It Works</a></li>
                 <li class="nav-item"><a href="#pricing" class="nav-link">Pricing</a></li>
-                <li class="nav-item"><button id="login-btn" class="nav-link-button">Log In</button></li>
+                <li class="nav-item"><a href="/login.html" class="nav-link">Log In</a></li>
                 <li class="nav-item cta-item"><a href="#hero" class="nav-link cta-button-nav">Get Started</a></li>
             </ul>
             <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">
@@ -214,22 +214,6 @@
         </section>
     </main>
 
-    <div id="login-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button id="close-modal-btn" class="close-button">&times;</button>
-            <h2>Dashboard Login</h2>
-            <p>Enter the email you signed up with and we'll send you a secure link to your dashboard.</p>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="login-email">Your Email Address</label>
-                    <input type="email" id="login-email" name="email" placeholder="you@yourlocalrestaurant.com" required>
-                </div>
-                <button type="submit" id="send-link-btn" class="cta-button">Send Login Link</button>
-            </form>
-            <div id="login-message" class="login-message hidden"></div>
-        </div>
-    </div>
-
     <footer>
         <p>&copy; <span id="copyright-year">2025</span> Restaurant Review Cards. All rights reserved.</p>
     </footer>
@@ -298,67 +282,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadScripts();
 
-            // --- LOGIN MODAL SCRIPT ---
-            const loginBtn = document.getElementById('login-btn');
-            const loginModal = document.getElementById('login-modal');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const loginForm = document.getElementById('login-form');
-            const loginEmailInput = document.getElementById('login-email');
-            const sendLinkBtn = document.getElementById('send-link-btn');
-            const loginMessage = document.getElementById('login-message');
-
-            const openModal = () => loginModal.classList.add('visible');
-            const closeModal = () => loginModal.classList.remove('visible');
-
-            if (loginBtn) {
-                loginBtn.addEventListener('click', openModal);
-            }
-            if (closeModalBtn) {
-                closeModalBtn.addEventListener('click', closeModal);
-            }
-            if (loginModal) {
-                loginModal.addEventListener('click', (e) => {
-                    if (e.target === loginModal) {
-                        closeModal();
-                    }
-                });
-            }
-
-            if (loginForm) {
-                loginForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    sendLinkBtn.disabled = true;
-                    sendLinkBtn.textContent = 'Sending...';
-
-                    try {
-                        const response = await fetch('/.netlify/functions/send-login-link', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email: loginEmailInput.value }),
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Something went wrong.');
-                        }
-
-                        loginMessage.textContent = 'Success! Please check your email for your login link.';
-                        loginMessage.className = 'login-message success';
-
-                    } catch (error) {
-                        loginMessage.textContent = 'An error occurred. Please try again in a moment.';
-                        loginMessage.className = 'login-message error';
-                    } finally {
-                        loginMessage.classList.remove('hidden');
-                        sendLinkBtn.textContent = 'Send Login Link';
-                        setTimeout(() => {
-                            closeModal();
-                            loginMessage.classList.add('hidden');
-                            sendLinkBtn.disabled = false;
-                        }, 4000);
-                    }
-                });
-            }
-
             // --- MOBILE MENU SCRIPT ---
             const hamburger = document.querySelector(".hamburger");
             const navMenu = document.querySelector(".nav-menu");
@@ -370,10 +293,12 @@
                 hamburger.setAttribute("aria-expanded", !isExpanded);
             });
 
-            document.querySelectorAll(".nav-link").forEach(n => n.addEventListener("click", () => {
-                hamburger.classList.remove("active");
-                navMenu.classList.remove("active");
-                hamburger.setAttribute("aria-expanded", "false");
+            document.querySelectorAll(".nav-link, .nav-link-button").forEach(n => n.addEventListener("click", () => {
+                if (n.closest('.nav-menu')) { // Only close if it's part of the mobile menu
+                    hamburger.classList.remove("active");
+                    navMenu.classList.remove("active");
+                    hamburger.setAttribute("aria-expanded", "false");
+                }
             }));
 
             // --- FADE-IN ANIMATION SCRIPT ---
