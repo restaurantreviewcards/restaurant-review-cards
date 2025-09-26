@@ -1,6 +1,11 @@
+// In: netlify/functions/finalizeSignup.js
+
 const admin = require('firebase-admin');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const sgMail = require('@sendgrid/mail');
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
@@ -27,7 +32,6 @@ exports.handler = async (event) => {
     }
 
     switch (stripeEvent.type) {
-        // **THIS IS THE NEW CASE TO HANDLE SUBSCRIPTIONS FROM ELEMENTS**
         case 'customer.subscription.created':
             const subscription = stripeEvent.data.object;
             const { placeId, email } = subscription.metadata;
@@ -39,7 +43,6 @@ exports.handler = async (event) => {
             }
 
             try {
-                // Check if a customer document already exists to prevent duplicates
                 const customerDoc = await db.collection('customers').doc(userId).get();
                 if (customerDoc.exists) {
                     console.log(`Customer ${userId} already exists. Skipping creation.`);
@@ -74,7 +77,42 @@ exports.handler = async (event) => {
                 };
                 
                 await db.collection('customers').doc(userId).set(customerData);
-                console.log(`Successfully created customer profile via Subscription for ${userId}`);
+                console.log(`Successfully created customer profile for ${userId}`);
+
+                // **NEW WELCOME EMAIL LOGIC**
+                const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${placeId}`;
+                const welcomeMsg = {
+                    to: email,
+                    from: {
+                        email: 'jake@restaurantreviewcards.com',
+                        name: 'Jake from RRC'
+                    },
+                    subject: `Welcome to ReviewCards, ${placeName}!`,
+                    html: `
+                        <div style="font-family: sans-serif; padding: 20px; color: #333; line-height: 1.6;">
+                            <h2 style="color: #005596;">Welcome Aboard!</h2>
+                            <p>Hi there,</p>
+                            <p>Thank you for signing up for ReviewCards! Your account for <strong>${placeName}</strong> is now active, and your new dashboard is ready.</p>
+                            
+                            <h3 style="color: #005596; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; margin-top: 30px;">What Happens Next?</h3>
+                            <p><strong>1. Welcome Kit Shipment:</strong> Your kit, including 250 Smart Review Cards and 2 stands, is being processed and will ship within 3-5 business days.</p>
+                            <p><strong>2. Using Your Cards:</strong> Simply hand a card to a happy customer. They scan the QR code and are taken directly to your Google review page. It's that easy!</p>
+                            
+                            <p style="text-align: center; margin: 30px 0;">
+                                <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block;">
+                                    Access Your Dashboard Now
+                                </a>
+                            </p>
+
+                            <p>If you have any questions, feel free to reply directly to this email.</p>
+                            <p>Cheers,<br>Jake</p>
+                        </div>
+                    `,
+                };
+
+                await sgMail.send(welcomeMsg);
+                console.log(`Welcome email sent to ${email}`);
+
             } catch (error) {
                 console.error('Error in subscription webhook fulfillment:', error);
                 return { statusCode: 500, body: `Fulfillment Error: ${error.message}` };
