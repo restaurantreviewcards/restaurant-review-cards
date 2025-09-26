@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const data = await response.json();
 
         if (!response.ok || !data.clientSecret) {
-            // Handle server errors gracefully
             throw new Error(data.error || 'Failed to initialize payment.');
         }
 
@@ -29,7 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
         console.error("Initialization error:", error);
         showMessage(error.message);
-        document.getElementById("submit").disabled = true; // Disable pay button if setup fails
+        document.getElementById("submit").disabled = true;
         return;
     }
 
@@ -38,11 +37,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.preventDefault();
         setLoading(true);
 
-        const { error } = await stripe.confirmPayment({
+        // **THE ONLY CHANGE IS HERE**: Use confirmSetup instead of confirmPayment
+        const { error } = await stripe.confirmSetup({
             elements,
             confirmParams: {
                 return_url: `https://restaurantreviewcards.com/success.html?placeId=${placeId}`,
-                receipt_email: email,
             },
         });
         
@@ -74,6 +73,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => {
             messageContainer.classList.add("hidden");
             messageContainer.textContent = "";
-        }, 5000); // Increased timeout for better readability
+        }, 5000);
     }
 });
