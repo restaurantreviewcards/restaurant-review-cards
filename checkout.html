@@ -4,77 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complete Your Order - ReviewCards</title>
-    <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
     <link rel="stylesheet" href="checkout.css">
 </head>
 <body>
-    <div class="mobile-cta-bar">
-        <div class="price-display">$20.00 / month</div>
-        <a href="#pricing-table-section" class="btn-mobile-cta">Get Started</a>
-    </div>
     <div class="container">
         <div class="summary-panel">
             <h1>Complete Your Order</h1>
             <p>You're just one step away from receiving your welcome kit and activating your account.</p>
 
             <div class="social-proof">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
                 <span>Trusted by 50,000+ US Restaurants</span>
             </div>
             
             <h3 class="list-header">Everything Included in Your Plan:</h3>
             <ul class="features-list">
-                <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span>2 Smart Review Stands</span>
-                </li>
-                <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span>250 Smart Review Cards</span>
-                </li>
-                <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span><strong>Monthly Refills:</strong> 50 Free Card Credits Every Month</span>
-                </li>
-                <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span><strong>Full Access:</strong> Dashboard, Sharing Tools & Support</span>
-                </li>
+                <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>2 Smart Review Stands</span></li>
+                <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>250 Smart Review Cards</span></li>
+                <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span><strong>Monthly Refills:</strong> 50 Free Card Credits</span></li>
+                <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span><strong>Full Access:</strong> Dashboard, Tools & Support</span></li>
             </ul>
 
             <div class="bonus-box">
                 <div class="bonus-header">🎁 Your Activation Bonus</div>
-                <p><strong>2 Smart Review Stands</strong><br>
-                (Included for free when you sign up today)</p>
+                <p><strong>2 Smart Review Stands</strong><br>(Included for free)</p>
             </div>
+        </div>
 
+        <div class="payment-panel">
+            <form id="payment-form">
+                <div id="payment-element">
+                    <!-- Stripe Payment Element will be inserted here -->
+                </div>
+                <button id="submit" class="pay-button">
+                    <span id="button-text">Pay $20.00 Now</span>
+                    <div class="spinner hidden" id="spinner"></div>
+                </button>
+                <div id="payment-message" class="hidden"></div>
+            </form>
             <div class="guarantee-box">
                 <strong>30-Day Money-Back Guarantee.</strong>
                 <p>No contracts, cancel anytime.</p>
             </div>
         </div>
-
-        <div class="pricing-panel" id="pricing-table-section">
-            <stripe-pricing-table pricing-table-id="prctbl_1SBMhDKDZto4bHeckCUHCfHA"
-                publishable-key="pk_live_51S8RCEKDZto4bHecq0hENGuWcyuGbjbbPzEc9qINe7041tQ0sd6MGFdDakm6Wc3VZteTypDbqtDQj7TKtLAxFxZ100z16Dzfso">
-            </stripe-pricing-table>
-        </div>
     </div>
 
-    <script>
-        const pricingTable = document.querySelector('stripe-pricing-table');
-        const params = new URLSearchParams(window.location.search);
-        const email = params.get('email');
-        const placeId = params.get('placeId');
-
-        if (email) {
-            pricingTable.customerEmail = email;
-        }
-        if (placeId) {
-            pricingTable.clientReferenceId = placeId;
-        }
-    </script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="checkout.js" defer></script>
 </body>
 </html>
