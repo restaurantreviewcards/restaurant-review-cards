@@ -78,31 +78,57 @@ exports.handler = async (event) => {
 
     const redirectUrl = `https://restaurantreviewcards.com/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}&placeId=${placeId}&email=${encodeURIComponent(email)}`;
 
-    // **NEW EMAIL LOGIC**
-    const msg = {
+    // Email to the Customer
+    const customerMsg = {
       to: email,
-      bcc: 'jake@restaurantreviewcards.com', // BCC you on the correspondence
+      bcc: 'jake@restaurantreviewcards.com',
       from: {
         email: 'jake@restaurantreviewcards.com',
-        name: 'Jake from RRC' // This sets the "From" name in the email client
+        name: 'Jake from RRC'
       },
       subject: `Your Custom Sample for ${name} is Ready!`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
           <h2 style="color: #005596;">Your Live Preview is Ready!</h2>
           <p>Hi there,</p>
-          <p>Thank you for your interest in Restaurant Review Cards. We've generated a live, interactive sample page for <strong>${name}</strong>.</p>
+          <p>Thank you for your interest in our Smart Review Cards. We've generated a live, interactive sample page for <strong>${name}</strong>.</p>
           <p>Click the button below to see how our system works to help you get more 5-star Google reviews.</p>
           <a href="${redirectUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px;">
             View My Live Sample
           </a>
           <p>If you have any questions, feel free to reply directly to this email.</p>
-          <p>Best,<br>Jake<br>Restaurant Review Cards</p>
+          <p>Cheers,<br>Jake</p>
         </div>
       `,
     };
 
-    await sgMail.send(msg);
+    // **NEW** Internal Notification Email to You
+    const internalMsg = {
+        to: 'jake@restaurantreviewcards.com',
+        from: 'notification@restaurantreviewcards.com', // Can be a no-reply or internal address
+        subject: `🔥 New Sample Generated: ${name}`,
+        html: `
+            <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                <h2 style="color: #005596;">New Lead Information</h2>
+                <p>A new sample has been generated. Here are the details:</p>
+                <ul>
+                    <li><strong>Business Name:</strong> ${name}</li>
+                    <li><strong>Email Submitted:</strong> ${email}</li>
+                    <li><strong>Business Address:</strong> ${parsedAddress.line1}, ${parsedAddress.city}, ${parsedAddress.state} ${parsedAddress.zip}</li>
+                    <li><strong>Current Rating:</strong> ${rating} (${user_ratings_total} reviews)</li>
+                </ul>
+                <a href="${redirectUrl}" style="background-color: #28a745; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px;">
+                    View Their Custom Sample Page
+                </a>
+            </div>
+        `,
+    };
+
+    // Send both emails
+    await Promise.all([
+        sgMail.send(customerMsg),
+        sgMail.send(internalMsg)
+    ]);
 
     return {
       statusCode: 302,
@@ -113,7 +139,6 @@ exports.handler = async (event) => {
 
   } catch (error) {
     console.error('Error in generate-sample function:', error);
-    // Redirect the user even if the email fails to send
     const fallbackRedirect = `/sample.html?name=${encodeURIComponent(submittedName)}&placeId=${placeId}&email=${encodeURIComponent(email)}&error=email_failed`;
     return {
       statusCode: 302,
