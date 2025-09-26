@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Dashboard - ReviewCards</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
@@ -23,12 +24,16 @@
 
     <main id="main-content" class="hidden">
         <div class="dashboard-grid">
-            <div class="card metrics-card">
-                <h2>Performance at a Glance</h2>
+            
+            <div class="card google-snapshot-card">
+                <div class="card-header">
+                    <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12,24.5c0-1.56-0.14-3.06-0.4-4.5H24v8.51h11.84c-0.51,2.75-2.06,5.08-4.39,6.64v5.52h7.11C42.84,40.45,45.12,33.19,45.12,24.5z"/><path fill="#34A853" d="M24,46c6.44,0,11.84-2.13,15.79-5.79l-7.11-5.52c-2.13,1.44-4.86,2.3-7.68,2.3c-5.88,0-10.86-3.98-12.64-9.31H4.04v5.69C7.96,40.16,15.4,46,24,46z"/><path fill="#FBBC05" d="M11.36,27.32c-0.77-2.3-0.77-4.84,0-7.14v-5.69H4.04c-3.53,6.97-3.53,15.25,0,22.22L11.36,27.32z"/><path fill="#EA4335" d="M24,10.13c3.49,0,6.58,1.2,9.01,3.52l6.33-6.33C35.84,2.86,29.98,0,24,0C15.4,0,7.96,5.84,4.04,14.49l7.32,5.69C13.14,14.11,18.12,10.13,24,10.13z"/></svg>
+                    <h2>Google Reputation Snapshot</h2>
+                </div>
                 <div class="metrics-container">
-                    <div class="metric-item">
+                    <div class="metric-item main-metric">
                         <span class="metric-value" id="current-reviews-val">--</span>
-                        <span class="metric-label">Current Google Reviews</span>
+                        <span class="metric-label">Total Google Reviews</span>
                     </div>
                     <div class="metric-item">
                         <span class="metric-value gain" id="new-reviews-val">--</span>
@@ -38,6 +43,18 @@
                         <span class="metric-value" id="invites-sent-val">--</span>
                         <span class="metric-label">Review Invites Sent</span>
                     </div>
+                </div>
+                <div class="progress-section">
+                    <div class="progress-labels">
+                        <span class="progress-label">Goal: 50 New Reviews</span>
+                        <span class="progress-percent" id="progress-percent-val">0%</span>
+                    </div>
+                    <div class="progress-bar-background">
+                        <div class="progress-bar-foreground" id="progress-bar"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="#" id="google-profile-link" target="_blank">View Your Google Business Profile</a>
                 </div>
             </div>
 

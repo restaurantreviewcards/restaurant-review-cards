@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- MAIN FUNCTION TO INITIALIZE DASHBOARD ---
     const initDashboard = async () => {
         try {
-            // 1. THE FIX: Get 'placeId' from URL instead of 'id'
             const params = new URLSearchParams(window.location.search);
             const placeId = params.get('placeId');
 
@@ -26,23 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error("Place ID not found in URL.");
             }
 
-            // 2. Fetch customer data from our secure Netlify function
             const response = await fetch(`/.netlify/functions/get-customer-data?placeId=${placeId}`);
             if (!response.ok) {
                 throw new Error("Could not load customer data.");
             }
             const data = await response.json();
 
-            // 3. Populate the dashboard with the data
             populateMetrics(data);
-            // THE FIX: The smart link now uses the Stripe Customer ID from the fetched data
+            
             const smartLink = `https://restaurantreviewcards.com/.netlify/functions/redirect?id=${data.userId}`;
             smartLinkInput.value = smartLink;
             
-            // 4. Set up interactive elements
             setupInteractivity(smartLink);
 
-            // 5. Show the dashboard
             loader.classList.add('hidden');
             mainContent.classList.remove('hidden');
 
@@ -59,6 +54,25 @@ document.addEventListener('DOMContentLoaded', () => {
         currentReviewsEl.textContent = data.googleReviewCountCurrent.toLocaleString();
         newReviewsEl.textContent = `+${newReviews.toLocaleString()}`;
         invitesSentEl.textContent = data.reviewInvitesSent.toLocaleString();
+
+        // --- NEW LOGIC FOR GOOGLE-STYLE CARD ---
+        const goal = 50; // Set a goal for new reviews
+        const progressPercent = Math.min((newReviews / goal) * 100, 100); // Cap at 100%
+
+        // Update progress bar
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercentVal = document.getElementById('progress-percent-val');
+        if (progressBar && progressPercentVal) {
+            progressBar.style.width = `${progressPercent}%`;
+            progressPercentVal.textContent = `${Math.round(progressPercent)}%`;
+        }
+
+        // Update link to Google Business Profile
+        const googleProfileLink = document.getElementById('google-profile-link');
+        if (googleProfileLink && data.googlePlaceId) {
+            // This creates a direct link to the business's public profile
+            googleProfileLink.href = `https://search.google.com/local/writereview?placeid=${data.googlePlaceId}`;
+        }
     };
 
     const setupInteractivity = (link) => {

@@ -1,5 +1,3 @@
-/* In: dashboard.css */
-
 /* --- GLOBAL STYLES & VARIABLES --- */
 :root {
     --primary-color: #005596;
@@ -63,16 +61,6 @@ main { padding: 2rem; }
 .card h2 { font-size: 1.25rem; margin-top: 0; margin-bottom: 1rem; }
 .card p { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; }
 
-/* --- METRICS CARD --- */
-.metrics-container { display: flex; text-align: center; gap: 1.5rem; margin-top: 1.5rem; }
-.metric-item { flex: 1; }
-.metric-value {
-    font-size: 3rem; font-weight: 700; display: block;
-    font-family: var(--font-heading); color: var(--text-dark); line-height: 1;
-}
-.metric-value.gain { color: var(--success-green); }
-.metric-label { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
-
 /* --- SMART LINK CARD & INPUT GROUP --- */
 .input-group { display: flex; margin-bottom: 1rem; }
 #smart-link-input {
@@ -124,3 +112,101 @@ main { padding: 2rem; }
     border: none; font-size: 2rem; cursor: pointer; color: var(--text-light);
 }
 #qrcode-container { margin: 1.5rem 0; }
+
+/* --- NEW GOOGLE SNAPSHOT CARD STYLES --- */
+.google-snapshot-card {
+    grid-column: 1 / -1; /* Make this card span the full width */
+    padding: 0; /* Remove default padding to allow for internal sections */
+    font-family: 'Roboto', sans-serif; /* Use Google's font */
+}
+
+.google-snapshot-card .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.google-snapshot-card h2 {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.google-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.google-snapshot-card .metrics-container {
+    padding: 1.5rem;
+    display: flex;
+    text-align: center;
+    gap: 1.5rem;
+    margin-top: 0;
+    align-items: flex-end;
+}
+
+.metric-item { flex: 1; }
+
+.metric-value {
+    font-size: 3rem; font-weight: 700; display: block;
+    font-family: var(--font-heading); color: var(--text-dark); line-height: 1;
+}
+
+.metric-value.gain { color: var(--success-green); }
+
+.metric-label { font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem; font-weight: 500; }
+
+.google-snapshot-card .metric-item.main-metric .metric-value {
+    font-size: 3.5rem;
+    color: #1a73e8; /* Google Blue */
+}
+
+.progress-section {
+    padding: 0 1.5rem 1.5rem;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+}
+
+.progress-bar-background {
+    width: 100%;
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-foreground {
+    height: 100%;
+    width: 0%; /* Will be set by JavaScript */
+    background-color: #1a73e8; /* Google Blue */
+    border-radius: 4px;
+    transition: width 0.5s ease-out;
+}
+
+.google-snapshot-card .card-footer {
+    padding: 1rem 1.5rem;
+    background-color: var(--background-light);
+    border-top: 1px solid var(--border-color);
+    text-align: right;
+}
+
+.google-snapshot-card .card-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.google-snapshot-card .card-footer a:hover {
+    text-decoration: underline;
+}
