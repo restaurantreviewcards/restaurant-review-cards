@@ -15,19 +15,17 @@ exports.handler = async (event) => {
       throw new Error('Stripe Price ID, email, or Place ID is missing.');
     }
 
-    // First, create a Stripe Customer
     const customer = await stripe.customers.create({
       email: email,
     });
 
-    // Now, create the subscription
+    // **THE FIX IS HERE**: We now expand the 'pending_setup_intent'
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: priceId }],
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.payment_intent'],
-      // **CRITICAL STEP**: Attach metadata to the subscription
+      expand: ['pending_setup_intent'], // This is the key change
       metadata: {
         placeId: placeId,
         email: email
@@ -38,7 +36,8 @@ exports.handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify({
         subscriptionId: subscription.id,
-        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+        // And we get the client secret from the correct object
+        clientSecret: subscription.pending_setup_intent.client_secret,
       }),
     };
     
