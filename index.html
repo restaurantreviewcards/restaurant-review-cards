@@ -310,46 +310,54 @@
             const openModal = () => loginModal.classList.add('visible');
             const closeModal = () => loginModal.classList.remove('visible');
 
-            loginBtn.addEventListener('click', openModal);
-            closeModalBtn.addEventListener('click', closeModal);
-            loginModal.addEventListener('click', (e) => {
-                if (e.target === loginModal) {
-                    closeModal();
-                }
-            });
-
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                sendLinkBtn.disabled = true;
-                sendLinkBtn.textContent = 'Sending...';
-
-                try {
-                    const response = await fetch('/.netlify/functions/send-login-link', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: loginEmailInput.value }),
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Something went wrong.');
-                    }
-
-                    loginMessage.textContent = 'Success! Please check your email for your login link.';
-                    loginMessage.className = 'login-message success';
-
-                } catch (error) {
-                    loginMessage.textContent = 'An error occurred. Please try again in a moment.';
-                    loginMessage.className = 'login-message error';
-                } finally {
-                    loginMessage.classList.remove('hidden');
-                    sendLinkBtn.textContent = 'Send Login Link';
-                    setTimeout(() => {
+            if (loginBtn) {
+                loginBtn.addEventListener('click', openModal);
+            }
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', closeModal);
+            }
+            if (loginModal) {
+                loginModal.addEventListener('click', (e) => {
+                    if (e.target === loginModal) {
                         closeModal();
-                        loginMessage.classList.add('hidden');
-                        sendLinkBtn.disabled = false;
-                    }, 4000);
-                }
-            });
+                    }
+                });
+            }
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    sendLinkBtn.disabled = true;
+                    sendLinkBtn.textContent = 'Sending...';
+
+                    try {
+                        const response = await fetch('/.netlify/functions/send-login-link', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: loginEmailInput.value }),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Something went wrong.');
+                        }
+
+                        loginMessage.textContent = 'Success! Please check your email for your login link.';
+                        loginMessage.className = 'login-message success';
+
+                    } catch (error) {
+                        loginMessage.textContent = 'An error occurred. Please try again in a moment.';
+                        loginMessage.className = 'login-message error';
+                    } finally {
+                        loginMessage.classList.remove('hidden');
+                        sendLinkBtn.textContent = 'Send Login Link';
+                        setTimeout(() => {
+                            closeModal();
+                            loginMessage.classList.add('hidden');
+                            sendLinkBtn.disabled = false;
+                        }, 4000);
+                    }
+                });
+            }
 
             // --- MOBILE MENU SCRIPT ---
             const hamburger = document.querySelector(".hamburger");
