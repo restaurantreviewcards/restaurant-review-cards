@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrModal = document.getElementById('qr-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
     const qrcodeContainer = document.getElementById('qrcode-container');
+    
+    // New QR action buttons
+    const downloadQrBtn = document.getElementById('download-qr-btn');
+    const printQrBtn = document.getElementById('print-qr-btn');
+
 
     // --- MAIN FUNCTION TO INITIALIZE DASHBOARD ---
     const initDashboard = async () => {
@@ -55,22 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
         newReviewsEl.textContent = `+${newReviews.toLocaleString()}`;
         invitesSentEl.textContent = data.reviewInvitesSent.toLocaleString();
 
-        // --- NEW LOGIC FOR GOOGLE-STYLE CARD ---
-        const goal = 50; // Set a goal for new reviews
-        const progressPercent = Math.min((newReviews / goal) * 100, 100); // Cap at 100%
-
-        // Update progress bar
-        const progressBar = document.getElementById('progress-bar');
-        const progressPercentVal = document.getElementById('progress-percent-val');
-        if (progressBar && progressPercentVal) {
-            progressBar.style.width = `${progressPercent}%`;
-            progressPercentVal.textContent = `${Math.round(progressPercent)}%`;
-        }
-
         // Update link to Google Business Profile
         const googleProfileLink = document.getElementById('google-profile-link');
         if (googleProfileLink && data.googlePlaceId) {
-            // This creates a direct link to the business's public profile
             googleProfileLink.href = `https://search.google.com/local/writereview?placeid=${data.googlePlaceId}`;
         }
     };
@@ -90,8 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!qrCodeGenerated) {
                 new QRCode(qrcodeContainer, {
                     text: link,
-                    width: 200,
-                    height: 200,
+                    width: 250, // Slightly larger for better download quality
+                    height: 250,
                     correctLevel: QRCode.CorrectLevel.H
                 });
                 qrCodeGenerated = true;
@@ -105,6 +97,111 @@ document.addEventListener('DOMContentLoaded', () => {
                 qrModal.classList.add('hidden');
             }
         });
+
+        // Download QR Code
+        downloadQrBtn.addEventListener('click', () => {
+            const qrCanvas = qrcodeContainer.querySelector('canvas');
+            if (qrCanvas) {
+                const imgData = qrCanvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = imgData;
+                link.download = `${restaurantNameEl.textContent.replace(/\s/g, '-')}-QRCode.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert('QR Code not ready for download. Please try again.');
+            }
+        });
+
+        // Print QR Code
+        printQrBtn.addEventListener('click', () => {
+            const qrCanvas = qrcodeContainer.querySelector('canvas');
+            if (qrCanvas) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write('<html><head><title>Print QR Code</title>');
+                printWindow.document.write('<style>body { font-family: sans-serif; text-align: center; padding: 20px; } img { max-width: 300px; height: auto; border: 1px solid #ccc; margin-bottom: 20px; } @media print { button { display: none; } }</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write(`<h1>${restaurantNameEl.textContent} Smart QR Code</h1>`);
+                printWindow.document.write(`<img src="${qrCanvas.toDataURL('image/png')}" alt="Your QR Code">`);
+                printWindow.document.write('<p>Scan this QR code to leave a review!</p>');
+                printWindow.document.write('<button onclick="window.print()">Print</button>');
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.focus();
+            } else {
+                alert('QR Code not ready for printing. Please try again.');
+            }
+        });
+
+
+        // Manage Billing button functionality
+        const manageBillingBtn = document.getElementById('manage-billing-btn');
+        if(manageBillingBtn) {
+            manageBillingBtn.addEventListener('click', async () => {
+                const originalText = manageBillingBtn.textContent;
+                manageBillingBtn.textContent = 'Loading...';
+                manageBillingBtn.disabled = true;
+
+                try {
+                    // Get the userId from the smart link input for simplicity
+                    const params = new URLSearchParams(smartLinkInput.value.split('?')[1]);
+                    const userId = params.get('id');
+
+                    const response = await fetch('/.netlify/functions/create-portal-link', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: userId }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Could not create portal link.');
+                    }
+
+                    const data = await response.json();
+
+                    // Redirect the user to the Stripe Customer Portal
+                    window.location.href = data.portalUrl;
+
+                } catch (error) {
+                    console.error('Portal Error:', error);
+                    alert('There was a problem accessing the billing portal. Please try again.');
+                    manageBillingBtn.textContent = originalText;
+                    manageBillingBtn.disabled = false;
+                }
+            });
+        }
+
+        // Share buttons functionality
+        const restaurantName = restaurantNameEl.textContent; // Ensure this is available
+        const shareMessage = `Here's a link to leave a review for ${restaurantName}. We'd love to hear your feedback!\n\n${link}`;
+
+        const shareEmailBtn = document.getElementById('share-email-btn');
+        const shareTextBtn = document.getElementById('share-text-btn');
+        const shareWhatsappBtn = document.getElementById('share-whatsapp-btn');
+        const shareMessengerBtn = document.getElementById('share-messenger-btn');
+
+        if(shareEmailBtn) {
+            shareEmailBtn.href = `mailto:?subject=Review for ${restaurantName}&body=${encodeURIComponent(shareMessage)}`;
+        }
+
+        if(shareTextBtn) {
+            shareTextBtn.href = `sms:?&body=${encodeURIComponent(shareMessage)}`;
+        }
+
+        if(shareWhatsappBtn) {
+            shareWhatsappBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
+            shareWhatsappBtn.target = '_blank';
+        }
+        
+        if(shareMessengerBtn) {
+            shareMessengerBtn.href = `fb-messenger://share?link=${encodeURIComponent(link)}`;
+            shareMessengerBtn.addEventListener('click', (e) => {
+                 navigator.clipboard.writeText(shareMessage).then(() => {
+                    alert('Your review link and message have been copied to the clipboard to easily paste into Messenger!');
+                 });
+            });
+        }
     };
 
     // --- RUN INITIALIZATION ---

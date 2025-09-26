@@ -100,9 +100,17 @@ main { padding: 2rem; }
     background-color: transparent; color: var(--primary-color);
     border: 1px solid var(--border-color); border-radius: 8px;
     padding: 0.75rem 1rem; font-weight: 600; text-decoration: none;
-    display: inline-block; margin-right: 0.5rem; margin-top: 0.5rem;
+    display: inline-flex; /* Changed to inline-flex for icon alignment */
+    align-items: center;
+    gap: 0.5rem; /* Space between icon and text */
+    margin-right: 0.5rem; margin-top: 0.5rem;
+    cursor: pointer; /* Ensure button has pointer cursor */
 }
 .button-secondary:hover { background-color: var(--background-light); }
+.button-secondary svg {
+    width: 18px; /* Icon size for secondary buttons */
+    height: 18px;
+}
 
 /* --- LOADER & MODAL --- */
 .hidden { display: none !important; }
@@ -122,12 +130,30 @@ main { padding: 2rem; }
 .modal-content {
     background: var(--white); padding: 2rem; border-radius: 12px;
     text-align: center; position: relative;
+    max-width: 90%; /* Ensure modal is responsive */
+    width: 400px;
 }
 .close-button {
     position: absolute; top: 10px; right: 15px; background: none;
     border: none; font-size: 2rem; cursor: pointer; color: var(--text-light);
 }
 #qrcode-container { margin: 1.5rem 0; }
+#qrcode-container img { /* Style for the actual QR code image */
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+/* --- QR ACTIONS --- */
+.qr-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* Space between action buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+}
+
 
 /* --- GOOGLE SNAPSHOT CARD STYLES --- */
 .google-snapshot-card {
@@ -186,6 +212,48 @@ main { padding: 2rem; }
     text-decoration: underline;
 }
 
+/* --- SHARE BUTTONS STYLES --- */
+.share-buttons-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.share-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.share-button:hover {
+    border-color: var(--primary-color);
+    background-color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.share-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.share-button.whatsapp { color: #25D366; }
+.share-button.whatsapp:hover { border-color: #25D366; }
+
+.share-button.messenger { color: #0078FF; }
+.share-button.messenger:hover { border-color: #0078FF; }
+
+
 /* --- RESPONSIVE STYLES --- */
 @media (max-width: 768px) {
     main {
@@ -219,5 +287,16 @@ main { padding: 2rem; }
     }
     .google-snapshot-card .card-footer {
         text-align: center;
+    }
+    .share-buttons-container {
+        grid-template-columns: 1fr; /* Stack buttons on very small screens */
+    }
+    .qr-actions {
+        flex-direction: column; /* Stack QR action buttons vertically */
+        gap: 0.75rem;
+    }
+    .modal-content {
+        width: 95%; /* Make modal fill more of the screen on mobile */
+        padding: 1.5rem;
     }
 }
