@@ -2,8 +2,10 @@
 
 const admin = require('firebase-admin');
 const fetch = require('node-fetch');
+const sgMail = require('@sendgrid/mail');
 
-// This block initializes the Firebase Admin SDK
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -17,7 +19,6 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
 
-// Helper function to parse Google's address components array
 function parseAddressComponents(components) {
   const address = {};
   components.forEach(component => {
@@ -43,12 +44,10 @@ exports.handler = async (event) => {
   const submittedName = formData.get('restaurant-name');
 
   if (!placeId || !email || !googleApiKey) {
-    // ... error handling
     return { statusCode: 400, body: 'Missing required information.' };
   }
 
   try {
-    // UPDATED: Added 'address_components' to the fields we request from Google
     const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,user_ratings_total,url,address_components&key=${googleApiKey}`;
     
     const detailsResponse = await fetch(detailsUrl);
@@ -60,10 +59,8 @@ exports.handler = async (event) => {
     
     const { name, rating, user_ratings_total, url, address_components } = placeData.result;
     
-    // UPDATED: Parse the address components into a usable format
     const parsedAddress = parseAddressComponents(address_components);
 
-    // UPDATED: Save the new address fields to your 'signups' collection in Firestore.
     await db.collection('signups').add({
       email: email,
       submittedName: submittedName,
@@ -72,7 +69,6 @@ exports.handler = async (event) => {
       googleRating: rating || 'N/A',
       googleReviewCount: user_ratings_total || 0,
       googleMapsUrl: url || 'N/A',
-      // New address fields
       googleAddressLine1: parsedAddress.line1,
       googleAddressCity: parsedAddress.city,
       googleAddressState: parsedAddress.state,
@@ -80,7 +76,33 @@ exports.handler = async (event) => {
       timestamp: new Date(),
     });
 
-    const redirectUrl = `/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}&placeId=${placeId}&email=${encodeURIComponent(email)}`;
+    const redirectUrl = `https://restaurantreviewcards.com/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}&placeId=${placeId}&email=${encodeURIComponent(email)}`;
+
+    // **NEW EMAIL LOGIC**
+    const msg = {
+      to: email,
+      bcc: 'jake@restaurantreviewcards.com', // BCC you on the correspondence
+      from: {
+        email: 'jake@restaurantreviewcards.com',
+        name: 'Jake from RRC' // This sets the "From" name in the email client
+      },
+      subject: `Your Custom Sample for ${name} is Ready!`,
+      html: `
+        <div style="font-family: sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #005596;">Your Live Preview is Ready!</h2>
+          <p>Hi there,</p>
+          <p>Thank you for your interest in Restaurant Review Cards. We've generated a live, interactive sample page for <strong>${name}</strong>.</p>
+          <p>Click the button below to see how our system works to help you get more 5-star Google reviews.</p>
+          <a href="${redirectUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px;">
+            View My Live Sample
+          </a>
+          <p>If you have any questions, feel free to reply directly to this email.</p>
+          <p>Best,<br>Jake<br>Restaurant Review Cards</p>
+        </div>
+      `,
+    };
+
+    await sgMail.send(msg);
 
     return {
       statusCode: 302,
@@ -91,9 +113,11 @@ exports.handler = async (event) => {
 
   } catch (error) {
     console.error('Error in generate-sample function:', error);
+    // Redirect the user even if the email fails to send
+    const fallbackRedirect = `/sample.html?name=${encodeURIComponent(submittedName)}&placeId=${placeId}&email=${encodeURIComponent(email)}&error=email_failed`;
     return {
-      statusCode: 500,
-      body: `An unexpected error occurred. Please try again later.`,
+      statusCode: 302,
+      headers: { 'Location': fallbackRedirect },
     };
   }
 };
