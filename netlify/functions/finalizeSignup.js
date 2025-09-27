@@ -52,7 +52,6 @@ exports.handler = async (event) => {
                 }
 
                 const signupData = snapshot.docs[0].data();
-                // **FIX**: Now correctly saves the address to the final customer profile
                 const customerData = {
                     userId: userId,
                     email: email,
@@ -78,14 +77,15 @@ exports.handler = async (event) => {
             break;
         }
 
-        case 'invoice.paid': {
-            const invoice = stripeEvent.data.object;
-            
-            if (invoice.billing_reason === 'subscription_create') {
-                const userId = invoice.customer;
-                const customerEmail = invoice.customer_email;
-                
-                console.log('First invoice paid, sending welcome email and internal notification...');
+        case 'customer.subscription.updated': {
+            const subscription = stripeEvent.data.object;
+
+            // This is the key change: trigger emails when the trial starts
+            if (subscription.status === 'trialing' && stripeEvent.data.previous_attributes?.status === 'incomplete') {
+                const userId = subscription.customer;
+                const customerEmail = subscription.metadata.email; // Get email from metadata
+
+                console.log('Subscription started trial, sending welcome email and internal notification...');
                 try {
                     const customerDoc = await db.collection('customers').doc(userId).get();
                     if (!customerDoc.exists) {
@@ -101,13 +101,25 @@ exports.handler = async (event) => {
                         bcc: 'jake@restaurantreviewcards.com',
                         from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from RRC' },
                         subject: `Your Order is being Processed now, ${customerData.googlePlaceName}!`,
-                        html: `...` // (Content is the same as before)
+                        html: `
+                            <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                                <h2 style="color: #005596;">Welcome! Your Account is Active</h2>
+                                <p>Hi there,</p>
+                                <p>Thank you for signing up! Your welcome kit, including 250 Smart Review Cards and 2 stands, is now being processed for shipment.</p>
+                                <p>You can access your Smart Dashboard immediately to start tracking your reviews and sharing your unique link. Click the button below to log in:</p>
+                                <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px;">
+                                    Go to My Dashboard
+                                </a>
+                                <p>If you have any questions, just reply to this email.</p>
+                                <p>Cheers,<br>Jake</p>
+                            </div>
+                        `
                     };
                     
-                    // **NEW** Internal Notification Email to You
+                    // Internal Notification Email to You
                     const internalNotificationMsg = {
                         to: 'jake@restaurantreviewcards.com',
-                        from: 'new-customer@restaurantreviewcards.com', // Use an internal-style address
+                        from: 'new-customer@restaurantreviewcards.com',
                         subject: `✅ New Customer Signup: ${customerData.googlePlaceName}`,
                         html: `
                             <div style="font-family: sans-serif; padding: 20px; color: #333;">
@@ -132,9 +144,9 @@ exports.handler = async (event) => {
                         sgMail.send(internalNotificationMsg)
                     ]);
                     
-                    console.log(`Emails sent successfully for customer ${userId}.`);
+                    console.log(`Emails sent successfully for new trialing customer ${userId}.`);
                 } catch (error) {
-                    console.error('Error sending emails:', error);
+                    console.error('Error sending emails for new trial:', error);
                 }
             }
             break;
