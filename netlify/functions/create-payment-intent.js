@@ -15,34 +15,29 @@ exports.handler = async (event) => {
       throw new Error('Stripe Price ID, email, or Place ID is missing.');
     }
 
-    const customer = await stripe.customers.create({ email: email });
+    const customer = await stripe.customers.create({
+      email: email,
+    });
 
+    // **THE FIX IS HERE**: We now expand the 'pending_setup_intent'
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: priceId }],
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.payment_intent'], // We expand this for the next step
+      expand: ['pending_setup_intent'], // This is the key change
       metadata: {
         placeId: placeId,
         email: email
       }
     });
 
-    // **THIS IS THE NEW, MORE ROBUST METHOD**
-    // We get the client secret from the invoice that was just created for the subscription.
-    // This is the most reliable way to get the client secret.
-    const clientSecret = subscription.latest_invoice.payment_intent.client_secret;
-
-    if (!clientSecret) {
-        throw new Error('Could not retrieve client_secret from the subscription invoice.');
-    }
-
     return {
       statusCode: 200,
       body: JSON.stringify({
         subscriptionId: subscription.id,
-        clientSecret: clientSecret,
+        // And we get the client secret from the correct object
+        clientSecret: subscription.pending_setup_intent.client_secret,
       }),
     };
     

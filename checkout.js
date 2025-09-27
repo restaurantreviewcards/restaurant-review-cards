@@ -1,11 +1,5 @@
-// In: checkout.js
-
 document.addEventListener("DOMContentLoaded", async () => {
-    // --- 1. INITIALIZE STRIPE & GET URL PARAMS ---
-    
-    // For now, use your TEST publishable key here.
-    // When you go live, you will replace this with your LIVE key.
-    const stripePublishableKey = "pk_test_51S8RCOGegWZsGI02bI74nCZ7keToSP0gfJ9mk2VbWwbyZqfaH2aPaY59dk4ML2NGs1sGwLCsACSFNLMlbA0B9nKQ00V3WOnv4z"; // <-- PASTE YOUR TEST PUBLISHABLE KEY HERE
+    const stripePublishableKey = "pk_live_51S8RCEKDZto4bHecq0hENGuWcyuGbjbbPzEc9qINe7041tQ0sd6MGFdDakm6Wc3VZteTypDbqtDQj7TKtLAxFxZ100z16Dzfso";
     const stripe = Stripe(stripePublishableKey);
 
     const params = new URLSearchParams(window.location.search);
@@ -43,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.preventDefault();
         setLoading(true);
 
+        // **THE ONLY CHANGE IS HERE**: Use confirmSetup instead of confirmPayment
         const { error } = await stripe.confirmSetup({
             elements,
             confirmParams: {
@@ -59,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setLoading(false);
     });
 
-    // --- 4. UI HELPER FUNCTIONS ---
+    // --- UI HELPER FUNCTIONS ---
     function setLoading(isLoading) {
         const submitBtn = document.getElementById("submit");
         const spinner = document.getElementById("spinner");
