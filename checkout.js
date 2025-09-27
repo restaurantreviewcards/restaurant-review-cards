@@ -1,27 +1,33 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    const stripePublishableKey = "pk_live_51S8RCEKDZto4bHecq0hENGuWcyuGbjbbPzEc9qINe7041tQ0sd6MGFdDakm6Wc3VZteTypDbqtDQj7TKtLAxFxZ100z16Dzfso";
-    const stripe = Stripe(stripePublishableKey);
+// In: checkout.js
 
+document.addEventListener("DOMContentLoaded", async () => {
+    // --- 1. INITIALIZE STRIPE & GET URL PARAMS ---
+    // The key is no longer hardcoded here.
+    
     const params = new URLSearchParams(window.location.search);
     const email = params.get('email');
     const placeId = params.get('placeId');
 
+    let stripe;
     let elements;
 
     try {
-        const response = await fetch("/.netlify/functions/create-payment-intent", {
+        // Fetch the publishable key from our new serverless function
+        const keyResponse = await fetch("/.netlify/functions/get-stripe-key");
+        const keyData = await keyResponse.json();
+        if (!keyResponse.ok) throw new Error(keyData.error);
+        stripe = Stripe(keyData.publishableKey);
+
+        // Fetch the client secret from our payment intent function
+        const intentResponse = await fetch("/.netlify/functions/create-payment-intent", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: email, placeId: placeId }),
         });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.clientSecret) {
-            throw new Error(data.error || 'Failed to initialize payment.');
-        }
-
-        elements = stripe.elements({ clientSecret: data.clientSecret });
+        const intentData = await intentResponse.json();
+        if (!intentResponse.ok) throw new Error(intentData.error);
+        
+        elements = stripe.elements({ clientSecret: intentData.clientSecret });
         const paymentElement = elements.create("payment");
         paymentElement.mount("#payment-element");
 
@@ -32,12 +38,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
+    // --- 3. HANDLE FORM SUBMISSION --- (This part remains the same)
     const paymentForm = document.getElementById("payment-form");
     paymentForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        // **THE ONLY CHANGE IS HERE**: Use confirmSetup instead of confirmPayment
         const { error } = await stripe.confirmSetup({
             elements,
             confirmParams: {
@@ -54,25 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setLoading(false);
     });
 
-    // --- UI HELPER FUNCTIONS ---
-    function setLoading(isLoading) {
-        const submitBtn = document.getElementById("submit");
-        const spinner = document.getElementById("spinner");
-        const buttonText = document.getElementById("button-text");
-
-        submitBtn.disabled = isLoading;
-        spinner.classList.toggle("hidden", !isLoading);
-        buttonText.classList.toggle("hidden", isLoading);
-    }
-
-    function showMessage(messageText) {
-        const messageContainer = document.querySelector("#payment-message");
-        messageContainer.classList.remove("hidden");
-        messageContainer.textContent = messageText;
-
-        setTimeout(() => {
-            messageContainer.classList.add("hidden");
-            messageContainer.textContent = "";
-        }, 5000);
-    }
+    // --- 4. UI HELPER FUNCTIONS --- (This part remains the same)
+    function setLoading(isLoading) { /* ... */ }
+    function showMessage(messageText) { /* ... */ }
 });

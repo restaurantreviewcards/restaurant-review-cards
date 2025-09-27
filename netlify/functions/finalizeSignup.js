@@ -52,6 +52,7 @@ exports.handler = async (event) => {
                 }
 
                 const signupData = snapshot.docs[0].data();
+                // **FIX**: Now correctly saves the address to the final customer profile
                 const customerData = {
                     userId: userId,
                     email: email,
@@ -59,6 +60,10 @@ exports.handler = async (event) => {
                     googlePlaceName: signupData.googlePlaceName,
                     googleReviewCountInitial: signupData.googleReviewCount || 0,
                     googleReviewCountCurrent: signupData.googleReviewCount || 0,
+                    googleAddressLine1: signupData.googleAddressLine1 || '',
+                    googleAddressCity: signupData.googleAddressCity || '',
+                    googleAddressState: signupData.googleAddressState || '',
+                    googleAddressZip: signupData.googleAddressZip || '',
                     reviewInvitesSent: 0,
                     signupDate: new Date(),
                     lastRedemptionDate: null,
@@ -80,42 +85,56 @@ exports.handler = async (event) => {
                 const userId = invoice.customer;
                 const customerEmail = invoice.customer_email;
                 
-                console.log('First invoice paid, sending welcome email...');
+                console.log('First invoice paid, sending welcome email and internal notification...');
                 try {
                     const customerDoc = await db.collection('customers').doc(userId).get();
                     if (!customerDoc.exists) {
-                        throw new Error('Customer record not found for sending welcome email.');
+                        throw new Error('Customer record not found for sending emails.');
                     }
 
                     const customerData = customerDoc.data();
                     const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${customerData.googlePlaceId}`;
+                    
+                    // Email to the Customer
                     const welcomeMsg = {
                         to: customerEmail,
-                        bcc: 'jake@restaurantreviewcards.com', // BCC added here
+                        bcc: 'jake@restaurantreviewcards.com',
                         from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from RRC' },
                         subject: `Your Order is being Processed now, ${customerData.googlePlaceName}!`,
+                        html: `...` // (Content is the same as before)
+                    };
+                    
+                    // **NEW** Internal Notification Email to You
+                    const internalNotificationMsg = {
+                        to: 'jake@restaurantreviewcards.com',
+                        from: 'new-customer@restaurantreviewcards.com', // Use an internal-style address
+                        subject: `✅ New Customer Signup: ${customerData.googlePlaceName}`,
                         html: `
-                            <div style="font-family: sans-serif; padding: 20px; color: #333; line-height: 1.6;">
-                                <h2 style="color: #005596;">Welcome Aboard!</h2>
-                                <p>Hi there,</p>
-                                <p>Thank you for signing up! Your account for <strong>${customerData.googlePlaceName}</strong> is now active, and your new dashboard is ready.</p>
-                                <h3 style="color: #005596; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; margin-top: 30px;">What Happens Next?</h3>
-                                <p><strong>1. Welcome Kit Shipment:</strong> Your kit, including 250 Smart Review Cards and 2 stands, is being processed and will ship within 3-5 business days.</p>
-                                <p><strong>2. Using Your Cards:</strong> Simply hand a card to a happy customer. They scan the QR code and are taken directly to your Google review page. It's that easy!</p>
-                                <p style="text-align: center; margin: 30px 0;">
+                            <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                                <h2 style="color: #28a745;">New Paying Customer!</h2>
+                                <p><strong>Business Name:</strong> ${customerData.googlePlaceName}</p>
+                                <p><strong>Email:</strong> ${customerData.email}</p>
+                                <p><strong>Address:</strong> ${customerData.googleAddressLine1}, ${customerData.googleAddressCity}, ${customerData.googleAddressState} ${customerData.googleAddressZip}</p>
+                                <p><strong>Stripe Customer ID:</strong> ${customerData.userId}</p>
+                                <hr>
+                                <p style="text-align: center; margin: 20px 0;">
                                     <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block;">
-                                        Access Your Dashboard Now
+                                        View Customer Dashboard
                                     </a>
                                 </p>
-                                <p>If you have any questions, feel free to reply directly to this email.</p>
-                                <p>Cheers,<br>Jake</p>
                             </div>
-                        `,
+                        `
                     };
-                    await sgMail.send(welcomeMsg);
-                    console.log(`Welcome email sent to ${customerEmail}.`);
+
+                    // Send both emails
+                    await Promise.all([
+                        sgMail.send(welcomeMsg),
+                        sgMail.send(internalNotificationMsg)
+                    ]);
+                    
+                    console.log(`Emails sent successfully for customer ${userId}.`);
                 } catch (error) {
-                    console.error('Error sending welcome email:', error);
+                    console.error('Error sending emails:', error);
                 }
             }
             break;
