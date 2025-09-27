@@ -2,32 +2,32 @@
 
 document.addEventListener("DOMContentLoaded", async () => {
     // --- 1. INITIALIZE STRIPE & GET URL PARAMS ---
-    // The key is no longer hardcoded here.
     
+    // For now, use your TEST publishable key here.
+    // When you go live, you will replace this with your LIVE key.
+    const stripePublishableKey = "pk_test_51S8RCOGegWZsGI02bI74nCZ7keToSP0gfJ9mk2VbWwbyZqfaH2aPaY59dk4ML2NGs1sGwLCsACSFNLMlbA0B9nKQ00V3WOnv4z"; // <-- PASTE YOUR TEST PUBLISHABLE KEY HERE
+    const stripe = Stripe(stripePublishableKey);
+
     const params = new URLSearchParams(window.location.search);
     const email = params.get('email');
     const placeId = params.get('placeId');
 
-    let stripe;
     let elements;
 
     try {
-        // Fetch the publishable key from our new serverless function
-        const keyResponse = await fetch("/.netlify/functions/get-stripe-key");
-        const keyData = await keyResponse.json();
-        if (!keyResponse.ok) throw new Error(keyData.error);
-        stripe = Stripe(keyData.publishableKey);
-
-        // Fetch the client secret from our payment intent function
-        const intentResponse = await fetch("/.netlify/functions/create-payment-intent", {
+        const response = await fetch("/.netlify/functions/create-payment-intent", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: email, placeId: placeId }),
         });
-        const intentData = await intentResponse.json();
-        if (!intentResponse.ok) throw new Error(intentData.error);
-        
-        elements = stripe.elements({ clientSecret: intentData.clientSecret });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.clientSecret) {
+            throw new Error(data.error || 'Failed to initialize payment.');
+        }
+
+        elements = stripe.elements({ clientSecret: data.clientSecret });
         const paymentElement = elements.create("payment");
         paymentElement.mount("#payment-element");
 
@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // --- 3. HANDLE FORM SUBMISSION --- (This part remains the same)
     const paymentForm = document.getElementById("payment-form");
     paymentForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -60,7 +59,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         setLoading(false);
     });
 
-    // --- 4. UI HELPER FUNCTIONS --- (This part remains the same)
-    function setLoading(isLoading) { /* ... */ }
-    function showMessage(messageText) { /* ... */ }
+    // --- 4. UI HELPER FUNCTIONS ---
+    function setLoading(isLoading) {
+        const submitBtn = document.getElementById("submit");
+        const spinner = document.getElementById("spinner");
+        const buttonText = document.getElementById("button-text");
+
+        submitBtn.disabled = isLoading;
+        spinner.classList.toggle("hidden", !isLoading);
+        buttonText.classList.toggle("hidden", isLoading);
+    }
+
+    function showMessage(messageText) {
+        const messageContainer = document.querySelector("#payment-message");
+        messageContainer.classList.remove("hidden");
+        messageContainer.textContent = messageText;
+
+        setTimeout(() => {
+            messageContainer.classList.add("hidden");
+            messageContainer.textContent = "";
+        }, 5000);
+    }
 });
