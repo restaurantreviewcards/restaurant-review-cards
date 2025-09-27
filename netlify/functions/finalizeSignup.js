@@ -91,6 +91,7 @@ exports.handler = async (event) => {
                     const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${customerData.googlePlaceId}`;
                     const welcomeMsg = {
                         to: customerEmail,
+                        bcc: 'jake@restaurantreviewcards.com', // BCC added here
                         from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from RRC' },
                         subject: `Your Order is being Processed now, ${customerData.googlePlaceName}!`,
                         html: `
