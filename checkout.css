@@ -135,10 +135,19 @@ body {
 }
 
 /* --- Payment Panel Styles --- */
+.payment-note {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
 #payment-form {
     margin-bottom: 1.5rem;
 }
 
+/* ▼ MODIFIED BUTTON STYLES FOR A MORE ENTICING LOOK ▼ */
 .pay-button {
     background: var(--primary-color);
     font-family: inherit;
@@ -152,17 +161,29 @@ body {
     display: block;
     width: 100%;
     margin-top: 1.5rem;
-    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 85, 150, 0.2);
+    transition: all 0.2s ease-out;
     position: relative;
 }
 
-.pay-button:hover {
+.pay-button:hover:not(:disabled) {
     background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 85, 150, 0.3);
 }
 
 .pay-button:disabled {
     opacity: 0.5;
     cursor: default;
+    box-shadow: none;
+}
+
+/* ▼ NEW RULE FOR THE SUBTEXT ▼ */
+.payment-terms {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 0.75rem;
 }
 
 #payment-message {
@@ -191,13 +212,12 @@ body {
     margin: 0.25rem 0 0;
 }
 
-/* Spinner / Loading State */
+/* Spinner / Loading State (No changes) */
 .spinner,
 .spinner:before,
 .spinner:after {
     border-radius: 50%;
 }
-
 .spinner {
     color: #ffffff;
     font-size: 22px;
@@ -209,13 +229,11 @@ body {
     box-shadow: inset 0 0 0 2px;
     transform: translateZ(0);
 }
-
 .spinner:before,
 .spinner:after {
     position: absolute;
     content: "";
 }
-
 .spinner:before {
     width: 10.4px;
     height: 20.4px;
@@ -226,7 +244,6 @@ body {
     transform-origin: 10.4px 10.2px;
     animation: loading 2s infinite ease 1.5s;
 }
-
 .spinner:after {
     width: 10.4px;
     height: 10.2px;
@@ -237,21 +254,13 @@ body {
     transform-origin: 0px 10.2px;
     animation: loading 2s infinite ease;
 }
-
 @keyframes loading {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
+.hidden { display: none; }
 
-.hidden {
-    display: none;
-}
-
-/* Responsive Styles */
+/* Responsive Styles (No changes) */
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
