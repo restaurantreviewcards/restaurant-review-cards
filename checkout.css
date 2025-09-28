@@ -143,11 +143,79 @@ body {
     line-height: 1.5;
 }
 
+/* --- Shipping Address Section --- */
+.shipping-section {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.shipping-section h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+#shipping-address-text p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text-dark);
+}
+
+.edit-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    text-decoration: underline;
+}
+
+.edit-btn.secondary {
+    color: var(--text-light);
+    text-decoration: none;
+    margin-top: 0;
+    margin-right: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* --- Form & Button Styles --- */
 #payment-form {
     margin-bottom: 1.5rem;
 }
 
-/* ▼ MODIFIED BUTTON STYLES FOR A MORE ENTICING LOOK ▼ */
 .pay-button {
     background: var(--primary-color);
     font-family: inherit;
@@ -178,7 +246,6 @@ body {
     box-shadow: none;
 }
 
-/* ▼ NEW RULE FOR THE SUBTEXT ▼ */
 .payment-terms {
     font-size: 0.85rem;
     color: var(--text-light);
@@ -212,7 +279,7 @@ body {
     margin: 0.25rem 0 0;
 }
 
-/* Spinner / Loading State (No changes) */
+/* Spinner / Loading State */
 .spinner,
 .spinner:before,
 .spinner:after {
@@ -260,7 +327,7 @@ body {
 }
 .hidden { display: none; }
 
-/* Responsive Styles (No changes) */
+/* Responsive Styles */
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
