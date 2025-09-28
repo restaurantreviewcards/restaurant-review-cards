@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const data = await response.json();
             
-            // Firestore timestamps have a _seconds property
-            const signupTime = new Date(data.signupTimestamp._seconds * 1000);
+            // Firestore timestamps have a _seconds property. Use the correct 'timestamp' property.
+            const signupTime = new Date(data.timestamp._seconds * 1000);
             
             // Calculate the 12-hour deadline based on the official signup time
             const targetTime = signupTime.getTime() + 12 * 60 * 60 * 1000;
