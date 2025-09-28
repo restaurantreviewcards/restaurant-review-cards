@@ -36,8 +36,9 @@ exports.handler = async (event) => {
 
         const signupDocRef = snapshot.docs[0].ref;
         
-        // Update the document with the new address
+        // Update the document with the new address, including the name
         await signupDocRef.update({
+            shippingRecipientName: address.name,
             googleAddressLine1: address.line1,
             googleAddressCity: address.city,
             googleAddressState: address.state,

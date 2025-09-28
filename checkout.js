@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const shippingAddressText = document.getElementById('shipping-address-text');
     const editAddressBtn = document.getElementById('edit-address-btn');
     const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    
+    const nameInput = document.getElementById('shipping-name');
     const line1Input = document.getElementById('shipping-line1');
     const cityInput = document.getElementById('shipping-city');
     const stateInput = document.getElementById('shipping-state');
@@ -32,6 +34,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             ${googleAddressLine1}<br>
             ${googleAddressCity}, ${googleAddressState} ${googleAddressZip}</p>
         `;
+        
+        nameInput.value = googlePlaceName;
         line1Input.value = googleAddressLine1;
         cityInput.value = googleAddressCity;
         stateInput.value = googleAddressState;
@@ -62,9 +66,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             body: JSON.stringify({ email, placeId }),
         });
         const data = await response.json();
+
+        if (!response.ok || !data.clientSecret) {
+            throw new Error(data.error || 'Failed to initialize payment.');
+        }
+
         elements = stripe.elements({ clientSecret: data.clientSecret });
         const paymentElement = elements.create("payment");
         paymentElement.mount("#payment-element");
+
     } catch (error) {
         console.error("Initialization error:", error);
         showMessage(error.message);
@@ -80,16 +90,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             // Step 1: Save the final shipping address to our database
             const finalAddress = {
+                name: nameInput.value,
                 line1: line1Input.value,
                 city: cityInput.value,
                 state: stateInput.value,
                 zip: zipInput.value
             };
-            await fetch('/.netlify/functions/update-shipping-address', {
+            
+            const updateResponse = await fetch('/.netlify/functions/update-shipping-address', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ placeId, address: finalAddress })
             });
+
+            if (!updateResponse.ok) {
+                throw new Error("Could not save shipping address. Please try again.");
+            }
 
             // Step 2: Confirm the payment with Stripe
             const { error } = await stripe.confirmSetup({
@@ -107,13 +123,31 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
         } catch (dbError) {
-            showMessage("Could not save shipping address. Please try again.");
+            showMessage(dbError.message);
         }
         
         setLoading(false);
     });
 
-    // UI Helper Functions
-    function setLoading(isLoading) { /* ... same as before ... */ }
-    function showMessage(messageText) { /* ... same as before ... */ }
+    // --- UI HELPER FUNCTIONS ---
+    function setLoading(isLoading) {
+        const submitBtn = document.getElementById("submit");
+        const spinner = document.getElementById("spinner");
+        const buttonText = document.getElementById("button-text");
+
+        submitBtn.disabled = isLoading;
+        spinner.classList.toggle("hidden", !isLoading);
+        buttonText.classList.toggle("hidden", isLoading);
+    }
+
+    function showMessage(messageText) {
+        const messageContainer = document.querySelector("#payment-message");
+        messageContainer.classList.remove("hidden");
+        messageContainer.textContent = messageText;
+
+        setTimeout(() => {
+            messageContainer.classList.add("hidden");
+            messageContainer.textContent = "";
+        }, 5000);
+    }
 });

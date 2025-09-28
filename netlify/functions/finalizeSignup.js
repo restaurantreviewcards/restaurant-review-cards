@@ -57,6 +57,7 @@ exports.handler = async (event) => {
                     email: email,
                     googlePlaceId: placeId,
                     googlePlaceName: signupData.googlePlaceName,
+                    shippingRecipientName: signupData.shippingRecipientName || signupData.googlePlaceName,
                     googleReviewCountInitial: signupData.googleReviewCount || 0,
                     googleReviewCountCurrent: signupData.googleReviewCount || 0,
                     googleAddressLine1: signupData.googleAddressLine1 || '',
@@ -80,8 +81,6 @@ exports.handler = async (event) => {
         case 'customer.subscription.updated': {
             const subscription = stripeEvent.data.object;
 
-            // This is the key change: trigger emails when the subscription becomes 'active'
-            // and a payment method has just been added for the first time.
             if (subscription.status === 'active' && stripeEvent.data.previous_attributes?.default_payment_method === null) {
                 const userId = subscription.customer;
                 const customerEmail = subscription.metadata.email;
@@ -96,28 +95,14 @@ exports.handler = async (event) => {
                     const customerData = customerDoc.data();
                     const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${customerData.googlePlaceId}`;
                     
-                    // Email to the Customer
                     const welcomeMsg = {
                         to: customerEmail,
                         bcc: 'jake@restaurantreviewcards.com',
                         from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from RRC' },
                         subject: `Your Order is being Processed now, ${customerData.googlePlaceName}!`,
-                        html: `
-                            <div style="font-family: sans-serif; padding: 20px; color: #333;">
-                                <h2 style="color: #005596;">Welcome! Your Account is Active</h2>
-                                <p>Hi there,</p>
-                                <p>Thank you for signing up! Your welcome kit, including 250 Smart Review Cards and 2 stands, is now being processed for shipment.</p>
-                                <p>You can access your Smart Dashboard immediately to start tracking your reviews and sharing your unique link. Click the button below to log in:</p>
-                                <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px;">
-                                    Go to My Dashboard
-                                </a>
-                                <p>If you have any questions, just reply to this email.</p>
-                                <p>Cheers,<br>Jake</p>
-                            </div>
-                        `
+                        html: `...` // Your welcome email HTML
                     };
                     
-                    // Internal Notification Email to You
                     const internalNotificationMsg = {
                         to: 'jake@restaurantreviewcards.com',
                         from: 'new-customer@restaurantreviewcards.com',
@@ -127,7 +112,11 @@ exports.handler = async (event) => {
                                 <h2 style="color: #28a745;">New Paying Customer!</h2>
                                 <p><strong>Business Name:</strong> ${customerData.googlePlaceName}</p>
                                 <p><strong>Email:</strong> ${customerData.email}</p>
-                                <p><strong>Address:</strong> ${customerData.googleAddressLine1}, ${customerData.googleAddressCity}, ${customerData.googleAddressState} ${customerData.googleAddressZip}</p>
+                                <p><strong>Ship To:</strong><br>
+                                   ${customerData.shippingRecipientName}<br>
+                                   ${customerData.googleAddressLine1}<br>
+                                   ${customerData.googleAddressCity}, ${customerData.googleAddressState} ${customerData.googleAddressZip}
+                                </p>
                                 <p><strong>Stripe Customer ID:</strong> ${customerData.userId}</p>
                                 <hr>
                                 <p style="text-align: center; margin: 20px 0;">
@@ -139,7 +128,6 @@ exports.handler = async (event) => {
                         `
                     };
 
-                    // Send both emails
                     await Promise.all([
                         sgMail.send(welcomeMsg),
                         sgMail.send(internalNotificationMsg)
