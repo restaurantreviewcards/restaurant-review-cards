@@ -80,12 +80,13 @@ exports.handler = async (event) => {
         case 'customer.subscription.updated': {
             const subscription = stripeEvent.data.object;
 
-            // This is the key change: trigger emails when the trial starts
-            if (subscription.status === 'trialing' && stripeEvent.data.previous_attributes?.status === 'incomplete') {
+            // This is the key change: trigger emails when the subscription becomes 'active'
+            // and a payment method has just been added for the first time.
+            if (subscription.status === 'active' && stripeEvent.data.previous_attributes?.default_payment_method === null) {
                 const userId = subscription.customer;
-                const customerEmail = subscription.metadata.email; // Get email from metadata
+                const customerEmail = subscription.metadata.email;
 
-                console.log('Subscription started trial, sending welcome email and internal notification...');
+                console.log('Subscription is now active, sending welcome email and internal notification...');
                 try {
                     const customerDoc = await db.collection('customers').doc(userId).get();
                     if (!customerDoc.exists) {
@@ -144,9 +145,9 @@ exports.handler = async (event) => {
                         sgMail.send(internalNotificationMsg)
                     ]);
                     
-                    console.log(`Emails sent successfully for new trialing customer ${userId}.`);
+                    console.log(`Emails sent successfully for new active customer ${userId}.`);
                 } catch (error) {
-                    console.error('Error sending emails for new trial:', error);
+                    console.error('Error sending emails for new active subscription:', error);
                 }
             }
             break;
