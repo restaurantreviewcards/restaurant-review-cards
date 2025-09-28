@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrcodeContainer = document.getElementById('qrcode-container');
     const downloadQrBtn = document.getElementById('download-qr-btn');
     const printQrBtn = document.getElementById('print-qr-btn');
-    const redeemCardsBtn = document.getElementById('redeem-cards-btn'); // New Button
+    const redeemCardsBtn = document.getElementById('redeem-cards-btn');
 
     // --- MAIN FUNCTION TO INITIALIZE DASHBOARD ---
     const initDashboard = async () => {
@@ -101,12 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const qrCanvas = qrcodeContainer.querySelector('canvas');
             if (qrCanvas) {
                 const imgData = qrCanvas.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.href = imgData;
-                link.download = `${restaurantNameEl.textContent.replace(/\s/g, '-')}-QRCode.png`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = imgData;
+                downloadLink.download = `${restaurantNameEl.textContent.replace(/\s/g, '-')}-QRCode.png`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
             } else {
                 alert('QR Code not ready for download. Please try again.');
             }
@@ -216,6 +216,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = `mailto:jake@restaurantreviewcards.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                 });
             }
+        }
+
+        // Info Icon functionality
+        const inviteInfoTrigger = document.getElementById('invite-info-trigger');
+        const inviteInfoText = document.getElementById('invite-info-text');
+
+        if (inviteInfoTrigger && inviteInfoText) {
+            inviteInfoTrigger.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevents click from bubbling up
+                inviteInfoText.classList.toggle('hidden');
+            });
         }
     };
 

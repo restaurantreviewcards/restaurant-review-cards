@@ -19,28 +19,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const populateSampleData = () => {
+        const params = new URLSearchParams(window.location.search);
         const name = params.get('name');
         const rating = parseFloat(params.get('rating'));
         const reviews = parseInt(params.get('reviews'));
 
         if (!name) return;
 
+        // --- Populate Business Names ---
         document.getElementById('business-name-header').textContent = name;
         document.querySelector('.business-name-preview').textContent = name;
-        document.getElementById('google-rating-value').textContent = rating.toFixed(1);
-        document.getElementById('google-review-count').textContent = `(${reviews.toLocaleString()})`;
         document.getElementById('mockup-business-name').textContent = name;
 
+        // --- Get DOM Elements for the Snapshot ---
+        const ratingValueEl = document.getElementById('google-rating-value');
         const starContainer = document.getElementById('star-rating-container');
-        if (starContainer) {
-            starContainer.innerHTML = '';
-            const fullStars = Math.floor(rating);
-            
-            for (let i = 0; i < 5; i++) {
-                if (i < fullStars) {
-                    starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Star Rating</title><path fill="#fbbc05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
-                } else {
-                    starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d8d8d8" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+        const reviewCountEl = document.getElementById('google-review-count');
+
+        // --- Logic to Handle Zero Reviews vs. Existing Reviews ---
+        if (!reviews || reviews === 0) {
+            // This is the zero-review case
+            if(ratingValueEl) ratingValueEl.textContent = 'No reviews yet';
+            if(starContainer) starContainer.innerHTML = ''; // Hide the stars
+            if(reviewCountEl) reviewCountEl.textContent = ''; // Hide the (0)
+        } else {
+            // This is the normal case for businesses with reviews
+            if(ratingValueEl) ratingValueEl.textContent = rating.toFixed(1);
+            if(reviewCountEl) reviewCountEl.textContent = `(${reviews.toLocaleString()})`;
+
+            if (starContainer) {
+                starContainer.innerHTML = '';
+                const fullStars = Math.floor(rating);
+                
+                for (let i = 0; i < 5; i++) {
+                    if (i < fullStars) {
+                        starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Star Rating</title><path fill="#fbbc05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+                    } else {
+                        starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d8d8d8" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+                    }
                 }
             }
         }
@@ -60,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- **UPDATED** COUNTDOWN TIMER SCRIPT ---
     const initCountdown = async () => {
         const hoursEl = document.getElementById('hours');
         const minutesEl = document.getElementById('minutes');
@@ -80,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // Fetch the official signup timestamp from our new serverless function
+            // Fetch the official signup timestamp from our serverless function
             const response = await fetch(`/.netlify/functions/get-signup-data?placeId=${placeId}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch signup data');
