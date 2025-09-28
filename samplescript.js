@@ -61,37 +61,65 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- **UPDATED** COUNTDOWN TIMER SCRIPT ---
-    const initCountdown = () => {
+    const initCountdown = async () => {
         const hoursEl = document.getElementById('hours');
         const minutesEl = document.getElementById('minutes');
         const secondsEl = document.getElementById('seconds');
-        const countdownTimerEl = document.querySelector('.countdown-timer'); // The whole clock
-        const bonusTextEl = document.querySelector('.bonus-reserved-text'); // The urgency text
+        const countdownTimerEl = document.querySelector('.countdown-timer');
+        const bonusTextEl = document.querySelector('.bonus-reserved-text');
 
         if (!countdownTimerEl || !bonusTextEl) return;
 
-        const formatTimeUnit = (unit) => String(unit).padStart(2, '0');
-        const twelveHoursFromNow = Date.now() + 12 * 60 * 60 * 1000;
+        const params = new URLSearchParams(window.location.search);
+        const placeId = params.get('placeId');
 
-        const updateTimer = setInterval(() => {
-            const distance = twelveHoursFromNow - Date.now();
-            
-            if (distance < 0) {
-                clearInterval(updateTimer);
-                // When the timer finishes, hide the clock and the text
-                countdownTimerEl.style.display = 'none';
-                bonusTextEl.style.display = 'none';
-                return;
+        if (!placeId) {
+            countdownTimerEl.style.display = 'none';
+            bonusTextEl.style.display = 'none';
+            return;
+        }
+
+        try {
+            // Fetch the official signup timestamp from our new serverless function
+            const response = await fetch(`/.netlify/functions/get-signup-data?placeId=${placeId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch signup data');
             }
+            const data = await response.json();
+            
+            // Firestore timestamps have a _seconds property
+            const signupTime = new Date(data.signupTimestamp._seconds * 1000);
+            
+            // Calculate the 12-hour deadline based on the official signup time
+            const targetTime = signupTime.getTime() + 12 * 60 * 60 * 1000;
 
-            const hours = Math.floor(distance / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const formatTimeUnit = (unit) => String(unit).padStart(2, '0');
 
-            hoursEl.textContent = formatTimeUnit(hours);
-            minutesEl.textContent = formatTimeUnit(minutes);
-            secondsEl.textContent = formatTimeUnit(seconds);
-        }, 1000);
+            const updateTimer = setInterval(() => {
+                const distance = targetTime - Date.now();
+                
+                if (distance < 0) {
+                    clearInterval(updateTimer);
+                    countdownTimerEl.style.display = 'none';
+                    bonusTextEl.style.display = 'none';
+                    return;
+                }
+
+                const hours = Math.floor(distance / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                hoursEl.textContent = formatTimeUnit(hours);
+                minutesEl.textContent = formatTimeUnit(minutes);
+                secondsEl.textContent = formatTimeUnit(seconds);
+            }, 1000);
+
+        } catch (error) {
+            console.error("Countdown Error:", error);
+            // If we can't get the official time, hide the timer to avoid confusion
+            countdownTimerEl.style.display = 'none';
+            bonusTextEl.style.display = 'none';
+        }
     };
     
     const initDashboardTabs = () => {
