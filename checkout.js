@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const email = params.get('email');
     const placeId = params.get('placeId');
 
+    // To be populated by our new serverless functions
+    let customerId;
+    let elements;
+
     // --- Shipping Address Elements ---
     const shippingDisplay = document.getElementById('shipping-display');
     const shippingEdit = document.getElementById('shipping-edit');
@@ -57,27 +61,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         shippingDisplay.classList.remove('hidden');
     });
 
-    // --- Stripe Elements Initialization ---
-    let elements;
+    // --- PHASE 1: Create a Setup Intent and initialize Stripe Elements ---
     try {
-        const response = await fetch("/.netlify/functions/create-payment-intent", {
+        const response = await fetch("/.netlify/functions/create-setup-intent", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, placeId }),
+            body: JSON.stringify({ email }),
         });
         const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
 
-        if (!response.ok || !data.clientSecret) {
-            throw new Error(data.error || 'Failed to initialize payment.');
-        }
-
+        customerId = data.customerId; // Save the customerId for Phase 2
         elements = stripe.elements({ clientSecret: data.clientSecret });
         const paymentElement = elements.create("payment");
         paymentElement.mount("#payment-element");
-
     } catch (error) {
         console.error("Initialization error:", error);
-        showMessage(error.message);
+        showMessage(error.message || "Could not initialize payment form.");
         document.getElementById("submit").disabled = true;
     }
 
@@ -87,8 +87,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.preventDefault();
         setLoading(true);
 
+        // First, save the latest shipping address to our database
         try {
-            // Step 1: Save the final shipping address to our database
             const finalAddress = {
                 name: nameInput.value,
                 line1: line1Input.value,
@@ -96,37 +96,55 @@ document.addEventListener("DOMContentLoaded", async () => {
                 state: stateInput.value,
                 zip: zipInput.value
             };
-            
             const updateResponse = await fetch('/.netlify/functions/update-shipping-address', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ placeId, address: finalAddress })
             });
-
-            if (!updateResponse.ok) {
-                throw new Error("Could not save shipping address. Please try again.");
-            }
-
-            // Step 2: Confirm the payment with Stripe
-            const { error } = await stripe.confirmSetup({
-                elements,
-                confirmParams: {
-                    return_url: `https://restaurantreviewcards.com/success.html?placeId=${placeId}`,
-                },
-            });
-
-            if (error) {
-                if (error.type === "card_error" || error.type === "validation_error") {
-                    showMessage(error.message);
-                } else {
-                    showMessage("An unexpected error occurred.");
-                }
-            }
+            if (!updateResponse.ok) throw new Error("Could not save shipping address.");
         } catch (dbError) {
             showMessage(dbError.message);
+            setLoading(false);
+            return;
         }
-        
-        setLoading(false);
+
+        // PHASE 2: Confirm the card setup on the frontend
+        const { error: setupError, setupIntent } = await stripe.confirmSetup({
+            elements,
+            redirect: 'if_required' // We handle the redirect ourselves
+        });
+
+        if (setupError) {
+            showMessage(setupError.message);
+            setLoading(false);
+            return;
+        }
+
+        // If card setup is successful, create the subscription on the backend
+        try {
+            const response = await fetch("/.netlify/functions/create-subscription", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    customerId: customerId,
+                    paymentMethodId: setupIntent.payment_method,
+                    placeId: placeId,
+                    email: email 
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Could not create subscription.');
+            }
+
+            // If subscription is successful, redirect to the success page
+            window.location.href = `/success.html?placeId=${placeId}`;
+
+        } catch (subError) {
+            showMessage(subError.message);
+            setLoading(false);
+        }
     });
 
     // --- UI HELPER FUNCTIONS ---
