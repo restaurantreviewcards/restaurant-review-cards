@@ -14,16 +14,13 @@ if (!admin.apps.length) {
   });
 }
 
-// NOTE: We will now get the db instance inside the handler.
-
 exports.handler = async (event) => {
-  // ▼ GET DB INSTANCE HERE FOR MORE ROBUST INITIALIZATION ▼
   const db = admin.firestore();
 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
-  //... The rest of your function code remains exactly the same
+
   try {
     const { email, placeId } = JSON.parse(event.body);
     const priceId = process.env.STRIPE_PRICE_ID;
@@ -66,24 +63,34 @@ exports.handler = async (event) => {
       }
     });
 
+    // ▼▼▼ THE FINAL, MOST ROBUST FIX STARTS HERE ▼▼▼
     let clientSecret;
 
     if (subscription.pending_setup_intent) {
+        // This handles free trials or $0 plans
         clientSecret = subscription.pending_setup_intent.client_secret;
-    } else if (subscription.latest_invoice) {
-        const latestInvoiceId = subscription.latest_invoice;
-        const invoice = await stripe.invoices.retrieve(latestInvoiceId, {
-            expand: ['payment_intent']
-        });
 
-        if (invoice.payment_intent && invoice.payment_intent.client_secret) {
-            clientSecret = invoice.payment_intent.client_secret;
-        } else {
-             throw new Error('Could not find a Payment Intent on the latest invoice.');
+    } else if (subscription.latest_invoice) {
+        // For paid plans, we get the invoice ID from the subscription
+        const latestInvoiceId = subscription.latest_invoice;
+
+        // Then, we retrieve the full Invoice object
+        const invoice = await stripe.invoices.retrieve(latestInvoiceId);
+
+        // The invoice contains the ID of the Payment Intent
+        const paymentIntentId = invoice.payment_intent;
+        if (!paymentIntentId) {
+            throw new Error('Invoice is missing a Payment Intent ID.');
         }
+
+        // Finally, we retrieve the full Payment Intent object to get its client_secret
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+        clientSecret = paymentIntent.client_secret;
+
     } else {
         throw new Error('Could not find a client_secret for the subscription.');
     }
+    // ▲▲▲ THE FINAL, MOST ROBUST FIX ENDS HERE ▲▲▲
 
     return {
       statusCode: 200,
