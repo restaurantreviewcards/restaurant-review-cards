@@ -44,7 +44,6 @@ exports.handler = async (event) => {
     });
 
     // --- LOGIC MOVED FROM WEBHOOK TO HERE ---
-    // 1. Get the initial signup data
     const signupsRef = db.collection('signups');
     const snapshot = await signupsRef.where('googlePlaceId', '==', placeId).orderBy('timestamp', 'desc').limit(1).get();
     if (snapshot.empty) {
@@ -52,10 +51,9 @@ exports.handler = async (event) => {
     }
     const signupData = snapshot.docs[0].data();
 
-    // 2. Create the permanent customer data object
     const customerData = {
         userId: customerId,
-        email: email,
+        email: email, // The email from the original request
         googlePlaceId: placeId,
         googlePlaceName: signupData.googlePlaceName,
         shippingRecipientName: signupData.shippingRecipientName || signupData.googlePlaceName,
@@ -71,22 +69,62 @@ exports.handler = async (event) => {
         subscriptionStatus: 'active',
     };
 
-    // 3. Save the new customer record to the 'customers' collection
     await db.collection('customers').doc(customerId).set(customerData);
     console.log(`Successfully created customer profile for ${customerId}.`);
 
-    // 4. Send the welcome and notification emails
     const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${customerData.googlePlaceId}`;
 
-    const welcomeMsg = { /* ... your full welcome email object ... */ };
-    const internalNotificationMsg = { /* ... your full internal notification email object ... */ };
+    const welcomeMsg = {
+        // ▼ THE FIX IS HERE ▼
+        // Use the email from the customerData object we just saved, which is more reliable.
+        to: customerData.email,
+        bcc: 'jake@restaurantreviewcards.com',
+        from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from RRC' },
+        subject: `Your Order is being Processed now, ${customerData.googlePlaceName}!`,
+        html: `
+            <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                <h2 style="color: #005596;">Welcome! Your Account is Active</h2>
+                <p>Hi there,</p>
+                <p>Thank you for signing up! Your welcome kit, including 250 Smart Review Cards and 2 stands, is now being processed for shipment.</p>
+                <p>You can access your Smart Dashboard immediately. Click the button below to log in:</p>
+                <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px;">
+                    Go to My Dashboard
+                </a>
+                <p>If you have any questions, just reply to this email.</p>
+                <p>Cheers,<br>Jake</p>
+            </div>
+        `
+    };
+
+    const internalNotificationMsg = {
+        to: 'jake@restaurantreviewcards.com',
+        from: 'new-customer@restaurantreviewcards.com',
+        subject: `✅ New Customer Signup: ${customerData.googlePlaceName}`,
+        html: `
+            <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                <h2 style="color: #28a745;">New Paying Customer!</h2>
+                <p><strong>Business Name:</strong> ${customerData.googlePlaceName}</p>
+                <p><strong>Email:</strong> ${customerData.email}</p>
+                <p><strong>Ship To:</strong><br>
+                   ${customerData.shippingRecipientName}<br>
+                   ${customerData.googleAddressLine1}<br>
+                   ${customerData.googleAddressCity}, ${customerData.googleAddressState} ${customerData.googleAddressZip}
+                </p>
+                <p><strong>Stripe Customer ID:</strong> ${customerData.userId}</p>
+                <hr>
+                <p style="text-align: center; margin: 20px 0;">
+                    <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block;">
+                        View Customer Dashboard
+                    </a>
+                </p>
+            </div>
+        `
+    };
 
     await Promise.all([
         sgMail.send(welcomeMsg),
         sgMail.send(internalNotificationMsg)
     ]);
-    console.log(`Emails sent successfully for new customer ${customerId}.`);
-    // --- END OF MOVED LOGIC ---
 
     return {
       statusCode: 200,
