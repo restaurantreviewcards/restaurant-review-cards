@@ -27,19 +27,13 @@ exports.handler = async (event) => {
     const { customerId, paymentMethodId, placeId, email } = JSON.parse(event.body);
     const priceId = process.env.STRIPE_PRICE_ID;
 
-    // Attach the payment method to the customer
-    await stripe.paymentMethods.attach(paymentMethodId, {
-      customer: customerId,
-    });
-
-    // Set it as the default for the customer's invoices
+    // Attach the payment method and set it as the default
+    await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId });
     await stripe.customers.update(customerId, {
-      invoice_settings: {
-        default_payment_method: paymentMethodId,
-      },
+      invoice_settings: { default_payment_method: paymentMethodId },
     });
 
-    // Create the subscription
+    // Create the Stripe subscription
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
@@ -49,66 +43,50 @@ exports.handler = async (event) => {
       }
     });
 
-    // --- SEND EMAILS IMMEDIATELY AFTER SUBSCRIPTION IS CREATED ---
-    const customerDoc = await db.collection('customers').doc(customerId).get();
-    if (!customerDoc.exists) {
-        throw new Error('Customer record not found for sending emails.');
+    // --- LOGIC MOVED FROM WEBHOOK TO HERE ---
+    // 1. Get the initial signup data
+    const signupsRef = db.collection('signups');
+    const snapshot = await signupsRef.where('googlePlaceId', '==', placeId).orderBy('timestamp', 'desc').limit(1).get();
+    if (snapshot.empty) {
+        throw new Error(`Critical: No matching signup document found for placeId: ${placeId}`);
     }
+    const signupData = snapshot.docs[0].data();
 
-    const customerData = customerDoc.data();
+    // 2. Create the permanent customer data object
+    const customerData = {
+        userId: customerId,
+        email: email,
+        googlePlaceId: placeId,
+        googlePlaceName: signupData.googlePlaceName,
+        shippingRecipientName: signupData.shippingRecipientName || signupData.googlePlaceName,
+        googleReviewCountInitial: signupData.googleReviewCount || 0,
+        googleReviewCountCurrent: signupData.googleReviewCount || 0,
+        googleAddressLine1: signupData.googleAddressLine1 || '',
+        googleAddressCity: signupData.googleAddressCity || '',
+        googleAddressState: signupData.googleAddressState || '',
+        googleAddressZip: signupData.googleAddressZip || '',
+        reviewInvitesSent: 0,
+        signupDate: new Date(),
+        lastRedemptionDate: null,
+        subscriptionStatus: 'active',
+    };
+
+    // 3. Save the new customer record to the 'customers' collection
+    await db.collection('customers').doc(customerId).set(customerData);
+    console.log(`Successfully created customer profile for ${customerId}.`);
+
+    // 4. Send the welcome and notification emails
     const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${customerData.googlePlaceId}`;
 
-    // Email to the Customer
-    const welcomeMsg = {
-        to: email,
-        bcc: 'jake@restaurantreviewcards.com',
-        from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from RRC' },
-        subject: `Your Order is being Processed now, ${customerData.googlePlaceName}!`,
-        html: `
-            <div style="font-family: sans-serif; padding: 20px; color: #333;">
-                <h2 style="color: #005596;">Welcome! Your Account is Active</h2>
-                <p>Hi there,</p>
-                <p>Thank you for signing up! Your welcome kit, including 250 Smart Review Cards and 2 stands, is now being processed for shipment.</p>
-                <p>You can access your Smart Dashboard immediately. Click the button below to log in:</p>
-                <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px;">
-                    Go to My Dashboard
-                </a>
-                <p>If you have any questions, just reply to this email.</p>
-                <p>Cheers,<br>Jake</p>
-            </div>
-        `
-    };
-
-    // Internal Notification Email
-    const internalNotificationMsg = {
-        to: 'jake@restaurantreviewcards.com',
-        from: 'new-customer@restaurantreviewcards.com',
-        subject: `✅ New Customer Signup: ${customerData.googlePlaceName}`,
-        html: `
-            <div style="font-family: sans-serif; padding: 20px; color: #333;">
-                <h2 style="color: #28a745;">New Paying Customer!</h2>
-                <p><strong>Business Name:</strong> ${customerData.googlePlaceName}</p>
-                <p><strong>Email:</strong> ${customerData.email}</p>
-                <p><strong>Ship To:</strong><br>
-                   ${customerData.shippingRecipientName}<br>
-                   ${customerData.googleAddressLine1}<br>
-                   ${customerData.googleAddressCity}, ${customerData.googleAddressState} ${customerData.googleAddressZip}
-                </p>
-                <p><strong>Stripe Customer ID:</strong> ${customerData.userId}</p>
-                <hr>
-                <p style="text-align: center; margin: 20px 0;">
-                    <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block;">
-                        View Customer Dashboard
-                    </a>
-                </p>
-            </div>
-        `
-    };
+    const welcomeMsg = { /* ... your full welcome email object ... */ };
+    const internalNotificationMsg = { /* ... your full internal notification email object ... */ };
 
     await Promise.all([
         sgMail.send(welcomeMsg),
         sgMail.send(internalNotificationMsg)
     ]);
+    console.log(`Emails sent successfully for new customer ${customerId}.`);
+    // --- END OF MOVED LOGIC ---
 
     return {
       statusCode: 200,
