@@ -57,20 +57,21 @@ exports.handler = async (event) => {
       items: [{ price: priceId }],
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.payment_intent', 'pending_setup_intent'], // Expand both possible objects
+      expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
       metadata: {
         placeId: placeId,
         email: email
       }
     });
 
-    // ▼ NEW LOGIC TO GET THE CORRECT CLIENT SECRET ▼
+    // ▼▼▼ THIS IS THE TEMPORARY DEBUGGING STEP ▼▼▼
+    console.log("Full Stripe Subscription Object:", JSON.stringify(subscription, null, 2));
+    // ▲▲▲ END DEBUGGING STEP ▲▲▲
+
     let clientSecret;
     if (subscription.pending_setup_intent) {
-        // This handles free trials or $0 plans
         clientSecret = subscription.pending_setup_intent.client_secret;
     } else if (subscription.latest_invoice && subscription.latest_invoice.payment_intent) {
-        // This handles paid plans that require immediate payment
         clientSecret = subscription.latest_invoice.payment_intent.client_secret;
     } else {
         throw new Error('Could not find a client_secret for the subscription.');
