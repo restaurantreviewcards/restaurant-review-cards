@@ -57,48 +57,22 @@ exports.handler = async (event) => {
       items: [{ price: priceId }],
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'], // We ask to expand the payment intent
       metadata: {
         placeId: placeId,
         email: email
       }
     });
 
-    // ▼▼▼ THE FINAL, MOST ROBUST FIX STARTS HERE ▼▼▼
-    let clientSecret;
+    // ▼▼▼ THIS IS THE ONLY THING WE NEED RIGHT NOW ▼▼▼
+    console.log("Full Stripe Subscription Object:", JSON.stringify(subscription, null, 2));
 
-    if (subscription.pending_setup_intent) {
-        // This handles free trials or $0 plans
-        clientSecret = subscription.pending_setup_intent.client_secret;
-
-    } else if (subscription.latest_invoice) {
-        // For paid plans, we get the invoice ID from the subscription
-        const latestInvoiceId = subscription.latest_invoice;
-
-        // Then, we retrieve the full Invoice object
-        const invoice = await stripe.invoices.retrieve(latestInvoiceId);
-
-        // The invoice contains the ID of the Payment Intent
-        const paymentIntentId = invoice.payment_intent;
-        if (!paymentIntentId) {
-            throw new Error('Invoice is missing a Payment Intent ID.');
-        }
-
-        // Finally, we retrieve the full Payment Intent object to get its client_secret
-        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-        clientSecret = paymentIntent.client_secret;
-
-    } else {
-        throw new Error('Could not find a client_secret for the subscription.');
-    }
-    // ▲▲▲ THE FINAL, MOST ROBUST FIX ENDS HERE ▲▲▲
-
+    // This will cause an error on the page, which is expected for this test.
     return {
-      statusCode: 200,
-      body: JSON.stringify({
-        subscriptionId: subscription.id,
-        clientSecret: clientSecret,
-      }),
+        statusCode: 500,
+        body: JSON.stringify({ error: "Diagnostic step complete. Check Netlify logs." })
     };
+    // ▲▲▲ END OF DIAGNOSTIC CODE ▲▲▲
     
   } catch (error) {
     console.error('Stripe Subscription Error:', error);
