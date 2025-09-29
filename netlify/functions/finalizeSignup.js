@@ -2,12 +2,12 @@
 
 const admin = require('firebase-admin');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const sgMail = require('@sendgrid/mail');
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// No longer need sgMail here
+// const sgMail = require('@sendgrid/mail');
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -78,81 +78,7 @@ exports.handler = async (event) => {
             break;
         }
 
-        case 'customer.subscription.updated': {
-            const subscription = stripeEvent.data.object;
-
-            if (subscription.status === 'active' && stripeEvent.data.previous_attributes?.default_payment_method === null) {
-                const userId = subscription.customer;
-                const customerEmail = subscription.metadata.email;
-
-                console.log('Subscription is now active, sending welcome email and internal notification...');
-                try {
-                    const customerDoc = await db.collection('customers').doc(userId).get();
-                    if (!customerDoc.exists) {
-                        throw new Error('Customer record not found for sending emails.');
-                    }
-
-                    const customerData = customerDoc.data();
-                    const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${customerData.googlePlaceId}`;
-                    
-                    const welcomeMsg = {
-                        to: customerEmail,
-                        bcc: 'jake@restaurantreviewcards.com',
-                        from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from RRC' },
-                        subject: `Your Order is being Processed now, ${customerData.googlePlaceName}!`,
-                        // ▼ THIS HTML BLOCK IS NOW CORRECT ▼
-                        html: `
-                            <div style="font-family: sans-serif; padding: 20px; color: #333;">
-                                <h2 style="color: #005596;">Welcome! Your Account is Active</h2>
-                                <p>Hi there,</p>
-                                <p>Thank you for signing up! Your welcome kit, including 250 Smart Review Cards and 2 stands, is now being processed for shipment.</p>
-                                <p>You can access your Smart Dashboard immediately to start tracking your reviews and sharing your unique link. Click the button below to log in:</p>
-                                <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px;">
-                                    Go to My Dashboard
-                                </a>
-                                <p>If you have any questions, just reply to this email.</p>
-                                <p>Cheers,<br>Jake</p>
-                            </div>
-                        `
-                    };
-                    
-                    const internalNotificationMsg = {
-                        to: 'jake@restaurantreviewcards.com',
-                        from: 'new-customer@restaurantreviewcards.com',
-                        subject: `✅ New Customer Signup: ${customerData.googlePlaceName}`,
-                        html: `
-                            <div style="font-family: sans-serif; padding: 20px; color: #333;">
-                                <h2 style="color: #28a745;">New Paying Customer!</h2>
-                                <p><strong>Business Name:</strong> ${customerData.googlePlaceName}</p>
-                                <p><strong>Email:</strong> ${customerData.email}</p>
-                                <p><strong>Ship To:</strong><br>
-                                   ${customerData.shippingRecipientName}<br>
-                                   ${customerData.googleAddressLine1}<br>
-                                   ${customerData.googleAddressCity}, ${customerData.googleAddressState} ${customerData.googleAddressZip}
-                                </p>
-                                <p><strong>Stripe Customer ID:</strong> ${customerData.userId}</p>
-                                <hr>
-                                <p style="text-align: center; margin: 20px 0;">
-                                    <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block;">
-                                        View Customer Dashboard
-                                    </a>
-                                </p>
-                            </div>
-                        `
-                    };
-
-                    await Promise.all([
-                        sgMail.send(welcomeMsg),
-                        sgMail.send(internalNotificationMsg)
-                    ]);
-                    
-                    console.log(`Emails sent successfully for new active customer ${userId}.`);
-                } catch (error) {
-                    console.error('Error sending emails for new active subscription:', error);
-                }
-            }
-            break;
-        }
+        // The 'customer.subscription.updated' case for sending emails is now REMOVED.
 
         case 'customer.subscription.deleted': {
             const deletedSubscription = stripeEvent.data.object;
