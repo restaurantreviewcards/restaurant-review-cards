@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const email = params.get('email');
     const placeId = params.get('placeId');
 
-    // To be populated by our new serverless functions
     let customerId;
     let elements;
 
@@ -71,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error);
 
-        customerId = data.customerId; // Save the customerId for Phase 2
+        customerId = data.customerId;
         elements = stripe.elements({ clientSecret: data.clientSecret });
         const paymentElement = elements.create("payment");
         paymentElement.mount("#payment-element");
@@ -87,7 +86,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.preventDefault();
         setLoading(true);
 
-        // First, save the latest shipping address to our database
         try {
             const finalAddress = {
                 name: nameInput.value,
@@ -108,11 +106,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        // PHASE 2: Confirm the card setup on the frontend
+        // ▼▼▼ THE FIX IS HERE ▼▼▼
+        // We remove the 'confirmParams' block entirely, as it's not needed when redirect is 'if_required'.
         const { error: setupError, setupIntent } = await stripe.confirmSetup({
             elements,
-            redirect: 'if_required' // We handle the redirect ourselves
+            redirect: 'if_required'
         });
+        // ▲▲▲ END OF FIX ▲▲▲
 
         if (setupError) {
             showMessage(setupError.message);
@@ -120,7 +120,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        // If card setup is successful, create the subscription on the backend
         try {
             const response = await fetch("/.netlify/functions/create-subscription", {
                 method: "POST",
@@ -138,7 +137,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 throw new Error(data.error || 'Could not create subscription.');
             }
 
-            // If subscription is successful, redirect to the success page
             window.location.href = `/success.html?placeId=${placeId}`;
 
         } catch (subError) {
