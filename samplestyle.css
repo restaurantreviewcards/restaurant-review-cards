@@ -1,3 +1,4 @@
+/* --- CUSTOM FONT DEFINITION --- */
 @font-face {
     font-family: 'Manrope';
     src: url('Manrope-Regular.ttf') format('truetype');
@@ -790,4 +791,89 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     .offer-accordion, .offer-accordion[open] { border: none; margin-bottom: 0; background: transparent; }
     .accordion-summary h2 { text-align: center; margin-bottom: 1.5rem; font-size: 1.8rem; }
     .accordion-content { padding: 0; border-top: none; }
+}
+
+/* --- NEW STYLES FOR FREE TRIAL CTA --- */
+/* Add these to the end of samplestyle.css */
+
+.final-offer-card {
+    position: relative; /* Required for badge positioning */
+    overflow: hidden;   /* Required for badge positioning */
+}
+
+.plan-badge {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    background-color: var(--success-green);
+    color: var(--white);
+    padding: 6px 100px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transform: rotate(45deg) translate(25%, -55%);
+    transform-origin: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.price-trial {
+    margin: 1.5rem 0 0.5rem;
+}
+
+.price-trial .price-main {
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--primary-color);
+    display: block;
+}
+
+.price-trial .price-sub {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.price-followup {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 2rem;
+}
+
+.welcome-kit-highlight {
+    background-color: var(--background-light);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: left;
+}
+
+.welcome-kit-highlight h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+    font-size: 1.2rem;
+}
+
+.welcome-kit-highlight p {
+    margin-bottom: 0;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.includes-text {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.cta-section .features-list {
+    display: inline-block;
+    text-align: left;
+    margin-bottom: 1rem;
 }
