@@ -95,7 +95,7 @@ section { padding: 40px 20px; }
     box-shadow: 0 4px 15px rgba(40,167,69,0.3);
     font-size: 1.2rem;
     padding: 18px 36px;
-    margin-top: 2.5rem;
+    margin-top: 1.5rem; /* CORRECTED: Reduced margin for better spacing */
 }
 .btn-success:hover {
     transform: translateY(-2px);
@@ -656,6 +656,7 @@ section { padding: 40px 20px; }
     box-shadow: 0 8px 30px rgba(0,0,0,0.08);
     border-radius: 16px;
     padding: 2rem;
+    text-align: center; /* CORRECTED: Ensures content inside is centered */
 }
 .offer-content-grid { display: flex; flex-direction: column; gap: 2rem; }
 .final-offer-card h2 { font-size: 1.8rem; }
@@ -877,3 +878,4 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     text-align: left;
     margin-bottom: 1rem;
 }
+
