@@ -95,7 +95,7 @@ section { padding: 40px 20px; }
     box-shadow: 0 4px 15px rgba(40,167,69,0.3);
     font-size: 1.2rem;
     padding: 18px 36px;
-    margin-top: 1.5rem; /* CORRECTED: Reduced margin for better spacing */
+    margin-top: 1.5rem;
 }
 .btn-success:hover {
     transform: translateY(-2px);
@@ -656,7 +656,7 @@ section { padding: 40px 20px; }
     box-shadow: 0 8px 30px rgba(0,0,0,0.08);
     border-radius: 16px;
     padding: 2rem;
-    text-align: center; /* CORRECTED: Ensures content inside is centered */
+    text-align: center; 
 }
 .offer-content-grid { display: flex; flex-direction: column; gap: 2rem; }
 .final-offer-card h2 { font-size: 1.8rem; }
@@ -672,10 +672,7 @@ section { padding: 40px 20px; }
 .offer-divider { border: none; border-top: 1px solid var(--border-color); margin: 0; }
 .bonus-section { text-align: center; }
 .bonus-section h3 { color: var(--primary-color); }
-.countdown-timer { display: flex; justify-content: center; gap: 1rem; margin: 1rem 0; }
-.timer-box { background: var(--background-light); padding: 0.5rem 1rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.timer-time { font-size: 2.5rem; font-weight: 700; color: var(--text-dark); }
-.timer-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-light); }
+
 .risk-free-text { margin-top: 1rem; font-size: 0.9rem; }
 .final-testimonial { margin-top: 3rem; }
 
@@ -849,7 +846,7 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     border-radius: 8px;
     padding: 1.5rem;
     margin: 2rem 0;
-    text-align: left;
+    text-align: center;
 }
 
 .welcome-kit-highlight h3 {
@@ -860,9 +857,45 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
 }
 
 .welcome-kit-highlight p {
-    margin-bottom: 0;
+    margin-bottom: 1.5rem;
     color: var(--text-light);
     font-size: 0.95rem;
+    text-align: center;
+}
+
+.bonus-reserved-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin: 1.5rem auto 1rem;
+    max-width: 350px;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.timer-box {
+    background: var(--white);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+}
+
+.timer-time {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.timer-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-light);
 }
 
 .includes-text {
@@ -878,4 +911,3 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     text-align: left;
     margin-bottom: 1rem;
 }
-
