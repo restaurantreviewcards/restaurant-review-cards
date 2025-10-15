@@ -181,8 +181,8 @@ section { padding: 40px 20px; }
 
 /* --- Special Google Word Styling --- */
 .google-word {
-    font-family: 'Manrope', sans-serif; /* Use Manrope, with fallback */
-    font-weight: 700; /* Make it bold to match headline */
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
 }
 .google-g-blue { color: #4285F4; }
 .google-o-red { color: #EA4335; }
@@ -350,7 +350,7 @@ section { padding: 40px 20px; }
     opacity: 0;
     transform: translateY(20px);
     animation: fadeInUp 0.6s ease-out forwards;
-    animation-delay: 0.2s; /* Start animation slightly after page load */
+    animation-delay: 0.2s;
 }
 
 @keyframes fadeInUp {
@@ -425,7 +425,7 @@ section { padding: 40px 20px; }
     cursor: pointer;
 }
 .mockup-aspect:hover {
-    background-color: #e8f0fe; /* Google's blue hover color */
+    background-color: #e8f0fe;
     border-color: #d2e3fc;
 }
 
@@ -445,7 +445,7 @@ section { padding: 40px 20px; }
     transition: background-color 0.2s;
 }
 .mockup-button-action:hover {
-    background-color: #1a73e8; /* Darker Google blue */
+    background-color: #1a73e8;
 }
 
 .mockup-disclaimer {
@@ -459,7 +459,7 @@ section { padding: 40px 20px; }
     opacity: 0;
     transform: translateY(10px);
     animation: fadeInUp 0.5s ease-out forwards;
-    animation-delay: 0.4s; /* Delay slightly more than the mockup itself */
+    animation-delay: 0.4s;
 }
 
 /* --- DASHBOARD PREVIEW MODULE --- */
@@ -528,20 +528,18 @@ section { padding: 40px 20px; }
     gap: 1rem;
     margin-bottom: 1.5rem;
 }
-/* --- UPDATED Dashboard Metric Styles --- */
 .metric-card {
     background: linear-gradient(180deg, var(--white) 0%, var(--background-light) 100%);
     padding: 1.5rem;
-    border-radius: 16px; /* Larger radius for a softer look */
+    border-radius: 16px;
     border: 1px solid var(--border-color);
     flex: 1;
     width: 100%;
     transition: all 0.3s ease;
-    /* Use Flexbox to center content */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.25rem; /* Space between elements */
+    gap: 0.25rem;
     box-shadow: 0 4px 15px rgba(0, 85, 150, 0.05);
 }
 .metric-card:hover {
@@ -549,33 +547,31 @@ section { padding: 40px 20px; }
     box-shadow: 0 8px 25px rgba(0, 85, 150, 0.1);
 }
 .metric-header {
-    /* This is the key trick: stack elements vertically with the icon on top */
     display: flex;
-    flex-direction: column-reverse; /* Reverses order, putting icon above number */
+    flex-direction: column-reverse;
     align-items: center;
-    gap: 0.75rem; /* Space between icon and number */
+    gap: 0.75rem;
     padding-bottom: 0.5rem;
 }
 .metric-icon {
-    color: var(--primary-color); /* Use brand color for the icon */
+    color: var(--primary-color);
     opacity: 0.9;
 }
-/* Ensure the icon's SVG is a bit larger */
 .metric-icon svg {
     width: 28px;
     height: 28px;
 }
 .metric-value {
-    font-size: 3rem; /* Slightly larger number */
+    font-size: 3rem;
     font-weight: 700;
     color: var(--primary-color);
-    line-height: 1; /* Tighter line height */
+    line-height: 1;
 }
 .metric-label {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-light);
-    margin-top: 0; /* Remove default margin */
+    margin-top: 0;
 }
 .flow-arrow { display: none; }
 .explanation-text { font-size: 0.9rem; color: var(--text-light); max-width: 320px; margin: 0 auto 2rem; }
@@ -656,7 +652,7 @@ section { padding: 40px 20px; }
     box-shadow: 0 8px 30px rgba(0,0,0,0.08);
     border-radius: 16px;
     padding: 2rem;
-    text-align: center; 
+    text-align: center;
 }
 .offer-content-grid { display: flex; flex-direction: column; gap: 2rem; }
 .final-offer-card h2 { font-size: 1.8rem; }
@@ -694,7 +690,7 @@ section { padding: 40px 20px; }
 }
 .bonus-image-container .bonus-qr-code {
     position: absolute;
-    top: 54.5%; /* Adjusted for better vertical alignment */
+    top: 54.5%;
     left: 35.4%;
     transform: translate(-50%, -50%) rotate(-2deg);
     width: 75px;
@@ -747,7 +743,7 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
         display: flex;
     }
     body {
-        padding-bottom: 80px; /* Prevents the bar from covering the footer */
+        padding-bottom: 80px;
     }
 }
 
@@ -791,12 +787,10 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     .accordion-content { padding: 0; border-top: none; }
 }
 
-/* --- NEW STYLES FOR FREE TRIAL CTA --- */
-/* Add these to the end of samplestyle.css */
-
+/* --- NEW STYLES FOR FREE TRIAL CTA & BONUS --- */
 .final-offer-card {
-    position: relative; /* Required for badge positioning */
-    overflow: hidden;   /* Required for badge positioning */
+    position: relative;
+    overflow: hidden;
 }
 
 .plan-badge {
@@ -839,7 +833,7 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     margin-bottom: 2rem;
 }
 
-.welcome-kit-highlight {
+.bonus-highlight-box {
     background-color: var(--background-light);
     border: 1px solid var(--border-color);
     border-left: 4px solid var(--primary-color);
@@ -849,18 +843,20 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     text-align: center;
 }
 
-.welcome-kit-highlight h3 {
+.bonus-highlight-box h3 {
     margin-top: 0;
     margin-bottom: 0.5rem;
     color: var(--text-dark);
     font-size: 1.2rem;
 }
 
-.welcome-kit-highlight p {
-    margin-bottom: 1.5rem;
+.bonus-highlight-box p {
     color: var(--text-light);
     font-size: 0.95rem;
-    text-align: center;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
 }
 
 .bonus-reserved-text {
@@ -901,7 +897,7 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
 .includes-text {
     font-weight: 600;
     color: var(--text-dark);
-    margin-bottom: 1.5rem;
+    margin: 2rem 0 1.5rem;
     font-size: 1rem;
     text-align: center;
 }
