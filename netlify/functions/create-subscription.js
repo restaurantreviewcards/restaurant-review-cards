@@ -48,7 +48,7 @@ exports.handler = async (event) => {
         const subscription = await stripe.subscriptions.create({
             customer: customerId,
             items: [{ price: priceId }],
-            trial_period_days: 30, // The critical update for the free trial
+            trial_period_days: 30,
             payment_behavior: 'default_incomplete',
             expand: ['latest_invoice.payment_intent'],
         });
@@ -62,13 +62,19 @@ exports.handler = async (event) => {
         }
         const signupData = signupSnapshot.docs[0].data();
 
-        // Create the final customer data object using the efficient spread operator
+        // Create the final customer data object
         const customerData = {
             userId: customerId,
             email: email.toLowerCase(),
             subscriptionId: subscription.id,
             subscriptionStatus: 'active', // A subscription is 'active' during its trial period
             ...signupData, // Copies all fields from the signup doc (name, address, etc.)
+            
+            // THE FIX: Explicitly create the initial and current review count fields
+            // that the dashboard expects, using the value from the signup document.
+            googleReviewCountInitial: signupData.googleReviewCount || 0,
+            googleReviewCountCurrent: signupData.googleReviewCount || 0,
+
             reviewInvitesSent: 0,
             signupDate: admin.firestore.FieldValue.serverTimestamp(),
             lastRedemptionDate: null,
@@ -79,7 +85,7 @@ exports.handler = async (event) => {
 
         const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${customerData.googlePlaceId}`;
 
-        // Restore the detailed welcome email
+        // Send the detailed welcome email to the customer
         const welcomeMsg = {
             to: customerData.email,
             from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from ReviewCards' },
@@ -99,7 +105,7 @@ exports.handler = async (event) => {
             `
         };
 
-        // Restore the internal notification email for you
+        // Send the internal notification email to you
         const internalNotificationMsg = {
             to: 'jake@restaurantreviewcards.com',
             from: { email: 'new-trial@restaurantreviewcards.com', name: 'New Trial Signup' },
@@ -144,4 +150,3 @@ exports.handler = async (event) => {
         };
     }
 };
-
