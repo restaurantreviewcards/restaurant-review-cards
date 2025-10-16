@@ -68,16 +68,29 @@
                         <button type="button" id="cancel-edit-btn" class="edit-btn secondary">Cancel</button>
                     </div>
                 </div>
+
+                <div class="trial-summary">
+                    <h3>Trial Plan Summary</h3>
+                    <div class="summary-row">
+                        <span>Today's Charge:</span>
+                        <span class="price-today">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>First Billing Date:</span>
+                        <span id="first-billing-date">30 days from today</span>
+                    </div>
+                </div>
                 
                 <div id="payment-element">
+                    <!-- Stripe Element will be mounted here -->
                     </div>
 
                 <button id="submit" class="pay-button">
-                    <span id="button-text">Activate Now & Get My Welcome Kit</span>
+                    <span id="button-text">Start My Free Trial & Get My Welcome Kit</span>
                     <div class="spinner hidden" id="spinner"></div>
                 </button>
                 
-                <p class="payment-terms">🔒 $20 / month. No Contract. Cancel anytime.</p>
+                <p class="payment-terms">🔒 You will not be charged for 30 days. Cancel anytime.</p>
 
                 <div id="payment-message" class="hidden"></div>
             </form>

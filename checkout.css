@@ -344,3 +344,38 @@ body {
         font-size: 1.6rem;
     }
 }
+
+/* --- NEW TRIAL SUMMARY STYLES --- */
+.trial-summary {
+    background-color: var(--bonus-background);
+    border: 1px solid var(--bonus-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+}
+
+.trial-summary h3 {
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.summary-row span:last-child {
+    font-weight: 700;
+}
+
+.summary-row .price-today {
+    color: var(--success-green);
+}
