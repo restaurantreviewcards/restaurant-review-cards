@@ -3,6 +3,9 @@
 const admin = require('firebase-admin');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const sgMail = require('@sendgrid/mail'); // ADDED: SendGrid dependency
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY); // ADDED: Configure SendGrid
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -33,11 +36,43 @@ exports.handler = async (event) => {
 
         case 'customer.subscription.deleted': {
             const deletedSubscription = stripeEvent.data.object;
-            const canceledUserId = deletedSubscription.customer;
+            const customerId = deletedSubscription.customer;
             try {
-                const customerRef = db.collection('customers').doc(canceledUserId);
-                await customerRef.update({ subscriptionStatus: 'canceled' });
-                console.log(`Successfully marked subscription as canceled for customer ${canceledUserId}`);
+                const customerRef = db.collection('customers').doc(customerId);
+                
+                // First, get the customer's data so we can use it in the email
+                const customerDoc = await customerRef.get();
+
+                if (customerDoc.exists) {
+                    // This is the original functionality: update the status in Firestore.
+                    // I've also added a timestamp as a best practice.
+                    await customerRef.update({ 
+                        subscriptionStatus: 'canceled',
+                        cancellationDate: admin.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log(`Successfully marked subscription as canceled for customer ${customerId}`);
+
+                    // This is the new functionality: send an email notification.
+                    const customerData = customerDoc.data();
+                    const internalNotificationMsg = {
+                        to: 'jake@restaurantreviewcards.com',
+                        from: { email: 'cancellations@restaurantreviewcards.com', name: 'System Alert' },
+                        subject: `❌ Subscription Canceled: ${customerData.googlePlaceName}`,
+                        html: `
+                            <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                                <h2 style="color: #dc2626;">Subscription Canceled</h2>
+                                <p>A customer has just canceled their subscription.</p>
+                                <p><strong>Business Name:</strong> ${customerData.googlePlaceName}</p>
+                                <p><strong>Email:</strong> ${customerData.email}</p>
+                                <p><strong>Stripe Customer ID:</strong> ${customerId}</p>
+                            </div>
+                        `
+                    };
+                    await sgMail.send(internalNotificationMsg);
+                } else {
+                    console.log(`Customer document ${customerId} not found. Cannot send notification.`);
+                }
+
             } catch (error) {
                 console.error('Error updating subscription status to canceled:', error);
             }
