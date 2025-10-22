@@ -49,16 +49,16 @@ exports.handler = async (event) => {
 
   try {
     const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,user_ratings_total,url,address_components&key=${googleApiKey}`;
-    
+
     const detailsResponse = await fetch(detailsUrl);
     const placeData = await detailsResponse.json();
 
     if (!placeData.result) {
       throw new Error('Could not retrieve restaurant details from Google.');
     }
-    
+
     const { name, rating, user_ratings_total, url, address_components } = placeData.result;
-    
+
     const parsedAddress = parseAddressComponents(address_components);
 
     await db.collection('signups').add({
@@ -78,7 +78,7 @@ exports.handler = async (event) => {
 
     const redirectUrl = `https://restaurantreviewcards.com/sample.html?name=${encodeURIComponent(name)}&rating=${rating}&reviews=${user_ratings_total}&placeId=${placeId}&email=${encodeURIComponent(email)}`;
 
-    // Email to the Customer
+    // Email to the Customer -- UPDATED SECTION
     const customerMsg = {
       to: email,
       bcc: 'jake@restaurantreviewcards.com',
@@ -86,23 +86,27 @@ exports.handler = async (event) => {
         email: 'jake@restaurantreviewcards.com',
         name: 'Jake from RRC'
       },
-      subject: `Your Custom Sample for ${name} is Ready!`,
+      // ▼▼▼ SUBJECT LINE UPDATED ▼▼▼
+      subject: `Your Welcome Kit for ${name} is Ready to Ship`,
+      // ▼▼▼ HTML BODY UPDATED ▼▼▼
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #005596;">Your Live Preview is Ready!</h2>
+          <h2 style="color: #005596;">Your Sample is Ready!</h2>
           <p>Hi there,</p>
-          <p>Thank you for your interest in our Smart Review Cards. We've generated a live, interactive sample page for <strong>${name}</strong>.</p>
-          <p>Click the button below to see how our system works to help you get more 5-star Google reviews.</p>
-          <a href="${redirectUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px;">
-            View My Live Sample
+          <p>Your sample for <strong>${name}</strong> is ready!</p>
+          <p>Once you sign up and start your trial, we will ship your <strong>FREE Welcome Kit</strong>, including <strong>250 Smart Review Cards</strong> and <strong>2 Counter Stands</strong>.</p>
+          <p>Visit your sample page to see how it works and get started:</p>
+          <a href="${redirectUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px; font-weight: bold;">
+            View Sample & Get Started
           </a>
-          <p>If you have any questions, feel free to reply directly to this email.</p>
+          <p>Let me know if you have questions!</p>
           <p>Cheers,<br>Jake</p>
         </div>
       `,
     };
+    // -- END OF UPDATED SECTION --
 
-    // **NEW** Internal Notification Email to You
+    // Internal Notification Email to You (Remains the same)
     const internalMsg = {
         to: 'jake@restaurantreviewcards.com',
         from: 'notification@restaurantreviewcards.com', // Can be a no-reply or internal address
