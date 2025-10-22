@@ -67,14 +67,10 @@ exports.handler = async (event) => {
             userId: customerId,
             email: email.toLowerCase(),
             subscriptionId: subscription.id,
-            subscriptionStatus: 'active', // A subscription is 'active' during its trial period
-            ...signupData, // Copies all fields from the signup doc (name, address, etc.)
-            
-            // THE FIX: Explicitly create the initial and current review count fields
-            // that the dashboard expects, using the value from the signup document.
+            subscriptionStatus: 'active',
+            ...signupData,
             googleReviewCountInitial: signupData.googleReviewCount || 0,
             googleReviewCountCurrent: signupData.googleReviewCount || 0,
-
             reviewInvitesSent: 0,
             signupDate: admin.firestore.FieldValue.serverTimestamp(),
             lastRedemptionDate: null,
@@ -88,6 +84,7 @@ exports.handler = async (event) => {
         // Send the detailed welcome email to the customer
         const welcomeMsg = {
             to: customerData.email,
+            bcc: 'jake@restaurantreviewcards.com', // BCC added here
             from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from ReviewCards' },
             subject: `Welcome to your free trial, ${customerData.googlePlaceName}!`,
             html: `
