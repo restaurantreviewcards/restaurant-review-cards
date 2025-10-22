@@ -86,16 +86,15 @@ exports.handler = async (event) => {
         email: 'jake@restaurantreviewcards.com',
         name: 'Jake from RRC'
       },
-      // ▼▼▼ SUBJECT LINE UPDATED ▼▼▼
       subject: `Your Welcome Kit for ${name} is Ready to Ship`,
       // ▼▼▼ HTML BODY UPDATED ▼▼▼
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #005596;">Your Sample is Ready!</h2>
           <p>Hi there,</p>
           <p>Your sample for <strong>${name}</strong> is ready!</p>
-          <p>Once you sign up and start your trial, we will ship your <strong>FREE Welcome Kit</strong>, including <strong>250 Smart Review Cards</strong> and <strong>2 Counter Stands</strong>.</p>
-          <p>Visit your sample page to see how it works and get started:</p>
+          
+          <p>Follow the link below to access your <strong>FREE Welcome Kit</strong>, including <strong>250 Smart Review Cards</strong> and <strong>2 Counter Stands</strong>.</p>
+
           <a href="${redirectUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px; font-weight: bold;">
             View Sample & Get Started
           </a>
@@ -109,7 +108,7 @@ exports.handler = async (event) => {
     // Internal Notification Email to You (Remains the same)
     const internalMsg = {
         to: 'jake@restaurantreviewcards.com',
-        from: 'notification@restaurantreviewcards.com', // Can be a no-reply or internal address
+        from: 'notification@restaurantreviewcards.com',
         subject: `🔥 New Sample Generated: ${name}`,
         html: `
             <div style="font-family: sans-serif; padding: 20px; color: #333;">
