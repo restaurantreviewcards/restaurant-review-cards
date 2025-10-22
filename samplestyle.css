@@ -11,13 +11,15 @@
 :root {
     --primary-color: #005596;
     --primary-dark: #003d6d;
-    --secondary-color: #FFD60A;
+    --secondary-color: #FFD60A; /* Added back in case used elsewhere */
     --text-dark: #2d3748;
     --text-light: #718096;
     --background-light: #f7fafc;
     --white: #ffffff;
     --border-color: #e2e8f0;
     --success-green: #28a745;
+    --bonus-background: #eef6ff; /* Added for preview box */
+    --bonus-border: #bde0fe; /* Added for preview box */
     --font-heading: 'Poppins', sans-serif;
     --font-body: 'Lato', sans-serif;
     --font-google: 'Roboto', sans-serif; /* Google's Font */
@@ -25,6 +27,8 @@
     --google-red: #EA4335;
     --google-yellow: #FBBC05;
     --google-green: #34A853;
+    /* Added var for google-text just in case */
+    --google-text: #202124;
 }
 
 /* --- GLOBAL STYLES & RESETS --- */
@@ -70,6 +74,7 @@ section { padding: 40px 20px; }
     text-decoration: none;
     display: inline-block;
     transition: all 0.2s ease;
+    text-align: center; /* Ensure text centers if it wraps */
 }
 .btn:disabled {
     cursor: not-allowed;
@@ -96,11 +101,23 @@ section { padding: 40px 20px; }
     font-size: 1.2rem;
     padding: 18px 36px;
     margin-top: 1.5rem;
+    /* ### ADJUSTED PADDING FOR BONUS CUE ### */
+    padding-top: 14px;
+    padding-bottom: 14px;
 }
 .btn-success:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(40,167,69,0.4);
 }
+/* ### NEW STYLE for Bonus Cue inside button ### */
+.btn-success .bonus-cue {
+    display: block; /* Makes it appear on a new line inside the button */
+    font-size: 0.8rem;
+    font-weight: 500;
+    opacity: 0.9;
+    margin-top: 4px; /* Add some space */
+}
+
 
 .btn-light {
     background: var(--background-light);
@@ -244,10 +261,82 @@ section { padding: 40px 20px; }
 }
 .review-count-link:hover { text-decoration: underline; }
 
+/* ### NEW Offer Preview Box Styles ### */
+.offer-preview-section {
+    background-color: var(--white);
+    padding: 30px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.offer-preview-box {
+    background-color: var(--bonus-background);
+    border: 1px solid var(--bonus-border);
+    border-left: 4px solid var(--primary-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.offer-preview-box h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.3rem;
+    color: var(--text-dark);
+}
+
+.offer-preview-box p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.offer-preview-box .btn {
+    font-size: 1.1rem;
+    padding: 14px 28px;
+}
+/* ### End Offer Preview Box Styles ### */
+
+
+/* --- SOCIAL PROOF SECTION (Now potentially higher up) --- */
+.social-proof-section {
+    background-color: var(--primary-dark);
+    color: var(--white);
+    padding: 60px 20px;
+    text-align: center;
+}
+.social-proof-section h2 {
+    font-size: 2rem;
+    margin-bottom: 3.5rem;
+}
+.metrics-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: center;
+}
+.metric-display { max-width: 400px; }
+.metric-number {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 4rem;
+    line-height: 1.1;
+    color: var(--white);
+}
+.metric-label-proof {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+
 /* --- PROCESS FLOW SECTION --- */
-.process-flow-section { 
-    padding-top: 60px; 
-    padding-bottom: 60px; 
+.process-flow-section {
+    padding-top: 60px;
+    padding-bottom: 60px;
 }
 .section-header {
     text-align: center;
@@ -272,21 +361,22 @@ section { padding: 40px 20px; }
 .step h3 {
     margin-bottom: 0.75rem;
 }
-.step-icon { 
-    font-size: 2.5rem; 
-    margin-bottom: 1rem; 
-    color: var(--primary-color); 
+.step-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
 }
-.step p { 
-    max-width: 450px; 
-    margin-left: auto; 
-    margin-right: auto; 
+.step p {
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
     color: var(--text-light);
 }
 .qr-card-composite {
     position: relative;
-    width: 300px;
-    height: 450px;
+    width: 300px; /* Adjust if needed */
+    height: auto; /* Changed for aspect ratio */
+    aspect-ratio: 2 / 3; /* Approx business card shape */
     margin: 1.5rem auto;
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
@@ -298,15 +388,23 @@ section { padding: 40px 20px; }
 }
 .qr-card-composite .centered-qr-code {
     position: absolute;
+    /* You might need to slightly adjust these % based on the card image */
     top: 50.5%;
     left: 52.1%;
     transform: translate(-50%, -50%) rotate(-1deg);
-    width: 100px;
-    height: 100px;
+    /* Adjust QR code size relative to card width */
+    width: 33.33%; /* e.g., 100px / 300px */
+    height: 22.22%; /* e.g., 100px / 450px */
     background-color: transparent;
     border: none;
     border-radius: 0;
 }
+/* Ensure QR code itself fills its container */
+.centered-qr-code canvas, .centered-qr-code img {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 
 /* --- Scan Prompt Box --- */
 .scan-prompt {
@@ -477,7 +575,7 @@ section { padding: 40px 20px; }
     padding: 0.75rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
     background-color: transparent;
-    border-radius: 16px 16px 0 0;
+    /* Removed border-radius here as container handles overflow */
 }
 .sample-label {
     font-family: var(--font-heading);
@@ -548,7 +646,7 @@ section { padding: 40px 20px; }
 }
 .metric-header {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column-reverse; /* Icons might look better above on mobile */
     align-items: center;
     gap: 0.75rem;
     padding-bottom: 0.5rem;
@@ -573,7 +671,7 @@ section { padding: 40px 20px; }
     color: var(--text-light);
     margin-top: 0;
 }
-.flow-arrow { display: none; }
+.flow-arrow { display: none; } /* Kept hidden on mobile */
 .explanation-text { font-size: 0.9rem; color: var(--text-light); max-width: 320px; margin: 0 auto 2rem; }
 .sharing-grid {
     display: grid;
@@ -582,10 +680,10 @@ section { padding: 40px 20px; }
 }
 .share-button {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: var(--white); 
+    background: var(--white);
     border: 1px solid var(--border-color);
-    border-radius: 10px; 
-    padding: 1.25rem 1rem; 
+    border-radius: 10px;
+    padding: 1.25rem 1rem;
     font-weight: 600; cursor: pointer;
     transition: all 0.2s ease;
     font-family: var(--font-body);
@@ -609,40 +707,18 @@ section { padding: 40px 20px; }
     font-style: italic;
     margin-top: 1.5rem;
 }
+/* ### Optional Style for Static Dashboard Image ### */
+.dashboard-static-image {
+    max-width: 100%;
+    width: 450px; /* Adjust width as needed */
+    height: auto;
+    display: block;
+    margin: 1.5rem auto 0;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+}
 
-/* --- SOCIAL PROOF SECTION --- */
-.social-proof-section {
-    background-color: var(--primary-dark);
-    color: var(--white);
-    padding: 60px 20px;
-    text-align: center;
-}
-.social-proof-section h2 {
-    font-size: 2rem;
-    margin-bottom: 3.5rem;
-}
-.metrics-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-    justify-content: center;
-    align-items: center;
-}
-.metric-display { max-width: 400px; }
-.metric-number {
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 4rem;
-    line-height: 1.1;
-    color: var(--white);
-}
-.metric-label-proof {
-    margin-top: 0.75rem;
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.8);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-}
 
 /* --- FINAL CTA SECTION --- */
 .cta-section { text-align: center; padding-top: 60px; padding-bottom: 60px; }
@@ -653,144 +729,8 @@ section { padding: 40px 20px; }
     border-radius: 16px;
     padding: 2rem;
     text-align: center;
-}
-.offer-content-grid { display: flex; flex-direction: column; gap: 2rem; }
-.final-offer-card h2 { font-size: 1.8rem; }
-.features-list { list-style: none; padding: 0; margin: 0; }
-.features-list li {
-    font-weight: 600;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-.features-list li svg { width: 20px; height: 20px; color: var(--success-green); }
-.offer-divider { border: none; border-top: 1px solid var(--border-color); margin: 0; }
-.bonus-section { text-align: center; }
-.bonus-section h3 { color: var(--primary-color); }
-
-.risk-free-text { margin-top: 1rem; font-size: 0.9rem; }
-.final-testimonial { margin-top: 3rem; }
-
-/* --- Bonus Image Composite Styles --- */
-.bonus-image-container {
-    position: relative;
-    max-width: 280px;
-    width: 100%;
-    margin: 1rem auto;
-    aspect-ratio: 2475 / 2247;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    border-radius: 12px;
-    overflow: hidden;
-}
-.bonus-image-container .bonus-background-img {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-.bonus-image-container .bonus-qr-code {
-    position: absolute;
-    top: 54.5%;
-    left: 35.4%;
-    transform: translate(-50%, -50%) rotate(-2deg);
-    width: 75px;
-    height: 75px;
-    background-color: transparent;
-    border: none;
-}
-
-/* --- MOBILE OFFER ACCORDION --- */
-.final-offer-card { padding: 1rem; }
-.offer-content-grid { display: block; }
-.offer-divider { display: none; }
-.bonus-section-wrapper, .value-stack { flex: none; }
-.accordion-summary h2 { margin-bottom: 0; text-align: left; }
-.offer-accordion {
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    background: var(--white);
-}
-.accordion-summary {
-    list-style: none;
-    padding: 1rem 1.25rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.accordion-summary h3 { font-size: 1.1rem; margin: 0; }
-.accordion-summary::after {
-    content: '▼';
-    font-size: 0.8rem;
-    color: var(--primary-color);
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
-    margin-left: 1rem;
-}
-.offer-accordion[open] > .accordion-summary::after { transform: rotate(180deg); }
-.accordion-content {
-    padding: 0 1.25rem 1.25rem;
-    border-top: 1px solid var(--border-color);
-}
-
-/* --- FOOTER --- */
-footer { background-color: var(--text-dark); color: var(--background-light); text-align: center; padding: 2rem; }
-
-/* --- MOBILE-ONLY STYLES --- */
-@media (max-width: 767px) {
-    .mobile-cta-bar {
-        display: flex;
-    }
-    body {
-        padding-bottom: 80px;
-    }
-}
-
-/* --- DESKTOP STYLES --- */
-@media (min-width: 768px) {
-    h1 { font-size: 2.5rem; }
-    h2 { font-size: 2rem; }
-    section { padding: 60px 40px; }
-    
-    .steps-container-reformatted {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2.5rem;
-    }
-    
-    .metric-flow-grid {
-        flex-direction: row;
-    }
-    .flow-arrow {
-        display: block;
-        align-self: center;
-        font-size: 2rem; 
-        color: #cbd5e0;
-        font-weight: 600; 
-    }
-
-    .social-proof-section h2 { font-size: 2.25rem; }
-    .metrics-container { flex-direction: row; gap: 0; }
-    .metric-display { flex: 1; padding: 0 2rem; }
-    .metric-display + .metric-display { border-left: 1px solid rgba(255, 255, 255, 0.2); }
-    .metric-number { font-size: 4.5rem; }
-    
-    .final-offer-card { padding: 2rem; }
-    .offer-content-grid { display: flex; flex-direction: row; align-items: center; gap: 2rem; }
-    .offer-divider { display: block; border-top: none; border-left: 1px solid var(--border-color); margin: 0 2rem; height: auto; align-self: stretch; }
-    .value-stack { flex: 1; }
-    .bonus-section-wrapper { flex: 1; }
-    .accordion-summary { pointer-events: none; }
-    .accordion-summary::after { display: none; }
-    .offer-accordion, .offer-accordion[open] { border: none; margin-bottom: 0; background: transparent; }
-    .accordion-summary h2 { text-align: center; margin-bottom: 1.5rem; font-size: 1.8rem; }
-    .accordion-content { padding: 0; border-top: none; }
-}
-
-/* --- NEW STYLES FOR FREE TRIAL CTA & BONUS --- */
-.final-offer-card {
-    position: relative;
-    overflow: hidden;
+    position: relative; /* Keep for badge */
+    overflow: hidden; /* Keep for badge */
 }
 
 .plan-badge {
@@ -807,10 +747,11 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+.final-offer-card h2 { font-size: 1.8rem; margin-bottom: 1rem;}
+
 .price-trial {
     margin: 1.5rem 0 0.5rem;
 }
-
 .price-trial .price-main {
     font-family: var(--font-heading);
     font-size: 4rem;
@@ -819,19 +760,40 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     color: var(--primary-color);
     display: block;
 }
-
 .price-trial .price-sub {
     font-size: 1rem;
     font-weight: 600;
     color: var(--text-light);
 }
-
 .price-followup {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-dark);
     margin-bottom: 2rem;
 }
+
+.includes-text {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 2rem 0 1.5rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.features-list {
+    list-style: none; padding: 0; margin: 0 auto 1rem; /* Centered */
+    display: inline-block; /* Allows auto margins to center */
+    text-align: left; /* Keep text left-aligned */
+}
+.features-list li {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.features-list li svg { width: 20px; height: 20px; color: var(--success-green); flex-shrink: 0;}
+
 
 .bonus-highlight-box {
     background-color: var(--background-light);
@@ -842,14 +804,12 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     margin: 2rem 0;
     text-align: center;
 }
-
 .bonus-highlight-box h3 {
     margin-top: 0;
     margin-bottom: 0.5rem;
     color: var(--text-dark);
     font-size: 1.2rem;
 }
-
 .bonus-highlight-box p {
     color: var(--text-light);
     font-size: 0.95rem;
@@ -857,6 +817,45 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 1.5rem;
+}
+/* ### NEW STYLE for strong tag in bonus ### */
+.bonus-highlight-box p strong {
+     color: var(--primary-dark);
+}
+
+.bonus-image-container {
+    position: relative;
+    max-width: 280px;
+    width: 100%;
+    margin: 1rem auto;
+    aspect-ratio: 2475 / 2247; /* Keep aspect ratio if image has it */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.bonus-image-container .bonus-background-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover; /* Cover container if aspect ratio differs */
+}
+.bonus-image-container .bonus-qr-code {
+    position: absolute;
+    /* Adjust based on the stand image */
+    top: 54.5%;
+    left: 35.4%;
+    transform: translate(-50%, -50%) rotate(-2deg);
+    /* Adjust size relative to container */
+    width: 26.8%; /* e.g. 75px / 280px */
+    height: auto;
+    aspect-ratio: 1 / 1;
+    background-color: transparent;
+    border: none;
+}
+/* Ensure QR code fills container */
+.bonus-qr-code canvas, .bonus-qr-code img {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .bonus-reserved-text {
@@ -873,7 +872,6 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     gap: 1rem;
     margin-top: 1rem;
 }
-
 .timer-box {
     background: var(--white);
     padding: 0.5rem 1rem;
@@ -881,29 +879,100 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     border: 1px solid var(--border-color);
 }
-
 .timer-time {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--text-dark);
+    line-height: 1;
 }
-
 .timer-label {
     font-size: 0.8rem;
     text-transform: uppercase;
     color: var(--text-light);
+    margin-top: 0.25rem;
+    display: block;
 }
 
-.includes-text {
-    font-weight: 600;
-    color: var(--text-dark);
-    margin: 2rem 0 1.5rem;
-    font-size: 1rem;
-    text-align: center;
+.risk-free-text { margin-top: 1rem; font-size: 0.9rem; color: var(--text-light); }
+
+/* --- FOOTER --- */
+footer { background-color: var(--text-dark); color: var(--background-light); text-align: center; padding: 2rem; }
+
+/* --- MOBILE-ONLY STYLES --- */
+@media (max-width: 767px) {
+    .mobile-cta-bar {
+        display: flex;
+    }
+    body {
+        padding-bottom: 80px; /* Adjust if mobile bar height changes */
+    }
+
+    /* ### ADJUSTED Mobile Header Styles ### */
+    .header {
+        padding-top: 1rem; /* Reduce top padding */
+        padding-bottom: 1rem; /* Reduce bottom padding */
+    }
+    .preview-title-container {
+         margin-top: 0.75rem; /* Reduce space above 'Preview For' */
+    }
+    .preview-business-name {
+        font-size: 1.6rem; /* Slightly smaller font size */
+        line-height: 1.2;
+    }
+
+    /* Adjust section padding for mobile */
+    section { padding: 30px 15px; }
+    .welcome-section { padding: 30px 15px 40px; }
+    .process-flow-section { padding-top: 40px; padding-bottom: 40px; }
+    .cta-section { padding-top: 40px; padding-bottom: 40px; }
+    .social-proof-section { padding: 40px 15px; }
+
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.5rem; }
+
+    .final-offer-card { padding: 1.5rem; }
+    .price-trial .price-main { font-size: 3rem; }
+    .timer-time { font-size: 2rem; }
+    .timer-box { padding: 0.5rem 0.75rem; }
+    .btn-success { font-size: 1.1rem; padding: 14px 24px; }
+
+    /* ### Potential Mobile Dashboard Adjustments (If keeping interactive) ### */
+    /* .dashboard-content { padding: 1rem 1.5rem 1.5rem; } */
+    /* .metric-value { font-size: 2.5rem; } */
+    /* .share-button { padding: 1rem 0.75rem; } */
+    /* .share-icon svg { width: 28px; height: 28px; } */
+
 }
 
-.cta-section .features-list {
-    display: inline-block;
-    text-align: left;
-    margin-bottom: 1rem;
+/* --- DESKTOP STYLES --- */
+@media (min-width: 768px) {
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 2rem; }
+    section { padding: 60px 40px; }
+
+    .steps-container-reformatted {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+    }
+
+    .metric-flow-grid {
+        flex-direction: row; /* Switch back to row on desktop */
+    }
+    .flow-arrow {
+        display: block;
+        align-self: center;
+        font-size: 2rem;
+        color: #cbd5e0;
+        font-weight: 600;
+    }
+
+    .social-proof-section h2 { font-size: 2.25rem; }
+    .metrics-container { flex-direction: row; gap: 0; }
+    .metric-display { flex: 1; padding: 0 2rem; }
+    .metric-display + .metric-display { border-left: 1px solid rgba(255, 255, 255, 0.2); }
+    .metric-number { font-size: 4.5rem; }
+
+    .final-offer-card { padding: 2.5rem; } /* Slightly more padding */
+    /* Remove accordion overrides as they are desktop defaults */
+    /* Desktop layout for final offer is handled implicitly now */
 }
