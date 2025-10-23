@@ -50,17 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (starContainer) {
                 starContainer.innerHTML = ''; // Clear previous stars
                 const fullStars = Math.floor(rating);
-                // Check for half star (optional, based on your design needs)
-                // const halfStar = rating % 1 >= 0.5;
 
                 for (let i = 0; i < 5; i++) {
                     if (i < fullStars) {
                         // Full star SVG (yellow)
                         starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Star Rating</title><path fill="#fbbc05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
-                    }
-                    // Add half-star logic here if needed
-                    // else if (halfStar && i === fullStars) { ... }
-                    else {
+                    } else {
                         // Empty star SVG (gray)
                         starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d8d8d8" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
                     }
@@ -69,37 +64,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // ▼▼▼ UPDATED generateQRCodes FUNCTION ▼▼▼
     const generateQRCodes = () => {
         if (!reviewUrl) return;
 
+        // Existing Card QR Code
         const cardQrContainer = document.getElementById('card-qr-code-container');
         if (cardQrContainer) {
-            // Clear previous QR Code if regenerating
-            cardQrContainer.innerHTML = '';
+            cardQrContainer.innerHTML = ''; // Clear previous
             new QRCode(cardQrContainer, {
                 text: reviewUrl,
-                width: 100, // Make sure these match desired render size
+                width: 100, // This is the render size, CSS controls final display size
                 height: 100,
                 colorDark: "#1f262b",
-                colorLight: "#e0d9d4", // Ensure this bg color matches card image
+                colorLight: "#e0d9d4",
                 correctLevel: QRCode.CorrectLevel.H
             });
         }
 
+        // Existing Bonus Stand QR Code
         const bonusQrContainer = document.getElementById('bonus-qr-code-container');
         if (bonusQrContainer) {
-             // Clear previous QR Code if regenerating
-            bonusQrContainer.innerHTML = '';
+             bonusQrContainer.innerHTML = ''; // Clear previous
             new QRCode(bonusQrContainer, {
                 text: reviewUrl,
-                width: 75, // Make sure these match desired render size
+                width: 75, // Render size
                 height: 75,
                 colorDark: "#282a2e",
-                colorLight: "#d7d5d1", // Ensure this bg color matches stand image
+                colorLight: "#d7d5d1",
                 correctLevel: QRCode.CorrectLevel.H
             });
         }
+
+        // ### NEW Live Sample QR Code Generation ###
+        const liveSampleQrContainer = document.getElementById('live-sample-qr-code');
+        if (liveSampleQrContainer) {
+            liveSampleQrContainer.innerHTML = ''; // Clear previous
+            new QRCode(liveSampleQrContainer, {
+                text: reviewUrl,
+                width: 200, // Render size in pixels (match desired size)
+                height: 200,
+                colorDark: "#191718", // Your specified dark color
+                colorLight: "#E6E8E7", // Your specified light color
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+        }
+        // ### END NEW CODE ###
     };
+    // ▲▲▲ END OF UPDATED FUNCTION ▲▲▲
 
     const initCountdown = async () => {
         const hoursEl = document.getElementById('hours');
@@ -123,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Fetch the official signup timestamp from our serverless function
             const response = await fetch(`/.netlify/functions/get-signup-data?placeId=${placeId}`);
             if (!response.ok) {
-                // Try to parse error if available
                 let errorMsg = 'Failed to fetch signup data';
                 try {
                     const errorData = await response.json();
@@ -133,19 +144,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const data = await response.json();
 
-            // Check if timestamp exists and has the expected structure
             if (!data.timestamp || typeof data.timestamp._seconds !== 'number') {
                 throw new Error('Invalid timestamp format received from server.');
             }
 
             const signupTime = new Date(data.timestamp._seconds * 1000);
-
-            // Calculate the 12-hour deadline based on the official signup time
             const targetTime = signupTime.getTime() + 12 * 60 * 60 * 1000;
-
             const formatTimeUnit = (unit) => String(unit).padStart(2, '0');
 
-            // Define interval variable outside to clear it properly
             let updateTimerInterval;
             const updateTimer = () => {
                 const distance = targetTime - Date.now();
@@ -166,12 +172,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 secondsEl.textContent = formatTimeUnit(seconds);
             };
 
-            updateTimer(); // Initial call to display immediately
+            updateTimer();
             updateTimerInterval = setInterval(updateTimer, 1000);
 
         } catch (error) {
             console.error("Countdown Error:", error.message);
-            // If we can't get the official time, hide the timer to avoid confusion
             countdownTimerEl.style.display = 'none';
             bonusTextEl.style.display = 'none';
         }
@@ -186,10 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tabsContainer.addEventListener('click', (e) => {
             const clickedTab = e.target.closest('.dashboard-tab');
-            if (!clickedTab) return;
-
-            // Don't do anything if the clicked tab is already active
-            if (clickedTab.classList.contains('active')) return;
+            if (!clickedTab || clickedTab.classList.contains('active')) return;
 
             tabs.forEach(t => t.classList.remove('active'));
             panels.forEach(p => p.classList.remove('active'));
@@ -204,7 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const initCopyLink = () => {
-        // copyLinkButton and reviewUrl defined at the top
         if (!copyLinkButton || !reviewUrl) return;
 
         copyLinkButton.addEventListener('click', async () => {
@@ -219,8 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 2000);
             } catch (err) {
                 console.error('Failed to copy text: ', err);
-                // Optionally provide user feedback here like an alert
-                // alert('Could not copy link to clipboard.');
             }
         });
     };
@@ -237,11 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (checkoutButtons.length > 0) {
             const params = new URLSearchParams(window.location.search);
             const placeId = params.get('placeId');
-            const email = params.get('email'); // Already decoded by URLSearchParams
+            const email = params.get('email');
 
             if (!placeId || !email) {
                 console.error("Missing placeId or email for checkout links.");
-                // Disable buttons if essential info is missing
                 checkoutButtons.forEach(button => {
                     button.style.pointerEvents = 'none';
                     button.style.opacity = '0.5';
@@ -250,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Encode email just for the URL parameter
             const checkoutUrl = `/checkout.html?placeId=${placeId}&email=${encodeURIComponent(email)}`;
 
             checkoutButtons.forEach(button => {
@@ -259,16 +256,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ### NEW FUNCTION for smooth scroll ###
     const initEarlyCtaScroll = () => {
         const earlyCtaButton = document.getElementById('early-cta-btn');
-        // Ensure the target section ID matches the one added in HTML
         const targetSection = document.getElementById('cta-section');
 
         if (earlyCtaButton && targetSection) {
             earlyCtaButton.addEventListener('click', (event) => {
-                event.preventDefault(); // Prevent default anchor jump
-                // Use smooth scrolling to the target section
+                event.preventDefault();
                 targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         } else {
@@ -276,15 +270,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!targetSection) console.log("Target CTA section not found");
         }
     };
-    // ### END NEW FUNCTION ###
 
     // Initialize all scripts
     populateSampleData();
-    generateQRCodes();
+    generateQRCodes(); // This now generates all three QR codes
     initCountdown();
     initDashboardTabs();
     initCopyLink();
     initFooter();
     initCheckoutLinks();
-    initEarlyCtaScroll(); // ### CALL THE NEW FUNCTION ###
+    initEarlyCtaScroll();
 });
