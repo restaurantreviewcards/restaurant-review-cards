@@ -596,7 +596,45 @@ section { padding: 40px 20px; }
 .bonus-highlight-box p { color: var(--text-light); font-size: 0.95rem; max-width: 400px; margin-left: auto; margin-right: auto; margin-bottom: 1.5rem; line-height: 1.6;}
 .bonus-highlight-box p strong { color: var(--primary-dark); }
 
-.bonus-image-container { position: relative; max-width: 280px; width: 100%; margin: 1rem auto; aspect-ratio: 2475 / 2247; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden; }
+/* --- Countdown Timer Styles (within bonus box) --- */
+.countdown-prompt {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-top: 1.5rem; /* Add space above */
+    margin-bottom: 0.75rem; /* Add space below before timer */
+    font-size: 0.95rem;
+}
+.countdown-timer {
+    display: flex; /* Ensure timer elements are properly laid out */
+    justify-content: center;
+    gap: 0.75rem; /* Space between boxes */
+    margin-bottom: 0; /* Remove bottom margin if inside bonus box */
+}
+.timer-box {
+    background: var(--white);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    min-width: 50px; /* Ensure boxes have a minimum width */
+}
+.timer-time {
+    font-size: 1.8rem; /* Slightly smaller */
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1;
+    display: block; /* Ensure it takes full width */
+}
+.timer-label {
+    font-size: 0.7rem; /* Smaller label */
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.bonus-image-container { position: relative; max-width: 280px; width: 100%; margin: 1.5rem auto 0; /* Adjusted margin-top */ aspect-ratio: 2475 / 2247; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden; }
 .bonus-image-container .bonus-background-img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .bonus-image-container .bonus-qr-code { position: absolute; top: 54.5%; left: 35.4%; transform: translate(-50%, -50%) rotate(-2deg); width: 26.8%; height: auto; aspect-ratio: 1 / 1; background-color: transparent; border: none; }
 .bonus-qr-code canvas, .bonus-qr-code img { width: 100% !important; height: 100% !important; display: block; }
@@ -639,8 +677,6 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
 
     .final-offer-card { padding: 1.5rem; }
     .price-trial .price-main { font-size: 3rem; }
-    .offer-preview-box .timer-time { font-size: 2rem; }
-    .offer-preview-box .timer-box { padding: 0.5rem 0.75rem; }
     .btn-success { font-size: 1.1rem; padding: 14px 24px; }
     .live-sample-image-container { width: 90%; max-width: 320px;}
 
@@ -649,6 +685,12 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     .smart-features-grid { gap: 2rem; margin-bottom: 2rem; }
     .smart-feature-item h3 { font-size: 1.15rem; }
     .smart-dashboard-visual { max-width: 100%; }
+
+    /* Adjust timer size on mobile inside bonus box */
+    .timer-time { font-size: 1.5rem; }
+    .timer-box { padding: 0.4rem 0.6rem; min-width: 45px;}
+    .countdown-timer { gap: 0.5rem; }
+    .countdown-prompt { font-size: 0.9rem; }
 }
 
 /* --- DESKTOP STYLES --- */

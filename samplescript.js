@@ -106,16 +106,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const minutesEl = document.getElementById('minutes');
         const secondsEl = document.getElementById('seconds');
         const countdownTimerEl = document.querySelector('.countdown-timer');
-        const bonusTextEl = document.querySelector('.bonus-reserved-text');
+        // We'll select the new prompt text element if needed for hiding
+        const countdownPromptEl = document.querySelector('.countdown-prompt'); 
 
-        if (!hoursEl || !minutesEl || !secondsEl || !countdownTimerEl || !bonusTextEl) return; // More robust check
+        // Check for all required elements
+        if (!hoursEl || !minutesEl || !secondsEl || !countdownTimerEl || !countdownPromptEl) {
+             console.error("Countdown timer elements not found.");
+             return; 
+        }
 
         const params = new URLSearchParams(window.location.search);
         const placeId = params.get('placeId');
 
-        if (!placeId) {
+        // Function to hide timer and prompt
+        const hideTimer = () => {
             countdownTimerEl.style.display = 'none';
-            bonusTextEl.style.display = 'none';
+            countdownPromptEl.style.display = 'none';
+        };
+
+        if (!placeId) {
+            hideTimer();
             return;
         }
 
@@ -137,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const signupTime = new Date(data.timestamp._seconds * 1000);
-            const targetTime = signupTime.getTime() + 12 * 60 * 60 * 1000;
+            const targetTime = signupTime.getTime() + 12 * 60 * 60 * 1000; // 12 hours
             const formatTimeUnit = (unit) => String(unit).padStart(2, '0');
 
             let updateTimerInterval;
@@ -146,8 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (distance < 0) {
                     clearInterval(updateTimerInterval);
-                    countdownTimerEl.style.display = 'none';
-                    bonusTextEl.style.display = 'none';
+                    hideTimer(); // Hide timer and prompt when expired
                     return;
                 }
 
@@ -160,13 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 secondsEl.textContent = formatTimeUnit(seconds);
             };
 
-            updateTimer();
-            updateTimerInterval = setInterval(updateTimer, 1000);
+            updateTimer(); // Initial call
+            updateTimerInterval = setInterval(updateTimer, 1000); // Update every second
 
         } catch (error) {
             console.error("Countdown Error:", error.message);
-            countdownTimerEl.style.display = 'none';
-            bonusTextEl.style.display = 'none';
+            hideTimer(); // Hide timer and prompt on error
         }
     };
 
@@ -250,8 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize all scripts
     populateSampleData();
-    generateQRCodes(); // This now generates all three QR codes
-    initCountdown();
+    generateQRCodes(); 
+    initCountdown(); // <-- Function call is added back here
     initDashboardTabs();
     initFooter();
     initCheckoutLinks();
