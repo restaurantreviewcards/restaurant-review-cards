@@ -141,6 +141,29 @@ section { padding: 40px 20px; }
     white-space: nowrap;
 }
 
+/* --- WELCOME BAR (TOP BANNER) --- */
+.welcome-bar {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-dark);
+    color: var(--white);
+    text-align: center;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+    
+    /* Makes the bar "stick" to the top as the user scrolls */
+    position: sticky;
+    top: 0;
+    z-index: 900; /* Below the mobile cta bar but above other content */
+}
+.welcome-bar:hover {
+    background-color: #002a4e; /* A slightly darker hover state */
+    color: var(--white);
+}
+
 /* --- HEADER --- */
 .header {
     padding: 1.25rem 1.5rem;

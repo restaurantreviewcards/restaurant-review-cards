@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Populate Business Names ---
         document.getElementById('business-name-header').textContent = name;
         document.querySelector('.business-name-preview').textContent = name;
-        // document.getElementById('mockup-business-name').textContent = name; // <-- THIS LINE IS NOW REMOVED
 
         // --- Get DOM Elements for the Snapshot ---
         const ratingValueEl = document.getElementById('google-rating-value');
@@ -227,17 +226,25 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const initEarlyCtaScroll = () => {
-        const earlyCtaButton = document.getElementById('early-cta-btn');
+        // Find ALL elements with the class 'js-scroll-to-cta'
+        const scrollButtons = document.querySelectorAll('.js-scroll-to-cta');
         const targetSection = document.getElementById('cta-section');
 
-        if (earlyCtaButton && targetSection) {
-            earlyCtaButton.addEventListener('click', (event) => {
-                event.preventDefault();
-                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!targetSection) {
+            console.log("Target CTA section not found");
+            return;
+        }
+
+        if (scrollButtons.length > 0) {
+            // Loop through each button (the new bar AND the one under the sample)
+            scrollButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent the default # jump
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
             });
         } else {
-            if (!earlyCtaButton) console.log("Early CTA button not found");
-            if (!targetSection) console.log("Target CTA section not found");
+            console.log("No scroll-to-cta buttons found");
         }
     };
 
