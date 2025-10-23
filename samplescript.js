@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
             liveSampleQrContainer.innerHTML = ''; // Clear previous
             new QRCode(liveSampleQrContainer, {
                 text: reviewUrl,
-                width: 200, // Render size in pixels (match desired size)
-                height: 200,
+                width: 600, // Render size in pixels (match desired size)
+                height: 600,
                 colorDark: "#191718", // Your specified dark color
                 colorLight: "#E6E8E7", // Your specified light color
                 correctLevel: QRCode.CorrectLevel.H // High error correction
