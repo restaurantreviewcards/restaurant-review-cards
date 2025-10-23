@@ -305,7 +305,7 @@ section { padding: 40px 20px; }
 .live-sample-section .section-subtext { /* Style for the subtext */
     font-size: 1.1rem;
     color: var(--text-light);
-    margin-bottom: 2rem; /* Space below subtext */
+    margin-bottom: 1rem; /* Reduced Space below subtext */
     max-width: 500px; /* Constrain width */
     margin-left: auto;
     margin-right: auto;
@@ -350,6 +350,20 @@ section { padding: 40px 20px; }
     margin-top: 0; /* Remove top margin if needed */
     margin-bottom: 1.5rem; /* Add space below before the image */
     text-align: center; /* Ensure it's centered */
+}
+/* Style for the descriptive paragraph below live sample */
+.live-sample-description {
+    font-size: 1rem;
+    color: var(--text-dark); /* Darker text for readability */
+    line-height: 1.6;
+    max-width: 500px; /* Constrain width */
+    margin: 1.5rem auto 1.5rem auto; /* Top and bottom margin */
+}
+/* Style for the Get Started button below live sample */
+.live-sample-cta {
+    margin-top: 0; /* Remove default top margin if needed */
+    font-size: 1.1rem; /* Slightly larger maybe */
+    padding: 14px 28px; /* Match preview box button */
 }
 
 
