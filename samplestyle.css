@@ -353,20 +353,20 @@ section { padding: 40px 20px; }
     justify-content: center;
     gap: 1rem;
 }
-.offer-preview-box .timer-box { /* Copied from below */
+.offer-preview-box .timer-box {
     background: var(--white);
     padding: 0.5rem 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     border: 1px solid var(--border-color);
 }
-.offer-preview-box .timer-time { /* Copied from below */
+.offer-preview-box .timer-time {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--text-dark);
     line-height: 1;
 }
-.offer-preview-box .timer-label { /* Copied from below */
+.offer-preview-box .timer-label {
     font-size: 0.8rem;
     text-transform: uppercase;
     color: var(--text-light);
@@ -452,32 +452,39 @@ section { padding: 40px 20px; }
     margin-right: auto;
     color: var(--text-light);
 }
+
+/* ### CORRECTED Rule for reviewcards.png container ### */
 .qr-card-composite {
     position: relative;
     width: 300px;
-    height: auto;
-    aspect-ratio: 3.5 / 2;
+    height: 450px; /* Reverted to fixed height */
     margin: 1.5rem auto;
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    overflow: hidden; /* Added */
+    border-radius: 12px; /* Added */
 }
+/* ### CORRECTED Rule for reviewcards.png image ### */
 .qr-card-composite .card-background-img {
     width: 100%;
     height: 100%;
     display: block;
-    border-radius: 8px;
+    object-fit: cover; /* Added */
+    /* Removed border-radius */
 }
+/* ### CORRECTED Rule for reviewcards.png QR code ### */
 .qr-card-composite .centered-qr-code {
     position: absolute;
-    /* Re-evaluate percentages based on image */
-    top: 50%;
-    left: 75%;
-    width: 28%;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    transform: translate(-50%, -50%);
+    top: 50.5%; /* Reverted */
+    left: 52.1%; /* Reverted */
+    transform: translate(-50%, -50%) rotate(-1deg); /* Reverted */
+    width: 100px; /* Reverted */
+    height: 100px; /* Reverted */
     background-color: transparent;
     border: none;
+    border-radius: 0; /* Added */
+    /* Removed aspect-ratio */
 }
+/* This rule ensuring QR fills container remains correct */
 .centered-qr-code canvas, .centered-qr-code img {
     width: 100% !important;
     height: 100% !important;
@@ -966,8 +973,8 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
 
     .final-offer-card { padding: 1.5rem; }
     .price-trial .price-main { font-size: 3rem; }
-    .offer-preview-box .timer-time { font-size: 2rem; } /* Adjusted timer size in preview */
-    .offer-preview-box .timer-box { padding: 0.5rem 0.75rem; } /* Adjusted timer padding in preview */
+    .offer-preview-box .timer-time { font-size: 2rem; }
+    .offer-preview-box .timer-box { padding: 0.5rem 0.75rem; }
     .btn-success { font-size: 1.1rem; padding: 14px 24px; }
     .live-sample-image-container { width: 90%; max-width: 320px;}
 
