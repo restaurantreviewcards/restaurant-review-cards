@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ▼▼▼ UPDATED generateQRCodes FUNCTION ▼▼▼
+    // ▼▼▼ UPDATED generateQRCodes FUNCTION (Live Sample Size Changed) ▼▼▼
     const generateQRCodes = () => {
         if (!reviewUrl) return;
 
@@ -102,8 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
             liveSampleQrContainer.innerHTML = ''; // Clear previous
             new QRCode(liveSampleQrContainer, {
                 text: reviewUrl,
-                width: 600, // Render size in pixels (match desired size)
-                height: 600,
+                // ▼▼▼ UPDATED RENDER SIZE ▼▼▼
+                width: 800,
+                height: 800,
+                // ▲▲▲ END UPDATED SIZE ▲▲▲
                 colorDark: "#191718", // Your specified dark color
                 colorLight: "#E6E8E7", // Your specified light color
                 correctLevel: QRCode.CorrectLevel.H // High error correction
