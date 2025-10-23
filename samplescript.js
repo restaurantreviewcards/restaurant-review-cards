@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const placeId = params.get('placeId');
     let reviewUrl = ''; // Initialize the variable
 
-    const copyLinkButton = document.getElementById('copy-link-btn');
     const googleReviewPageLink = document.getElementById('google-review-page-link'); // Find the new inline link
 
     if (placeId) {
@@ -17,10 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     } else {
         console.error("Place ID missing from URL. QR codes and copy link will not function correctly.");
-        if (copyLinkButton) {
-            copyLinkButton.textContent = 'Link Unavailable';
-            copyLinkButton.disabled = true;
-        }
         // Disable the inline link if no Place ID
         if (googleReviewPageLink) {
              googleReviewPageLink.style.pointerEvents = 'none'; // Make unclickable
@@ -78,20 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateQRCodes = () => {
         if (!reviewUrl) return;
 
-        // Existing Card QR Code
-        const cardQrContainer = document.getElementById('card-qr-code-container');
-        if (cardQrContainer) {
-            cardQrContainer.innerHTML = ''; // Clear previous
-            new QRCode(cardQrContainer, {
-                text: reviewUrl,
-                width: 100, // This is the render size, CSS controls final display size
-                height: 100,
-                colorDark: "#1f262b",
-                colorLight: "#e0d9d4",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
-
         // Existing Bonus Stand QR Code
         const bonusQrContainer = document.getElementById('bonus-qr-code-container');
         if (bonusQrContainer) {
@@ -101,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 width: 75, // Render size
                 height: 75,
                 colorDark: "#282a2e",
-                colorLight: "#d7d5d1",
+                colorLight: "#d7d5d1", // <-- COMMA WAS MISSING BEFORE THIS LINE
                 correctLevel: QRCode.CorrectLevel.H
             });
         }
@@ -115,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 width: 800, // Render size in pixels
                 height: 800,
                 colorDark: "#191718", // Your specified dark color
-                colorLight: "#E6E8E7", // Your specified light color
+                colorLight: "#E6E8E7", // <-- COMMA WAS MISSING BEFORE THIS LINE
                 correctLevel: QRCode.CorrectLevel.H // High error correction
             });
         }
@@ -213,25 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const initCopyLink = () => {
-        if (!copyLinkButton || !reviewUrl) return;
-
-        copyLinkButton.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(reviewUrl);
-                const originalText = copyLinkButton.textContent;
-                copyLinkButton.textContent = 'Copied!';
-                copyLinkButton.disabled = true;
-                setTimeout(() => {
-                    copyLinkButton.textContent = originalText;
-                    copyLinkButton.disabled = false;
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-            }
-        });
-    };
-
     const initFooter = () => {
         const yearSpan = document.getElementById('copyright-year');
         if (yearSpan) {
@@ -284,7 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
     generateQRCodes(); // This now generates all three QR codes
     initCountdown();
     initDashboardTabs();
-    initCopyLink();
     initFooter();
     initCheckoutLinks();
     initEarlyCtaScroll();

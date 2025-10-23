@@ -113,20 +113,6 @@ section { padding: 40px 20px; }
     margin-top: 4px;
 }
 
-
-.btn-light {
-    background: var(--background-light);
-    border-color: var(--border-color);
-    color: var(--text-dark);
-    padding: 8px 16px;
-    font-weight: 600;
-    font-size: 1rem;
-    margin-left: 0.5rem;
-}
-.btn-light:hover {
-    background-color: var(--border-color);
-}
-
 /* --- MOBILE STICKY CTA BAR --- */
 .mobile-cta-bar {
     display: none;
@@ -527,10 +513,6 @@ section { padding: 40px 20px; }
 }
 
 /* --- PROCESS FLOW SECTION --- */
-.process-flow-section {
-    padding-top: 60px;
-    padding-bottom: 60px;
-}
 .section-header {
     text-align: center;
     max-width: 600px;
@@ -545,131 +527,6 @@ section { padding: 40px 20px; }
     color: var(--text-light);
     line-height: 1.6; /* Ensure consistent line height */
 }
-.steps-container-reformatted {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3.5rem;
-    align-items: flex-start;
-}
-.step { text-align: center; }
-.step h3 {
-    margin-bottom: 0.75rem;
-}
-.step-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: var(--primary-color);
-}
-.step p {
-    max-width: 450px;
-    margin-left: auto;
-    margin-right: auto;
-    color: var(--text-light);
-    line-height: 1.6; /* Ensure consistent line height */
-    margin-bottom: 1rem; /* Consistent bottom margin */
-}
-
-/* Corrected Rule for reviewcards.png container */
-.qr-card-composite {
-    position: relative;
-    width: 300px;
-    height: 450px; /* Reverted to fixed height */
-    margin: 1.5rem auto;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    overflow: hidden; /* Added */
-    border-radius: 12px; /* Added */
-}
-/* Corrected Rule for reviewcards.png image */
-.qr-card-composite .card-background-img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover; /* Added */
-}
-/* Corrected Rule for reviewcards.png QR code */
-.qr-card-composite .centered-qr-code {
-    position: absolute;
-    top: 50.5%; /* Reverted */
-    left: 52.1%; /* Reverted */
-    transform: translate(-50%, -50%) rotate(-1deg); /* Reverted */
-    width: 100px; /* Reverted */
-    height: 100px; /* Reverted */
-    background-color: transparent;
-    border: none;
-    border-radius: 0; /* Added */
-}
-/* This rule ensuring QR fills container remains correct */
-.centered-qr-code canvas, .centered-qr-code img {
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
-}
-
-/* --- Scan Prompt Box (Only used for reviewcards.png now) --- */
-.scan-prompt {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    max-width: 320px;
-    margin: 1.5rem auto;
-    padding: 1rem;
-    background-color: var(--white);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    text-align: left;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-.scan-prompt .prompt-icon {
-    font-size: 1.5rem;
-    margin-top: 0.25rem;
-    flex-shrink: 0;
-}
-.scan-prompt strong {
-    color: var(--text-dark);
-}
-.scan-prompt p {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-top: 0.25rem;
-    margin-bottom: 0;
-    color: var(--text-light);
-}
-
-/* --- Google Review Mockup --- */
-/* ... (No changes needed here) ... */
-.google-review-mockup {
-    background: var(--white);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 1rem;
-    max-width: 400px;
-    margin: 2rem auto 0;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    text-align: left;
-    font-family: var(--font-google);
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.6s ease-out forwards;
-    animation-delay: 0.2s;
-}
-@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-.mockup-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; }
-.mockup-header img { width: 24px; height: 24px; }
-.mockup-header-text { font-size: 0.9rem; line-height: 1.4; }
-.mockup-business-name { font-weight: 700; color: var(--text-dark); display: block; }
-.mockup-section { padding: 1rem 0.5rem; border-top: 1px solid var(--border-color); }
-.mockup-stars { display: flex; justify-content: center; gap: 0.5rem; }
-.mockup-stars svg { width: 36px; height: 36px; fill: var(--google-yellow); cursor: pointer; transition: transform 0.1s ease-out; }
-.mockup-stars svg:hover { transform: scale(1.15); }
-.mockup-textarea { background-color: var(--background-light); border-radius: 8px; padding: 1rem; min-height: 80px; color: var(--text-light); font-size: 1rem; }
-.mockup-aspects { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
-.mockup-aspect { padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
-.mockup-aspect:hover { background-color: #e8f0fe; border-color: #d2e3fc; }
-.mockup-buttons { text-align: right; padding: 1rem 0.5rem 0.5rem; }
-.mockup-button-action { background-color: var(--google-blue); color: white; font-weight: 600; border: none; padding: 0.75rem 1.5rem; border-radius: 20px; font-family: var(--font-heading); cursor: pointer; transition: background-color 0.2s; }
-.mockup-button-action:hover { background-color: #1a73e8; }
-.mockup-disclaimer { font-size: 0.8rem; color: var(--text-light); text-align: center; margin-top: 0.75rem; max-width: 400px; margin-left: auto; margin-right: auto; opacity: 0; transform: translateY(10px); animation: fadeInUp 0.5s ease-out forwards; animation-delay: 0.4s; }
-
 
 /* --- DASHBOARD PREVIEW MODULE (within Smart Features section now) --- */
 /* ... (No changes needed here) ... */
@@ -758,7 +615,6 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     .live-sample-section { padding: 30px 15px; }
     .offer-preview-section { padding: 25px 15px; }
     .smart-features-section { padding: 30px 15px; } /* Added */
-    .process-flow-section { padding-top: 40px; padding-bottom: 40px; }
     .cta-section { padding-top: 40px; padding-bottom: 40px; }
     .social-proof-section { padding: 40px 15px; }
 
@@ -790,11 +646,6 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
         grid-template-columns: 1fr 1fr; /* Two columns on desktop */
         gap: 3rem;
         align-items: start; /* Align items to the top */
-    }
-
-    .steps-container-reformatted {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2.5rem;
     }
 
     .metric-flow-grid {
