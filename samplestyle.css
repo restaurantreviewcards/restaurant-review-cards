@@ -330,12 +330,12 @@ section { padding: 40px 20px; }
 /* Positioning and sizing the QR code placeholder (800px on 1376x1834) */
 #live-sample-qr-code {
     position: absolute;
-    top: 54.4%;
+    top: 53%;
     left: 50.6%;
     width: 58.1%;
     height: 43.6%;
     /* aspect-ratio: 1 / 1; height: auto; */
-    transform: translate(-50%, -50%) rotate(-1deg);
+    transform: translate(-50%, -50%) rotate(0deg);
     background-color: transparent;
     border: none;
 }
