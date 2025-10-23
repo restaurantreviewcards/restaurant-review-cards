@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Populate Business Names ---
         document.getElementById('business-name-header').textContent = name;
         document.querySelector('.business-name-preview').textContent = name;
-        document.getElementById('mockup-business-name').textContent = name;
+        // document.getElementById('mockup-business-name').textContent = name; // <-- THIS LINE IS NOW REMOVED
 
         // --- Get DOM Elements for the Snapshot ---
         const ratingValueEl = document.getElementById('google-rating-value');
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 width: 75, // Render size
                 height: 75,
                 colorDark: "#282a2e",
-                colorLight: "#d7d5d1", // <-- COMMA WAS MISSING BEFORE THIS LINE
+                colorLight: "#d7d5d1",
                 correctLevel: QRCode.CorrectLevel.H
             });
         }
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 width: 800, // Render size in pixels
                 height: 800,
                 colorDark: "#191718", // Your specified dark color
-                colorLight: "#E6E8E7", // <-- COMMA WAS MISSING BEFORE THIS LINE
+                colorLight: "#E6E8E7", // Your specified light color
                 correctLevel: QRCode.CorrectLevel.H // High error correction
             });
         }
