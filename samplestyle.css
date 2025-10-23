@@ -289,8 +289,8 @@ section { padding: 40px 20px; }
     position: absolute;
     top: 54.4%;
     left: 50.6%;
-    width: 43.6%;
-    height: 32.7%; /* Use height percentage or aspect-ratio */
+    width: 58.1%;
+    height: 43.6%; /* Use height percentage or aspect-ratio */
     /* aspect-ratio: 1 / 1; height: auto; */
     transform: translate(-50%, -50%) rotate(-1deg);
     background-color: transparent;
