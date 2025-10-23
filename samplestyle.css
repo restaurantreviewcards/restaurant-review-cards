@@ -1,48 +1,48 @@
 /* --- CUSTOM FONT DEFINITION --- */
 @font-face {
-    font-family: 'Manrope';
-    src: url('Manrope-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+    font-family: 'Manrope';
+    src: url('Manrope-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 
 /* --- CSS VARIABLES (COLORS & FONTS) --- */
 :root {
-    --primary-color: #005596;
-    --primary-dark: #003d6d;
-    --secondary-color: #FFD60A;
-    --text-dark: #2d3748;
-    --text-light: #718096;
-    --background-light: #f7fafc;
-    --white: #ffffff;
-    --border-color: #e2e8f0;
-    --success-green: #28a745;
-    --bonus-background: #eef6ff;
-    --bonus-border: #bde0fe;
-    --font-heading: 'Poppins', sans-serif;
-    --font-body: 'Lato', sans-serif;
-    --font-google: 'Roboto', sans-serif; /* Google's Font */
-    --google-blue: #4285F4;
-    --google-red: #EA4335;
-    --google-yellow: #FBBC05;
-    --google-green: #34A853;
-    --google-text: #202124;
+    --primary-color: #005596;
+    --primary-dark: #003d6d;
+    --secondary-color: #FFD60A;
+    --text-dark: #2d3748;
+    --text-light: #718096;
+    --background-light: #f7fafc;
+    --white: #ffffff;
+    --border-color: #e2e8f0;
+    --success-green: #28a745;
+    --bonus-background: #eef6ff;
+    --bonus-border: #bde0fe;
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Lato', sans-serif;
+    --font-google: 'Roboto', sans-serif; /* Google's Font */
+    --google-blue: #4285F4;
+    --google-red: #EA4335;
+    --google-yellow: #FBBC05;
+    --google-green: #34A853;
+    --google-text: #202124;
 }
 
 /* --- GLOBAL STYLES & RESETS --- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-    font-family: var(--font-body);
-    line-height: 1.7;
-    color: var(--text-dark);
-    background-color: var(--background-light);
+    font-family: var(--font-body);
+    line-height: 1.7;
+    color: var(--text-dark);
+    background-color: var(--background-light);
 }
 h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    line-height: 1.3;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.3;
 }
 h1 { font-size: 2.2rem; }
 h2 { font-size: 1.8rem; }
@@ -51,150 +51,136 @@ section { padding: 40px 20px; }
 
 /* --- UTILITY CLASSES --- */
 .container-centered {
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .container-centered-sm {
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* --- REUSABLE BUTTON CLASSES --- */
 .btn {
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    padding: 12px 24px;
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: 1rem;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.2s ease;
-    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+    text-align: center;
 }
 .btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 .btn:active, .share-button:active, .dashboard-tab:active {
-    transform: scale(0.97);
-    filter: brightness(0.95);
+    transform: scale(0.97);
+    filter: brightness(0.95);
 }
 
 .btn-primary {
-    background-color: var(--primary-color);
-    color: var(--white);
-    border: none;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
 }
 .btn-primary:hover {
-    background-color: var(--primary-dark);
+    background-color: var(--primary-dark);
 }
 
 .btn-success {
-    background-color: var(--success-green);
-    color: var(--white);
-    box-shadow: 0 4px 15px rgba(40,167,69,0.3);
-    font-size: 1.2rem;
-    padding: 14px 36px; /* Adjusted padding */
-    margin-top: 1.5rem;
+    background-color: var(--success-green);
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+    font-size: 1.2rem;
+    padding: 14px 36px; /* Adjusted padding */
+    margin-top: 1.5rem;
 }
 .btn-success:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40,167,69,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40,167,69,0.4);
 }
 .btn-success .bonus-cue {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 500;
-    opacity: 0.9;
-    margin-top: 4px;
-}
-
-
-.btn-light {
-    background: var(--background-light);
-    border-color: var(--border-color);
-    color: var(--text-dark);
-    padding: 8px 16px;
-    font-weight: 600;
-    font-size: 1rem;
-    margin-left: 0.5rem;
-}
-.btn-light:hover {
-    background-color: var(--border-color);
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    opacity: 0.9;
+    margin-top: 4px;
 }
 
 /* --- MOBILE STICKY CTA BAR --- */
 .mobile-cta-bar {
-    display: none;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: var(--white);
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-    padding: 0.75rem 1rem;
-    z-index: 1000;
-    justify-content: space-between;
-    align-items: center;
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--white);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    padding: 0.75rem 1rem;
+    z-index: 1000;
+    justify-content: space-between;
+    align-items: center;
 }
 .mobile-cta-bar .business-name-preview {
-    font-weight: 600;
-    font-family: var(--font-heading);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 1rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 1rem;
 }
 .mobile-cta-bar .btn {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    white-space: nowrap;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 /* --- HEADER --- */
 .header {
-    padding: 1.25rem 1.5rem;
-    background-color: var(--white);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    text-align: center;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--white);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    text-align: center;
 }
 .logo a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: var(--text-dark);
-    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    text-decoration: none;
 }
 .logo a .logo-icon { color: var(--primary-color); }
 .preview-title-container { margin-top: 1.25rem; }
 .preview-for-label {
-    font-family: var(--font-heading);
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-light);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 0.25rem;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.25rem;
 }
 .preview-business-name {
-    font-family: var(--font-heading);
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    line-height: 1.2;
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.2;
 }
 
 /* --- Special Google Word Styling --- */
 .google-word {
-    font-family: 'Manrope', sans-serif;
-    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
 }
 .google-g-blue { color: #4285F4; }
 .google-o-red { color: #EA4335; }
@@ -204,9 +190,9 @@ section { padding: 40px 20px; }
 
 /* --- Style for inline Google word --- */
 .google-word-inline {
-    font-family: 'Manrope', sans-serif;
-    font-weight: 700; /* Match the heading style */
-    white-space: nowrap; /* Prevent the word from breaking */
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700; /* Match the heading style */
+    white-space: nowrap; /* Prevent the word from breaking */
 }
 /* Ensure existing color classes apply correctly within the inline span */
 .google-word-inline .google-g-blue { color: #4285F4; }
@@ -217,459 +203,330 @@ section { padding: 40px 20px; }
 
 /* --- Inline Link Style --- */
 .inline-link {
-    color: var(--primary-color); /* Use brand color for the link */
-    text-decoration: none; /* No underline by default */
-    font-weight: 600; /* Make it slightly bolder */
-    border-bottom: 1px dotted var(--primary-color); /* Subtle dotted underline */
-    transition: all 0.2s ease;
+    color: var(--primary-color); /* Use brand color for the link */
+    text-decoration: none; /* No underline by default */
+    font-weight: 600; /* Make it slightly bolder */
+    border-bottom: 1px dotted var(--primary-color); /* Subtle dotted underline */
+    transition: all 0.2s ease;
 }
 .inline-link:hover,
 .inline-link:focus { /* Add focus state for accessibility */
-    color: var(--primary-dark); /* Darken on hover */
-    border-bottom-style: solid; /* Solid underline on hover */
-    background-color: #f0f6fc; /* Very light background highlight on hover */
-    outline: none; /* Remove default focus outline if you handle it elsewhere */
+    color: var(--primary-dark); /* Darken on hover */
+    border-bottom-style: solid; /* Solid underline on hover */
+    background-color: #f0f6fc; /* Very light background highlight on hover */
+    outline: none; /* Remove default focus outline if you handle it elsewhere */
 }
 /* Ensure nested Google word styles still apply */
 .inline-link .google-word-inline {
-    /* Inherit color styling from parent spans */
-    font-weight: inherit; /* Inherit font-weight from link */
-    border-bottom: none; /* Prevent double underline */
-    background-color: transparent; /* Prevent background highlight */
+    /* Inherit color styling from parent spans */
+    font-weight: inherit; /* Inherit font-weight from link */
+    border-bottom: none; /* Prevent double underline */
+    background-color: transparent; /* Prevent background highlight */
 }
 
 
 /* --- WELCOME SECTION --- */
 .welcome-section {
-    text-align: center;
-    padding: 40px 20px 50px;
-    background-color: var(--white);
-    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+    padding: 40px 20px 50px;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border-color);
 }
 .welcome-section .subtitle {
-    font-size: 1.2rem;
-    color: var(--text-dark);
+    font-size: 1.2rem;
+    color: var(--text-dark);
 }
 
 /* --- GOOGLE REPUTATION SNAPSHOT --- */
 .google-snapshot-card {
-    font-family: var(--font-google);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    background: var(--white);
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.07);
-    max-width: 400px;
-    margin: 1.5rem auto 0;
-    border: 1px solid var(--border-color);
+    font-family: var(--font-google);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.07);
+    max-width: 400px;
+    margin: 1.5rem auto 0;
+    border: 1px solid var(--border-color);
 }
 .google-icon { width: 28px; height: 28px; }
 .google-rating-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 .rating-value {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--google-text);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--google-text);
 }
 .star-rating { display: flex; }
 .star-rating svg {
-    width: 18px;
-    height: 18px;
+    width: 18px;
+    height: 18px;
 }
 .review-count-link {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--google-blue);
-    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--google-blue);
+    text-decoration: none;
 }
 .review-count-link:hover { text-decoration: underline; }
 
 /* --- Live Sample Image Section --- */
 .live-sample-section {
-    padding: 40px 20px;
-    background-color: var(--white); /* White background */
-    border-bottom: 1px solid var(--border-color);
-    text-align: center; /* Center align content */
+    padding: 40px 20px;
+    background-color: var(--white); /* White background */
+    border-bottom: 1px solid var(--border-color);
+    text-align: center; /* Center align content */
 }
 .live-sample-section h2 {
-    margin-bottom: 0.5rem; /* Space below header */
+    margin-bottom: 0.5rem; /* Space below header */
 }
 .live-sample-section .section-subtext { /* Style for the subtext */
-    font-size: 1.1rem;
-    color: var(--text-light);
-    margin-bottom: 1rem; /* Reduced Space below subtext */
-    max-width: 500px; /* Constrain width */
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6; /* Ensure good line height */
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 1rem; /* Reduced Space below subtext */
+    max-width: 500px; /* Constrain width */
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6; /* Ensure good line height */
 }
 .live-sample-image-container {
-    position: relative;
-    max-width: 400px;
-    width: 70%; /* Adjust width for mobile */
-    margin: 0 auto 1.5rem auto;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    overflow: hidden;
+    position: relative;
+    max-width: 400px;
+    width: 70%; /* Adjust width for mobile */
+    margin: 0 auto 1.5rem auto;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 .live-sample-background-img {
-    display: block;
-    width: 100%;
-    height: auto;
+    display: block;
+    width: 100%;
+    height: auto;
 }
 /* Positioning and sizing the QR code placeholder (800px on 1376x1834) */
 #live-sample-qr-code {
-    position: absolute;
-    top: 54.4%;
-    left: 50.6%;
-    width: 58.1%;
-    height: 43.6%;
-    /* aspect-ratio: 1 / 1; height: auto; */
-    transform: translate(-50%, -50%) rotate(-1deg);
-    background-color: transparent;
-    border: none;
+    position: absolute;
+    top: 54.4%;
+    left: 50.6%;
+    width: 58.1%;
+    height: 43.6%;
+    /* aspect-ratio: 1 / 1; height: auto; */
+    transform: translate(-50%, -50%) rotate(-1deg);
+    background-color: transparent;
+    border: none;
 }
 #live-sample-qr-code canvas,
 #live-sample-qr-code img {
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
 }
 /* Style for the scan prompt text */
 .scan-action-text {
-    font-size: 0.9rem; /* Slightly smaller font size */
-    color: var(--text-light); /* Lighter text color */
-    font-weight: 500; /* Normal or medium weight, not bold */
-    margin-top: 0; /* Remove top margin */
-    margin-bottom: 1.5rem; /* Add space below before the image */
-    text-align: center; /* Ensure it's centered */
+    font-size: 0.9rem; /* Slightly smaller font size */
+    color: var(--text-light); /* Lighter text color */
+    font-weight: 500; /* Normal or medium weight, not bold */
+    margin-top: 0; /* Remove top margin */
+    margin-bottom: 1.5rem; /* Add space below before the image */
+    text-align: center; /* Ensure it's centered */
 }
 /* Style for the descriptive paragraph below live sample */
 .live-sample-description {
-    font-size: 1rem;
-    color: var(--text-dark); /* Darker text for readability */
-    line-height: 1.6;
-    max-width: 500px; /* Constrain width */
-    margin: 0 auto 1.5rem auto; /* Top and bottom margin */
+    font-size: 1rem;
+    color: var(--text-dark); /* Darker text for readability */
+    line-height: 1.6;
+    max-width: 500px; /* Constrain width */
+    margin: 0 auto 1.5rem auto; /* Top and bottom margin */
 }
 /* Style for the Get Started button below live sample */
 .live-sample-cta {
-    margin-top: 0; /* Remove default top margin if needed */
-    font-size: 1.1rem; /* Slightly larger maybe */
-    padding: 14px 28px; /* Match preview box button */
+    margin-top: 0; /* Remove default top margin if needed */
+    font-size: 1.1rem; /* Slightly larger maybe */
+    padding: 14px 28px; /* Match preview box button */
 }
 
 
 /* --- Offer Preview Box Styles --- */
 .offer-preview-section {
-    background-color: var(--white);
-    padding: 30px 20px;
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--white);
+    padding: 30px 20px;
+    border-bottom: 1px solid var(--border-color);
 }
 .offer-preview-box {
-    background-color: var(--bonus-background);
-    border: 1px solid var(--bonus-border);
-    border-left: 4px solid var(--primary-color);
-    padding: 1.5rem;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    background-color: var(--bonus-background);
+    border: 1px solid var(--bonus-border);
+    border-left: 4px solid var(--primary-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 .offer-preview-box h3 {
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-    font-size: 1.3rem;
-    color: var(--text-dark);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.3rem;
+    color: var(--text-dark);
 }
 .offer-preview-box p {
-    color: var(--text-light);
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-    line-height: 1.6; /* Ensure consistent line height */
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.6; /* Ensure consistent line height */
 }
 /* Style for bonus text within preview box */
 .offer-preview-box .bonus-reserved-text {
-    margin-top: 0; /* Adjust spacing */
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    font-weight: 600;
+    margin-top: 0; /* Adjust spacing */
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 /* Style for countdown within preview box */
 .offer-preview-box .countdown-timer {
-    margin-bottom: 1.5rem; /* Add space before button */
-    display: flex; /* Ensure timer elements are properly laid out */
-    justify-content: center;
-    gap: 1rem;
+    margin-bottom: 1.5rem; /* Add space before button */
+    display: flex; /* Ensure timer elements are properly laid out */
+    justify-content: center;
+    gap: 1rem;
 }
 .offer-preview-box .timer-box {
-    background: var(--white);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    border: 1px solid var(--border-color);
+    background: var(--white);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
 }
 .offer-preview-box .timer-time {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    line-height: 1;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1;
 }
 .offer-preview-box .timer-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    color: var(--text-light);
-    margin-top: 0.25rem;
-    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+    display: block;
 }
 .offer-preview-box .btn {
-    font-size: 1.1rem;
-    padding: 14px 28px;
+    font-size: 1.1rem;
+    padding: 14px 28px;
 }
 
 
 /* --- SOCIAL PROOF SECTION --- */
 .social-proof-section {
-    background-color: var(--primary-dark);
-    color: var(--white);
-    padding: 60px 20px;
-    text-align: center;
+    background-color: var(--primary-dark);
+    color: var(--white);
+    padding: 60px 20px;
+    text-align: center;
 }
 .social-proof-section h2 {
-    font-size: 2rem;
-    margin-bottom: 3.5rem;
+    font-size: 2rem;
+    margin-bottom: 3.5rem;
 }
 .metrics-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-    justify-content: center;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: center;
 }
 .metric-display { max-width: 400px; }
 .metric-number {
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 4rem;
-    line-height: 1.1;
-    color: var(--white);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 4rem;
+    line-height: 1.1;
+    color: var(--white);
 }
 .metric-label-proof {
-    margin-top: 0.75rem;
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.8);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }
 
 /* --- Smart Features Section --- */
 .smart-features-section {
-    background-color: var(--white); /* Or var(--background-light) */
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--white); /* Or var(--background-light) */
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 .smart-features-section .section-header {
-    margin-bottom: 3rem; /* Adjust spacing */
+    margin-bottom: 3rem; /* Adjust spacing */
 }
 .smart-features-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Default to single column for mobile */
-    gap: 2.5rem; /* Space between items */
-    margin-bottom: 3rem; /* Space before dashboard visual */
-    max-width: 900px; /* Constrain width */
-    margin-left: auto;
-    margin-right: auto;
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column for mobile */
+    gap: 2.5rem; /* Space between items */
+    margin-bottom: 3rem; /* Space before dashboard visual */
+    max-width: 900px; /* Constrain width */
+    margin-left: auto;
+    margin-right: auto;
 }
 .smart-feature-item {
-    text-align: center;
+    text-align: center;
 }
 .smart-feature-icon {
-    font-size: 2.5rem; /* Adjust icon size */
-    margin-bottom: 1rem;
-    color: var(--primary-color);
-    line-height: 1;
+    font-size: 2.5rem; /* Adjust icon size */
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    line-height: 1;
 }
 .smart-feature-item h3 {
-    margin-bottom: 0.5rem;
-    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
 }
 .smart-feature-item p {
-    color: var(--text-light);
-    max-width: 400px; /* Limit paragraph width */
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6; /* Ensure consistent line height */
-    margin-bottom: 0; /* Remove default margin */
+    color: var(--text-light);
+    max-width: 400px; /* Limit paragraph width */
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6; /* Ensure consistent line height */
+    margin-bottom: 0; /* Remove default margin */
 }
 /* Adjust dashboard visual spacing within this section */
 .smart-dashboard-visual {
-    margin-top: 0; /* Remove default top margin if needed */
-    margin-bottom: 1rem; /* Space before caption */
-    max-width: 500px; /* Slightly larger maybe? */
-    margin-left: auto; /* Center */
-    margin-right: auto; /* Center */
+    margin-top: 0; /* Remove default top margin if needed */
+    margin-bottom: 1rem; /* Space before caption */
+    max-width: 500px; /* Slightly larger maybe? */
+    margin-left: auto; /* Center */
+    margin-right: auto; /* Center */
 }
 /* Style for the dashboard caption */
 .dashboard-caption {
-    font-size: 0.95rem;
-    color: var(--text-light);
-    text-align: center;
-    max-width: 450px;
-    margin: 0 auto; /* Center caption */
-    line-height: 1.6; /* Ensure consistent line height */
+    font-size: 0.95rem;
+    color: var(--text-light);
+    text-align: center;
+    max-width: 450px;
+    margin: 0 auto; /* Center caption */
+    line-height: 1.6; /* Ensure consistent line height */
 }
 
 /* --- PROCESS FLOW SECTION --- */
-.process-flow-section {
-    padding-top: 60px;
-    padding-bottom: 60px;
-}
 .section-header {
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto 3.5rem auto;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 3.5rem auto;
 }
 .section-header h2 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
 }
 .section-header p {
-    font-size: 1.1rem;
-    color: var(--text-light);
-    line-height: 1.6; /* Ensure consistent line height */
+    font-size: 1.1rem;
+    color: var(--text-light);
+    line-height: 1.6; /* Ensure consistent line height */
 }
-.steps-container-reformatted {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3.5rem;
-    align-items: flex-start;
-}
-.step { text-align: center; }
-.step h3 {
-    margin-bottom: 0.75rem;
-}
-.step-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: var(--primary-color);
-}
-.step p {
-    max-width: 450px;
-    margin-left: auto;
-    margin-right: auto;
-    color: var(--text-light);
-    line-height: 1.6; /* Ensure consistent line height */
-    margin-bottom: 1rem; /* Consistent bottom margin */
-}
-
-/* Corrected Rule for reviewcards.png container */
-.qr-card-composite {
-    position: relative;
-    width: 300px;
-    height: 450px; /* Reverted to fixed height */
-    margin: 1.5rem auto;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    overflow: hidden; /* Added */
-    border-radius: 12px; /* Added */
-}
-/* Corrected Rule for reviewcards.png image */
-.qr-card-composite .card-background-img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover; /* Added */
-}
-/* Corrected Rule for reviewcards.png QR code */
-.qr-card-composite .centered-qr-code {
-    position: absolute;
-    top: 50.5%; /* Reverted */
-    left: 52.1%; /* Reverted */
-    transform: translate(-50%, -50%) rotate(-1deg); /* Reverted */
-    width: 100px; /* Reverted */
-    height: 100px; /* Reverted */
-    background-color: transparent;
-    border: none;
-    border-radius: 0; /* Added */
-}
-/* This rule ensuring QR fills container remains correct */
-.centered-qr-code canvas, .centered-qr-code img {
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
-}
-
-/* --- Scan Prompt Box (Only used for reviewcards.png now) --- */
-.scan-prompt {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    max-width: 320px;
-    margin: 1.5rem auto;
-    padding: 1rem;
-    background-color: var(--white);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    text-align: left;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-.scan-prompt .prompt-icon {
-    font-size: 1.5rem;
-    margin-top: 0.25rem;
-    flex-shrink: 0;
-}
-.scan-prompt strong {
-    color: var(--text-dark);
-}
-.scan-prompt p {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-top: 0.25rem;
-    margin-bottom: 0;
-    color: var(--text-light);
-}
-
-/* --- Google Review Mockup --- */
-/* ... (No changes needed here) ... */
-.google-review-mockup {
-    background: var(--white);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 1rem;
-    max-width: 400px;
-    margin: 2rem auto 0;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    text-align: left;
-    font-family: var(--font-google);
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.6s ease-out forwards;
-    animation-delay: 0.2s;
-}
-@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-.mockup-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; }
-.mockup-header img { width: 24px; height: 24px; }
-.mockup-header-text { font-size: 0.9rem; line-height: 1.4; }
-.mockup-business-name { font-weight: 700; color: var(--text-dark); display: block; }
-.mockup-section { padding: 1rem 0.5rem; border-top: 1px solid var(--border-color); }
-.mockup-stars { display: flex; justify-content: center; gap: 0.5rem; }
-.mockup-stars svg { width: 36px; height: 36px; fill: var(--google-yellow); cursor: pointer; transition: transform 0.1s ease-out; }
-.mockup-stars svg:hover { transform: scale(1.15); }
-.mockup-textarea { background-color: var(--background-light); border-radius: 8px; padding: 1rem; min-height: 80px; color: var(--text-light); font-size: 1rem; }
-.mockup-aspects { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
-.mockup-aspect { padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
-.mockup-aspect:hover { background-color: #e8f0fe; border-color: #d2e3fc; }
-.mockup-buttons { text-align: right; padding: 1rem 0.5rem 0.5rem; }
-.mockup-button-action { background-color: var(--google-blue); color: white; font-weight: 600; border: none; padding: 0.75rem 1.5rem; border-radius: 20px; font-family: var(--font-heading); cursor: pointer; transition: background-color 0.2s; }
-.mockup-button-action:hover { background-color: #1a73e8; }
-.mockup-disclaimer { font-size: 0.8rem; color: var(--text-light); text-align: center; margin-top: 0.75rem; max-width: 400px; margin-left: auto; margin-right: auto; opacity: 0; transform: translateY(10px); animation: fadeInUp 0.5s ease-out forwards; animation-delay: 0.4s; }
-
 
 /* --- DASHBOARD PREVIEW MODULE (within Smart Features section now) --- */
 /* ... (No changes needed here) ... */
@@ -734,85 +591,79 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
 
 /* --- MOBILE-ONLY STYLES --- */
 @media (max-width: 767px) {
-    .mobile-cta-bar {
-        display: flex;
-    }
-    body {
-        padding-bottom: 80px;
-    }
+    .mobile-cta-bar {
+        display: flex;
+    }
+    body {
+        padding-bottom: 80px;
+    }
 
-    .header {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-    }
-    .preview-title-container {
-         margin-top: 0.75rem;
-    }
-    .preview-business-name {
-        font-size: 1.6rem;
-        line-height: 1.2;
-    }
+    .header {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    .preview-title-container {
+         margin-top: 0.75rem;
+    }
+    .preview-business-name {
+        font-size: 1.6rem;
+        line-height: 1.2;
+    }
 
-    section { padding: 30px 15px; }
-    .welcome-section { padding: 30px 15px 40px; }
-    .live-sample-section { padding: 30px 15px; }
-    .offer-preview-section { padding: 25px 15px; }
-    .smart-features-section { padding: 30px 15px; } /* Added */
-    .process-flow-section { padding-top: 40px; padding-bottom: 40px; }
-    .cta-section { padding-top: 40px; padding-bottom: 40px; }
-    .social-proof-section { padding: 40px 15px; }
+    section { padding: 30px 15px; }
+    .welcome-section { padding: 30px 15px 40px; }
+    .live-sample-section { padding: 30px 15px; }
+    .offer-preview-section { padding: 25px 15px; }
+    .smart-features-section { padding: 30px 15px; } /* Added */
+    .cta-section { padding-top: 40px; padding-bottom: 40px; }
+    .social-proof-section { padding: 40px 15px; }
 
-    h1 { font-size: 1.8rem; }
-    h2 { font-size: 1.5rem; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.5rem; }
 
-    .final-offer-card { padding: 1.5rem; }
-    .price-trial .price-main { font-size: 3rem; }
-    .offer-preview-box .timer-time { font-size: 2rem; }
-    .offer-preview-box .timer-box { padding: 0.5rem 0.75rem; }
-    .btn-success { font-size: 1.1rem; padding: 14px 24px; }
-    .live-sample-image-container { width: 90%; max-width: 320px;}
+    .final-offer-card { padding: 1.5rem; }
+    .price-trial .price-main { font-size: 3rem; }
+    .offer-preview-box .timer-time { font-size: 2rem; }
+    .offer-preview-box .timer-box { padding: 0.5rem 0.75rem; }
+    .btn-success { font-size: 1.1rem; padding: 14px 24px; }
+    .live-sample-image-container { width: 90%; max-width: 320px;}
 
-    /* Smart Features Mobile */
-    .smart-features-section .section-header { margin-bottom: 2rem; }
-    .smart-features-grid { gap: 2rem; margin-bottom: 2rem; }
-    .smart-feature-item h3 { font-size: 1.15rem; }
-    .smart-dashboard-visual { max-width: 100%; }
+    /* Smart Features Mobile */
+    .smart-features-section .section-header { margin-bottom: 2rem; }
+    .smart-features-grid { gap: 2rem; margin-bottom: 2rem; }
+    .smart-feature-item h3 { font-size: 1.15rem; }
+    .smart-dashboard-visual { max-width: 100%; }
 }
 
 /* --- DESKTOP STYLES --- */
 @media (min-width: 768px) {
-    h1 { font-size: 2.5rem; }
-    h2 { font-size: 2rem; }
-    section { padding: 60px 40px; }
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 2rem; }
+    section { padding: 60px 40px; }
 
-    /* Smart Features Desktop Grid */
-     .smart-features-grid {
-        grid-template-columns: 1fr 1fr; /* Two columns on desktop */
-        gap: 3rem;
-        align-items: start; /* Align items to the top */
-    }
+    /* Smart Features Desktop Grid */
+     .smart-features-grid {
+        grid-template-columns: 1fr 1fr; /* Two columns on desktop */
+        gap: 3rem;
+    D    align-items: start; /* Align items to the top */
+    }
 
-    .steps-container-reformatted {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2.5rem;
-    }
+    .metric-flow-grid {
+        flex-direction: row;
+    }
+    .flow-arrow {
+        display: block;
+        align-self: center;
+        font-size: 2rem;
+        color: #cbd5e0;
+        font-weight: 600;
+    }
 
-    .metric-flow-grid {
-        flex-direction: row;
-    }
-    .flow-arrow {
-        display: block;
-        align-self: center;
-        font-size: 2rem;
-        color: #cbd5e0;
-        font-weight: 600;
-    }
+    .social-proof-section h2 { font-size: 2.25rem; }
+    .metrics-container { flex-direction: row; gap: 0; }
+    .metric-display { flex: 1; padding: 0 2rem; }
+    .metric-display + .metric-display { border-left: 1px solid rgba(255, 255, 255, 0.2); }
+Two    .metric-number { font-size: 4.5rem; }
 
-    .social-proof-section h2 { font-size: 2.25rem; }
-    .metrics-container { flex-direction: row; gap: 0; }
-    .metric-display { flex: 1; padding: 0 2rem; }
-    .metric-display + .metric-display { border-left: 1px solid rgba(255, 255, 255, 0.2); }
-    .metric-number { font-size: 4.5rem; }
-
-    .final-offer-card { padding: 2.5rem; }
+    .final-offer-card { padding: 2.5rem; }
 }
