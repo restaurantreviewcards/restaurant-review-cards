@@ -7,14 +7,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let reviewUrl = ''; // Initialize the variable
 
     const copyLinkButton = document.getElementById('copy-link-btn');
+    const googleReviewPageLink = document.getElementById('google-review-page-link'); // Find the new inline link
 
     if (placeId) {
         reviewUrl = `https://search.google.com/local/writereview?placeid=${placeId}`;
+        // Set the href for the new inline link
+        if (googleReviewPageLink) {
+            googleReviewPageLink.href = reviewUrl;
+        }
     } else {
         console.error("Place ID missing from URL. QR codes and copy link will not function correctly.");
         if (copyLinkButton) {
             copyLinkButton.textContent = 'Link Unavailable';
             copyLinkButton.disabled = true;
+        }
+        // Disable the inline link if no Place ID
+        if (googleReviewPageLink) {
+             googleReviewPageLink.style.pointerEvents = 'none'; // Make unclickable
+             googleReviewPageLink.style.color = 'var(--text-light)'; // Make look less like a link
+             googleReviewPageLink.removeAttribute('href');
         }
     }
 
@@ -64,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ▼▼▼ UPDATED generateQRCodes FUNCTION (Live Sample Size Changed) ▼▼▼
     const generateQRCodes = () => {
         if (!reviewUrl) return;
 
@@ -96,24 +106,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // ### NEW Live Sample QR Code Generation ###
+        // Live Sample QR Code Generation
         const liveSampleQrContainer = document.getElementById('live-sample-qr-code');
         if (liveSampleQrContainer) {
             liveSampleQrContainer.innerHTML = ''; // Clear previous
             new QRCode(liveSampleQrContainer, {
                 text: reviewUrl,
-                // ▼▼▼ UPDATED RENDER SIZE ▼▼▼
-                width: 800,
+                width: 800, // Render size in pixels
                 height: 800,
-                // ▲▲▲ END UPDATED SIZE ▲▲▲
                 colorDark: "#191718", // Your specified dark color
                 colorLight: "#E6E8E7", // Your specified light color
                 correctLevel: QRCode.CorrectLevel.H // High error correction
             });
         }
-        // ### END NEW CODE ###
     };
-    // ▲▲▲ END OF UPDATED FUNCTION ▲▲▲
 
     const initCountdown = async () => {
         const hoursEl = document.getElementById('hours');

@@ -202,6 +202,42 @@ section { padding: 40px 20px; }
 .google-l-green { color: #34A853; }
 .google-e-red { color: #EA4335; }
 
+/* --- Style for inline Google word --- */
+.google-word-inline {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700; /* Match the heading style */
+    white-space: nowrap; /* Prevent the word from breaking */
+}
+/* Ensure existing color classes apply correctly within the inline span */
+.google-word-inline .google-g-blue { color: #4285F4; }
+.google-word-inline .google-o-red { color: #EA4335; }
+.google-word-inline .google-o-yellow { color: #FBBC05; }
+.google-word-inline .google-l-green { color: #34A853; }
+.google-word-inline .google-e-red { color: #EA4335; }
+
+/* --- Inline Link Style --- */
+.inline-link {
+    color: var(--primary-color); /* Use brand color for the link */
+    text-decoration: none; /* No underline by default */
+    font-weight: 600; /* Make it slightly bolder */
+    border-bottom: 1px dotted var(--primary-color); /* Subtle dotted underline */
+    transition: all 0.2s ease;
+}
+.inline-link:hover,
+.inline-link:focus { /* Add focus state for accessibility */
+    color: var(--primary-dark); /* Darken on hover */
+    border-bottom-style: solid; /* Solid underline on hover */
+    background-color: #f0f6fc; /* Very light background highlight on hover */
+    outline: none; /* Remove default focus outline if you handle it elsewhere */
+}
+/* Ensure nested Google word styles still apply */
+.inline-link .google-word-inline {
+    /* Inherit color styling from parent spans */
+    font-weight: inherit; /* Inherit font-weight from link */
+    border-bottom: none; /* Prevent double underline */
+    background-color: transparent; /* Prevent background highlight */
+}
+
 
 /* --- WELCOME SECTION --- */
 .welcome-section {
@@ -306,12 +342,16 @@ section { padding: 40px 20px; }
     height: 100% !important;
     display: block;
 }
-.scan-action-text { /* Style for the scan prompt text */
-    font-size: 1rem;
-    color: var(--text-dark);
-    font-weight: 600;
-    margin-top: 1.5rem; /* Space above */
+/* Style for the scan prompt text */
+.scan-action-text {
+    font-size: 0.9rem; /* Slightly smaller font size */
+    color: var(--text-light); /* Lighter text color */
+    font-weight: 500; /* Normal or medium weight, not bold */
+    margin-top: 0; /* Remove top margin if needed */
+    margin-bottom: 1.5rem; /* Add space below before the image */
+    text-align: center; /* Ensure it's centered */
 }
+
 
 /* --- Offer Preview Box Styles --- */
 .offer-preview-section {
@@ -453,7 +493,7 @@ section { padding: 40px 20px; }
     color: var(--text-light);
 }
 
-/* ### CORRECTED Rule for reviewcards.png container ### */
+/* Corrected Rule for reviewcards.png container */
 .qr-card-composite {
     position: relative;
     width: 300px;
@@ -463,15 +503,14 @@ section { padding: 40px 20px; }
     overflow: hidden; /* Added */
     border-radius: 12px; /* Added */
 }
-/* ### CORRECTED Rule for reviewcards.png image ### */
+/* Corrected Rule for reviewcards.png image */
 .qr-card-composite .card-background-img {
     width: 100%;
     height: 100%;
     display: block;
     object-fit: cover; /* Added */
-    /* Removed border-radius */
 }
-/* ### CORRECTED Rule for reviewcards.png QR code ### */
+/* Corrected Rule for reviewcards.png QR code */
 .qr-card-composite .centered-qr-code {
     position: absolute;
     top: 50.5%; /* Reverted */
@@ -482,7 +521,6 @@ section { padding: 40px 20px; }
     background-color: transparent;
     border: none;
     border-radius: 0; /* Added */
-    /* Removed aspect-ratio */
 }
 /* This rule ensuring QR fills container remains correct */
 .centered-qr-code canvas, .centered-qr-code img {
