@@ -379,3 +379,13 @@ body {
 .summary-row .price-today {
     color: var(--success-green);
 }
+
+/* --- Style for Trial Cancellation Note --- */
+.trial-cancel-note {
+    font-size: 0.85rem; /* Slightly smaller text */
+    color: var(--text-light); /* Lighter color */
+    text-align: center;
+    margin-top: 1.25rem; /* Add some space above */
+    margin-bottom: 0; /* Remove default bottom margin */
+    line-height: 1.5;
+}
