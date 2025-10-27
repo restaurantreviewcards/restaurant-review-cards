@@ -129,29 +129,6 @@ body {
 }
 /* --- END OF Snapshot Styles --- */
 
-/* --- Style for QR Explanation Text --- */
-.qr-explanation {
-    font-size: 0.85rem; /* Slightly smaller */
-    color: var(--text-light); /* Lighter color for subtlety */
-    max-width: 90%; /* Limit width relative to container */
-    margin: 0 auto 1rem; /* Center, space below before card preview */
-    line-height: 1.5;
-    text-align: center;
-}
-
-.qr-explanation a {
-    color: var(--primary-color);
-    font-weight: 600;
-    text-decoration: underline;
-    text-decoration-style: dotted; /* Subtle underline */
-}
-
-.qr-explanation a:hover {
-    color: var(--primary-dark);
-    text-decoration-style: solid;
-}
-
-
 /* --- Divider --- */
 .builder-divider {
     border: none;
@@ -230,6 +207,30 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
+
+/* --- Style for QR Explanation Text (Inside Preview Section) --- */
+.qr-explanation {
+    font-size: 0.85rem; /* Slightly smaller */
+    color: var(--text-light); /* Lighter color for subtlety */
+    max-width: 90%; /* Limit width relative to container */
+    margin: 0 auto 1rem; /* Center, space below before card preview */
+    line-height: 1.5;
+    text-align: center;
+}
+
+.qr-explanation a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-style: dotted; /* Subtle underline */
+}
+
+.qr-explanation a:hover {
+    color: var(--primary-dark);
+    text-decoration-style: solid;
+}
+/* --- END QR Explanation Style --- */
+
 
 .card-preview {
     background-color: var(--white);
