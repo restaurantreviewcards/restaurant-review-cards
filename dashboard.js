@@ -35,10 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             populateMetrics(data);
-            
+
             const smartLink = `https://restaurantreviewcards.com/.netlify/functions/redirect?id=${data.userId}`;
             smartLinkInput.value = smartLink;
-            
+
             // Pass the full customer data object to setupInteractivity
             setupInteractivity(smartLink, data);
 
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  });
             });
         }
-        
+
         // Card Redemption Logic
         if (redeemCardsBtn) {
             const now = new Date();
@@ -204,15 +204,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (customerData.lastRedemptionDate && customerData.lastRedemptionDate._seconds) {
                 lastRedemption = new Date(customerData.lastRedemptionDate._seconds * 1000);
             }
-            
+
             if (lastRedemption && lastRedemption.getMonth() === now.getMonth() && lastRedemption.getFullYear() === now.getFullYear()) {
                 redeemCardsBtn.textContent = 'Credits Redeemed This Month';
                 redeemCardsBtn.disabled = true;
             } else {
                 redeemCardsBtn.addEventListener('click', () => {
                     const subject = "Card Refill Request";
-                    const body = `Please process the monthly 50 card refill for:\n\nRestaurant: ${customerData.googlePlaceName}\nCustomer ID: ${customerData.userId}\nPlace ID: ${customerData.googlePlaceId}\n\nShipping Address on File:\n${customerData.googleAddressLine1 || '(Not on file)'}\n${customerData.googleAddressCity || ''}, ${customerData.googleAddressState || ''} ${customerData.googleAddressZip || ''}\n\nThank you!`;
-                    
+                    // --- UPDATED LINE IN EMAIL BODY BELOW ---
+                    const body = `Please process the monthly 100 card refill for:\n\nRestaurant: ${customerData.googlePlaceName}\nCustomer ID: ${customerData.userId}\nPlace ID: ${customerData.googlePlaceId}\n\nShipping Address on File:\n${customerData.googleAddressLine1 || '(Not on file)'}\n${customerData.googleAddressCity || ''}, ${customerData.googleAddressState || ''} ${customerData.googleAddressZip || ''}\n\nThank you!`;
+
                     window.location.href = `mailto:jake@restaurantreviewcards.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                 });
             }

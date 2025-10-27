@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restaurant Review Cards - Get More Google Reviews</title>
-    
+
     <meta name="description" content="Turn happy diners into 5-star Google Reviews with custom QR-coded cards. Simple setup, powerful results. Start your free trial today.">
-    
+
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://restaurantreviewcards.com/">
     <meta property="og:title" content="Smart Review Cards for Your Restaurant">
@@ -18,7 +18,7 @@
     <meta property="twitter:title" content="Smart Review Cards for Your Restaurant">
     <meta property="twitter:description" content="Turn happy diners into 5-star Google Reviews with custom QR-coded cards.">
     <meta property="twitter:image" content="https://restaurantreviewcards.com/twitter-image.png">
-    
+
     <link rel="icon" type="image/png" href="favicon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,10 +65,10 @@
             <div class="hero-content">
                 <h1>Smart Review Cards for Your Restaurant</h1>
                 <p class="subtitle">
-                    Turn Happy Diners into 5-Star 
+                    Turn Happy Diners into 5-Star
                     <span class="google-logo">
                         <span class="g-blue">G</span><span class="o-red">o</span><span class="o-yellow">o</span><span class="g-blue">g</span><span class="l-green">l</span><span class="e-red">e</span>
-                    </span> 
+                    </span>
                     Reviews
                 </p>
                 <div class="hero-form-container">
@@ -123,7 +123,7 @@
                 </div>
             </div>
         </section>
-        
+
         <section id="benefits" class="feature-section alt-background fade-in-section">
             <div class="section-header">
                 <h2>Watch Your Reputation Soar</h2>
@@ -165,22 +165,21 @@
                 <div class="single-plan">
                     <div class="plan-badge">Free 30-Day Trial</div>
                     <h3>The All-In-One Plan</h3>
-                    
+
                     <div class="price-trial">
                         <span class="price-main">FREE</span>
                         <span class="price-sub">For your first 30 days</span>
                     </div>
                     <p class="price-followup">Then, just $20/month. Cancel anytime.</p>
-                    
+
                     <ul class="features-list">
-                        <li>✔ 250 Smart Review Cards</li>
-                        <li>✔ 2 Smart Review Stands (Welcome Gift)</li>
-                        <li>✔ 50 Monthly Card Refill Credits</li>
+                        <li>✔ 250 Smart Review Cards (Shipped Immediately)</li>
+                        <li>✔ 100 Smart Card Refills Per Month</li>
                         <li>✔ Smart Review Dashboard</li>
                         <li>✔ Unlimited QR Code Scans & Sharing</li>
                         <li>✔ 24/7 Phone & Email Support</li>
                     </ul>
-                    
+
                     <a href="#hero" class="cta-button">Claim Your Free Month & Welcome Kit</a>
                     <p class="risk-free-guarantee">No contract. Cancel anytime.</p>
                 </div>
@@ -207,7 +206,7 @@
                 </details>
                  <details class="faq-item">
                     <summary>How do the monthly card refills work?</summary>
-                    <p class="faq-answer">Each month your plan renews, your account is credited with 50 card refills for that month. You can request a new shipment at any time from your dashboard.</p>
+                    <p class="faq-answer">Each month your plan renews, your account is credited with 100 card refills for that month. You can request a new shipment at any time from your dashboard.</p>
                 </details>
             </div>
         </section>
@@ -238,9 +237,9 @@
 
             const options = {
                 types: ['establishment'],
-                fields: ['place_id', 'name'] 
+                fields: ['place_id', 'name']
             };
-            
+
             const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, options);
 
             autocomplete.addListener('place_changed', () => {
@@ -265,15 +264,15 @@
             try {
                 const response = await fetch('/.netlify/functions/get-maps-key');
                 if (!response.ok) throw new Error('Failed to fetch API key.');
-                
+
                 const data = await response.json();
                 const apiKey = data.apiKey;
-                
+
                 const script = document.createElement('script');
                 script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
                 script.async = true;
                 script.defer = true;
-                
+
                 document.head.appendChild(script);
 
             } catch (error) {

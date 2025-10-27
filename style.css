@@ -17,6 +17,7 @@
     --background-light: #f7fafc;
     --white: #ffffff;
     --border-color: #e2e8f0;
+    --success-green: #28a745; /* Added this missing variable definition */
     --font-heading: 'Poppins', sans-serif;
     --font-body: 'Lato', sans-serif;
 }
@@ -103,10 +104,10 @@ section {
 }
 
 .nav-menu {
-    display: flex;  
+    display: flex;
     position: fixed;
     left: -100%;
-    top: 5rem;
+    top: 5rem; /* Adjust based on navbar height */
     flex-direction: column;
     background-color: var(--white);
     width: 100%;
@@ -290,7 +291,7 @@ section {
 
 .cta-button-nav {
     padding: 8px 16px;
-    display: none;
+    display: none; /* Hidden by default, shown in media query */
 }
 
 /* --- SECTIONS (Shared Styles) --- */
@@ -350,7 +351,7 @@ section {
 .statistic-section h2 {
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
-    color: var(--white);
+    color: var(--white); /* Ensure heading is white */
 }
 
 .statistic-section p {
@@ -379,6 +380,8 @@ section {
     max-width: 450px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     border-top: 5px solid var(--primary-color);
+    position: relative; /* Needed for the badge positioning */
+    overflow: hidden; /* Prevent badge overflow if needed */
 }
 
 .single-plan h3 {
@@ -387,7 +390,7 @@ section {
     font-weight: 600;
 }
 
-.single-plan .price {
+.single-plan .price { /* Kept original .price styles, may need adjustments if you change structure */
     font-family: var(--font-heading);
     font-size: 3.5rem;
     font-weight: 700;
@@ -395,7 +398,7 @@ section {
     color: var(--text-dark);
 }
 
-.single-plan .price span {
+.single-plan .price span { /* Kept original .price styles */
     font-size: 1rem;
     font-weight: 400;
     color: var(--text-light);
@@ -410,6 +413,7 @@ section {
     list-style: none;
     text-align: left;
     margin-bottom: 2.5rem;
+    margin-top: 2rem; /* Added margin-top from earlier block */
 }
 
 .single-plan .features-list li {
@@ -482,7 +486,7 @@ section {
     font-weight: 400;
     max-width: 700px;
     margin: 0 auto 1rem;
-    border: none;
+    border: none; /* Added to remove potential default border */
 }
 
 .testimonial-content cite {
@@ -536,14 +540,14 @@ footer {
     width: 90%;
     max-width: 450px;
     position: relative;
-    text-align: left;
+    text-align: left; /* Keep modal content aligned left */
 }
 .modal-content h2 {
     margin-top: 0;
-    text-align: center;
+    text-align: center; /* Center heading within modal */
 }
 .modal-content p {
-    text-align: center;
+    text-align: center; /* Center paragraph within modal */
     margin-bottom: 1.5rem;
 }
 .modal-content .close-button {
@@ -556,7 +560,7 @@ footer {
     cursor: pointer;
     color: var(--text-light);
 }
-.login-message {
+.login-message { /* Style for messages inside modal */
     text-align: center;
     margin-top: 1rem;
     font-weight: 600;
@@ -576,7 +580,7 @@ footer {
 }
 
 /* --- DESKTOP STYLES (REVISED) --- */
-@media (min-width: 768px) {  
+@media (min-width: 768px) {
     section {
         padding: 80px 40px;
     }
@@ -589,26 +593,26 @@ footer {
     .nav-menu {
         position: static;
         flex-direction: row;
-        width: auto;  
+        width: auto;
         background-color: transparent;
         box-shadow: none;
         left: 0;
         top: 0;
         align-items: center;
         gap: 2rem;
-        transition: none;  
+        transition: none;
     }
     .nav-item {
         padding: 0;
     }
     .nav-link-button {
-        font-size: 1rem;
+        font-size: 1rem; /* Adjust font size for desktop */
     }
     .nav-item.cta-item {
         margin-left: 0; /* Adjusted from auto */
     }
     .cta-button-nav {
-        display: inline-block;
+        display: inline-block; /* Show CTA button in nav on desktop */
     }
     .steps-container {
         flex-direction: row;
@@ -616,20 +620,15 @@ footer {
     }
 }
 
-/* --- NEW STYLES FOR FREE TRIAL --- */
-/* Add this to your existing style.css file */
-
-.single-plan {
-    position: relative; /* Needed for the badge positioning */
-    overflow: hidden;
-}
-
+/* --- NEW STYLES FOR FREE TRIAL (Including the fix) --- */
 .plan-badge {
     position: absolute;
     top: -1px;
     right: -1px;
-    background-color: var(--success-green);
-    color: var(--white);
+    /* --- UPDATED LINES BELOW --- */
+    background-color: #28a745; /* Explicit green */
+    color: #ffffff;           /* Explicit white */
+    /* --- END OF UPDATED LINES --- */
     padding: 6px 100px;
     font-size: 0.9rem;
     font-weight: 700;
@@ -662,9 +661,4 @@ footer {
     font-weight: 600;
     color: var(--text-dark);
     margin-bottom: 2.5rem;
-}
-
-/* Also update the features list for clarity */
-.single-plan .features-list {
-    margin-top: 2rem;
 }
