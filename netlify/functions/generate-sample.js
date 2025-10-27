@@ -61,23 +61,21 @@ exports.handler = async (event) => {
     const placeData = await detailsResponse.json();
 
     if (placeData.result) {
-        // Overwrite fallbacks with actual fetched data if available
-        name = placeData.result.name || name; // Prefer fetched name
+        name = placeData.result.name || name;
         rating = placeData.result.rating || 'N/A';
         user_ratings_total = placeData.result.user_ratings_total || 0;
         url = placeData.result.url || 'N/A';
         parsedAddress = parseAddressComponents(placeData.result.address_components);
     } else {
       console.warn(`Could not retrieve full restaurant details from Google for placeId: ${placeId}. Status: ${placeData.status}`);
-      // Continue with submitted name if details fetch fails partially
     }
 
-    // Save signup data regardless of email success later
+    // Save signup data
     await db.collection('signups').add({
       email: email,
       submittedName: submittedName,
       googlePlaceId: placeId,
-      googlePlaceName: name, // Use the determined name (fetched or submitted)
+      googlePlaceName: name,
       googleRating: rating,
       googleReviewCount: user_ratings_total,
       googleMapsUrl: url,
@@ -86,20 +84,22 @@ exports.handler = async (event) => {
       googleAddressState: parsedAddress.state,
       googleAddressZip: parsedAddress.zip,
       timestamp: new Date(),
-      welcomeEmailSent: false // Add the flag for the new email logic
+      // --- CHANGE 1: Added welcomeEmailSent flag ---
+      welcomeEmailSent: false
     });
 
-    // --- UPDATED Redirect URL to card-builder.html ---
+    // --- CHANGE 2: Redirect URL points to card-builder.html with basic params ---
     const redirectUrl = new URL('https://restaurantreviewcards.com/card-builder.html');
     redirectUrl.searchParams.set('placeId', placeId);
     redirectUrl.searchParams.set('email', email);
-    redirectUrl.searchParams.set('googleName', name); // Pass the determined name
-    redirectUrl.searchParams.set('rating', rating.toString()); // Ensure rating is string
-    redirectUrl.searchParams.set('reviews', user_ratings_total.toString()); // Ensure reviews is string
+    redirectUrl.searchParams.set('googleName', name); // Pass fetched name
+    redirectUrl.searchParams.set('rating', rating.toString());
+    redirectUrl.searchParams.set('reviews', user_ratings_total.toString());
 
-    // --- Customer Email (customerMsg) REMOVED ---
+    // --- CHANGE 3: Customer Email (customerMsg) REMOVED ---
+    // const customerMsg = { ... };
 
-    // Internal Notification Email to You - Link updated
+    // --- Internal Notification Email to You - Link updated ---
     const internalMsg = {
         to: 'jake@restaurantreviewcards.com',
         from: { email: 'jake@restaurantreviewcards.com', name: 'New Sample Lead' },
@@ -121,31 +121,30 @@ exports.handler = async (event) => {
         `,
     };
 
-    // --- Send ONLY the internal email ---
+    // --- CHANGE 4: Send ONLY the internal email ---
     await sgMail.send(internalMsg);
 
-    // --- Perform the redirect ---
+    // Perform the redirect
     return {
       statusCode: 302,
       headers: {
-        'Location': redirectUrl.toString(), // Use the constructed URL object
+        'Location': redirectUrl.toString(),
       },
     };
 
   } catch (error) {
     console.error('Error in generate-sample function:', error);
 
-    // --- UPDATED Fallback Redirect to card-builder.html ---
-    // Try to include as much info as possible, even if details fetch failed
+    // --- CHANGE 5: Fallback Redirect also points to card-builder.html ---
     const fallbackRedirectUrl = new URL('https://restaurantreviewcards.com/card-builder.html');
-    fallbackRedirectUrl.searchParams.set('placeId', placeId);
-    fallbackRedirectUrl.searchParams.set('email', email);
-    fallbackRedirectUrl.searchParams.set('googleName', submittedName); // Use submitted name as fallback
+    fallbackRedirectUrl.searchParams.set('placeId', placeId); // Still need placeId
+    fallbackRedirectUrl.searchParams.set('email', email);     // Still need email
+    fallbackRedirectUrl.searchParams.set('googleName', submittedName); // Use submitted name
     fallbackRedirectUrl.searchParams.set('rating', 'N/A');
     fallbackRedirectUrl.searchParams.set('reviews', '0');
-    fallbackRedirectUrl.searchParams.set('error', 'details_fetch_failed'); // Add error flag
+    fallbackRedirectUrl.searchParams.set('error', 'details_fetch_failed');
 
-    // Attempt to send just the internal notification on error
+    // Attempt to send internal notification on error
     try {
       const errorMsg = {
         to: 'jake@restaurantreviewcards.com',

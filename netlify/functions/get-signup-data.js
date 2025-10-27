@@ -39,8 +39,7 @@ exports.handler = async (event) => {
 
     const signupData = snapshot.docs[0].data();
 
-    // ▼ THE FIX IS HERE ▼
-    // Instead of just sending the timestamp, send the entire signupData object.
+    // Return the entire signupData object
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },

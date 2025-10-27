@@ -50,17 +50,17 @@ exports.handler = async (event) => {
       return { statusCode: 200, body: JSON.stringify({ message: 'Email previously sent.' }) };
     }
 
-    // Construct the correct sample.html link using data from the record
-    // Note: We don't need customized name/phone for this link, just the core data
+    // --- CHANGE: Construct the sample.html link using ONLY basic, original data ---
     const sampleLink = new URL('https://restaurantreviewcards.com/sample.html');
     sampleLink.searchParams.set('placeId', signupData.googlePlaceId);
     sampleLink.searchParams.set('email', signupData.email);
-    sampleLink.searchParams.set('name', signupData.googlePlaceName); // Original Google name
+    // Use the original Google Name, NOT a customDisplayName field
+    sampleLink.searchParams.set('name', signupData.googlePlaceName);
     sampleLink.searchParams.set('rating', signupData.googleRating ? signupData.googleRating.toString() : '0');
     sampleLink.searchParams.set('reviews', signupData.googleReviewCount ? signupData.googleReviewCount.toString() : '0');
-    // Important: DO NOT pass displayName or phoneNumber here if they aren't saved yet
+    // DO NOT add displayName or phoneNumber here
 
-    // Prepare the welcome email content (same as before, but using signupData)
+    // Prepare the welcome email content
     const customerMsg = {
       to: signupData.email,
       bcc: 'jake@restaurantreviewcards.com',
