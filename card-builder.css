@@ -1,0 +1,540 @@
+/* --- card-builder.css --- */
+
+/* --- ADD FONT FACE DEFINITION --- */
+@font-face {
+    font-family: 'Manrope';
+    /* Adjust the path if Manrope-Regular.ttf is not in the same directory */
+    src: url('Manrope-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Improves loading performance */
+}
+
+body {
+    background-color: var(--background-light);
+    /* Ensure smooth scrolling on touch devices */
+    -webkit-overflow-scrolling: touch;
+}
+
+.builder-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align top on mobile */
+    min-height: 100vh;
+    width: 100%;
+    padding: 15px; /* Reduced padding for mobile */
+}
+
+.builder-container {
+    width: 100%;
+    max-width: 480px; /* Slightly adjusted max-width */
+    background: var(--white);
+    padding: 1.75rem; /* Reduced padding */
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08); /* Slightly softer shadow */
+    text-align: center;
+    border: 1px solid var(--border-color);
+    margin-top: 1rem; /* Add some top margin */
+    margin-bottom: 1rem; /* Add bottom margin */
+}
+
+.builder-container .logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    transform: scale(0.95); /* Slightly smaller logo */
+}
+
+/* --- Welcome Header --- */
+.welcome-header {
+    text-align: center;
+    margin-bottom: 0.5rem; /* Space before snapshot */
+}
+
+.welcome-header h2 {
+    font-family: var(--font-heading);
+    color: var(--text-dark);
+    font-size: 1.6rem; /* Slightly smaller */
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+}
+#welcome-business-name {
+    color: var(--primary-color); /* Highlight business name */
+}
+
+.welcome-header .subtitle {
+    font-size: 1rem; /* Slightly smaller */
+    color: var(--text-light);
+    margin: 0 auto 1.25rem;
+    max-width: 400px;
+}
+
+/* --- Google Snapshot Styling (Sleeker & Smaller) --- */
+.google-snapshot-card {
+    max-width: 320px; /* Reduced max-width */
+    margin: 0 auto;
+    padding: 1rem 1.25rem; /* Reduced padding */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Lighter shadow */
+    border: 1px solid var(--border-color);
+    border-radius: 10px; /* Slightly smaller radius */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem; /* Reduced gap */
+    font-family: var(--font-google, 'Roboto', sans-serif);
+    background-color: #fdfdfd; /* Slightly off-white */
+}
+
+.google-snapshot-card .google-icon {
+    width: 24px; /* Smaller icon */
+    height: 24px;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.google-snapshot-card .google-rating-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Reduced gap */
+    flex-wrap: wrap; /* Allow wrapping on small screens if needed */
+    justify-content: center; /* Center items if they wrap */
+}
+
+.google-snapshot-card .rating-value {
+    font-size: 1rem; /* Smaller font size */
+    font-weight: 700; /* Keep weight */
+    color: var(--google-text, var(--text-dark));
+    line-height: 1;
+}
+
+.google-snapshot-card .star-rating {
+    display: flex;
+    line-height: 1; /* Align stars better */
+}
+
+.google-snapshot-card .star-rating svg {
+    width: 15px; /* Smaller stars */
+    height: 15px;
+    margin: 0 1px;
+}
+
+/* Specific styling for the review count text in builder */
+.review-count-display { /* Updated from .review-count-link if necessary */
+    font-size: 1rem; /* Smaller font size */
+    font-weight: 400; /* Lighter weight */
+    color: var(--text-light);
+    text-decoration: none;
+    line-height: 1;
+    margin-left: 0.15rem; /* Fine-tune spacing */
+}
+/* --- END OF Snapshot Styles --- */
+
+/* --- Style for QR Explanation Text --- */
+.qr-explanation {
+    font-size: 0.85rem; /* Slightly smaller */
+    color: var(--text-light); /* Lighter color for subtlety */
+    max-width: 90%; /* Limit width relative to container */
+    margin: 0 auto 1rem; /* Center, space below before card preview */
+    line-height: 1.5;
+    text-align: center;
+}
+
+.qr-explanation a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-style: dotted; /* Subtle underline */
+}
+
+.qr-explanation a:hover {
+    color: var(--primary-dark);
+    text-decoration-style: solid;
+}
+
+
+/* --- Divider --- */
+.builder-divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 2rem 0; /* Adjusted margin */
+}
+
+/* --- Customization Section --- */
+.builder-container h3 { /* "Customize Your Card Preview" */
+    font-family: var(--font-heading);
+    color: var(--text-dark);
+    font-size: 1.3rem; /* Adjusted size */
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.builder-container p { /* Paragraph below h3 */
+    color: var(--text-light);
+    line-height: 1.5;
+    font-size: 0.95rem; /* Slightly smaller */
+    margin-bottom: 1.75rem;
+}
+
+.builder-container .form-group {
+    text-align: left;
+    margin-bottom: 1.25rem; /* Reduced margin */
+}
+
+.builder-container .form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem; /* Slightly smaller */
+}
+
+.builder-container input[type="text"] {
+    width: 100%;
+    padding: 12px; /* Slightly reduced padding */
+    border: 1px solid var(--border-color);
+    border-radius: 6px; /* Smaller radius */
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.builder-container input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 85, 150, 0.2);
+}
+
+/* --- Style for Character Limit Note --- */
+.char-limit-note {
+    display: block;
+    text-align: right;
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin-top: 4px;
+    padding-right: 2px;
+}
+
+/* --- Preview Section Styling (Card Look) --- */
+.preview-section {
+    margin-top: 2rem;
+    margin-bottom: 1rem; /* Reduced bottom margin */
+    text-align: left;
+}
+
+.preview-section h4 { /* "Live Preview:" */
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem; /* Tighter space above explanation */
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-preview {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border-radius: 12px; /* More rounded */
+    padding: 0.5rem;
+    width: 240px; /* Adjusted width */
+    aspect-ratio: 2 / 3.25; /* New ratio */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; /* Push top/bottom content */
+    text-align: center;
+    overflow: hidden;
+    font-family: 'Manrope', sans-serif;
+}
+
+/* --- Grouping divs --- */
+.card-top-content, .card-bottom-content {
+    width: 100%;
+}
+.card-top-content {
+    margin-top: 0.5rem; /* Pushes content down from top */
+}
+.card-bottom-content {
+    margin-bottom: 0.5rem; /* Pushes content up from bottom */
+}
+
+
+/* --- Styles for elements within Card Preview --- */
+.review-us-text {
+    font-size: 1.6rem;
+    color: var(--text-light);
+    margin-bottom: 0.1rem;
+    line-height: 1.1;
+    flex-shrink: 0;
+}
+
+.google-word-preview {
+    font-size: 2rem;
+    font-weight: normal;
+    margin-bottom: 0.5rem; /* Space above stars */
+    line-height: 1;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+/* Individual letter colors */
+.google-word-preview .g-blue { color: #4285F4; }
+.google-word-preview .o-red { color: #EA4335; }
+.google-word-preview .o-yellow { color: #FBBC05; }
+.google-word-preview .g-green { color: #34A853; }
+.google-word-preview .l-blue { color: #4285F4; }
+.google-word-preview .e-red { color: #EA4335; }
+
+.stars-preview {
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.star-icon {
+    width: 18px;
+    height: 18px;
+    fill: #FFBC08;
+    margin: 0; /* No space between stars */
+    vertical-align: middle;
+}
+
+/* --- Container for the QR Code --- */
+.qr-placeholder {
+    width: 168px; /* Larger size */
+    height: 168px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex-shrink: 0;
+    /* margin: 0.25rem 0; Optional margin */
+}
+
+/* Target the actual QR code element (img or canvas) inside */
+#qr-code-dummy img,
+#qr-code-dummy canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+}
+
+#preview-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.15rem;
+    word-break: break-word;
+    max-width: 95%;
+    line-height: 1.2;
+    flex-shrink: 0;
+}
+
+#preview-phone {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    min-height: 1.1em;
+    margin-top: 0;
+    word-break: break-all;
+    max-width: 95%;
+    flex-shrink: 0;
+}
+/* --- END Preview --- */
+
+/* --- Style for Dimension Note --- */
+.card-dimensions-note {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 0.75rem; /* Space above */
+    margin-bottom: 0; /* Reset bottom margin */
+    font-style: italic;
+}
+
+/* --- Tip Box Styles --- */
+.tip-box {
+    display: flex;
+    align-items: flex-start; /* Align icon to top */
+    gap: 0.75rem;
+    background-color: #eef6ff; /* Light blue background */
+    border: 1px solid #bde0fe; /* Blue border */
+    border-left: 4px solid var(--primary-color); /* Accent border */
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem; /* Space above tip box */
+    margin-bottom: 2rem; /* Space below before button */
+}
+
+.tip-icon {
+    font-size: 1.5rem; /* Size of the lightbulb */
+    line-height: 1.5; /* Align vertically better */
+    flex-shrink: 0;
+}
+
+.tip-content p {
+    font-size: 0.85rem; /* Smaller text for tip */
+    color: var(--text-dark); /* Slightly darker for readability */
+    line-height: 1.6;
+    margin-bottom: 0.5rem; /* Space between paragraphs in tip */
+    text-align: left; /* Ensure text is left-aligned */
+}
+.tip-content p:last-child {
+    margin-bottom: 0;
+}
+.tip-content a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: underline;
+}
+.tip-content a:hover {
+    color: var(--primary-dark);
+}
+/* --- END Tip Box Styles --- */
+
+
+.builder-container .cta-button {
+    width: 100%;
+    /* margin-top: 2rem; Now set by tip-box margin-bottom */
+    padding: 14px;
+    font-size: 1rem;
+}
+
+/* --- Mobile Optimizations --- */
+@media (max-width: 480px) {
+    .builder-wrapper {
+        padding: 10px;
+        align-items: flex-start;
+    }
+
+    .builder-container {
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-header h2 {
+        font-size: 1.4rem;
+    }
+     .welcome-header .subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    .google-snapshot-card {
+        padding: 0.75rem 1rem;
+        gap: 0.5rem;
+        max-width: 95%;
+    }
+
+     .google-snapshot-card .google-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .google-snapshot-card .rating-value,
+    .google-snapshot-card .review-count-display {
+        font-size: 0.9rem;
+    }
+     .google-snapshot-card .star-rating svg {
+        width: 13px;
+        height: 13px;
+    }
+
+     .qr-explanation {
+         font-size: 0.8rem; /* Adjusted mobile size */
+         margin-bottom: 0.75rem; /* Adjust space */
+     }
+
+    .builder-container h3 {
+        font-size: 1.2rem;
+    }
+     .builder-container p {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+     .builder-container input[type="text"] {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+
+    .char-limit-note {
+        font-size: 0.7rem; /* Even smaller on mobile */
+    }
+
+     .preview-section h4 {
+         font-size: 0.8rem;
+         margin-bottom: 0.15rem; /* Tighter mobile space */
+     }
+
+      .card-preview {
+          width: 200px; /* Adjust mobile width slightly */
+          padding: 0.4rem;
+          border-radius: 10px; /* Adjust if needed */
+      }
+
+      /* Mobile styles for top card elements */
+      .card-top-content {
+          margin-top: 0.3rem;
+      }
+      .review-us-text {
+          font-size: 1.4rem;
+      }
+      .google-word-preview {
+          font-size: 1.9rem;
+          margin-bottom: 0.4rem; /* Adjust space */
+      }
+      .star-icon {
+          width: 15px;
+          height: 15px;
+      }
+      /* End mobile styles for top elements */
+
+      .qr-placeholder { /* Scale down QR placeholder container */
+          width: 131px; /* Kept larger mobile size */
+          height: 131px;
+      }
+
+      /* Mobile styles for bottom card elements */
+       .card-bottom-content {
+           margin-bottom: 0.3rem;
+       }
+      #preview-name {
+          font-size: 0.8rem;
+          margin-bottom: 0.1rem;
+      }
+
+      #preview-phone {
+          font-size: 0.65rem;
+          margin-top: 0;
+      }
+      /* End mobile styles for bottom elements */
+
+      .card-dimensions-note {
+          font-size: 0.75rem;
+          margin-top: 0.5rem;
+      }
+
+      /* Mobile Tip Box Styles */
+      .tip-box {
+          padding: 0.75rem 1rem;
+          margin-top: 1rem;
+          margin-bottom: 1.5rem;
+          gap: 0.5rem;
+      }
+      .tip-icon {
+          font-size: 1.25rem;
+      }
+      .tip-content p {
+          font-size: 0.8rem;
+      }
+      /* End Mobile Tip Box */
+
+      .builder-container .cta-button {
+         /* margin-top adjusted by tip box */
+         padding: 12px;
+         font-size: 0.95rem;
+      }
+}

@@ -146,7 +146,7 @@ section { padding: 40px 20px; }
     font-weight: 600;
     font-size: 1rem;
     transition: background-color 0.2s ease;
-    
+
     /* Makes the bar "stick" to the top as the user scrolls */
     position: sticky;
     top: 0;
@@ -314,7 +314,7 @@ section { padding: 40px 20px; }
     line-height: 1.6; /* Ensure good line height */
 }
 .live-sample-image-container {
-    position: relative;
+    position: relative; /* NEEDED for absolute positioning of children */
     max-width: 400px;
     width: 70%; /* Adjust width for mobile */
     margin: 0 auto 1.5rem auto;
@@ -327,15 +327,15 @@ section { padding: 40px 20px; }
     width: 100%;
     height: auto;
 }
-/* Positioning and sizing the QR code placeholder (800px on 1376x1834) */
+
+/* Positioning and sizing the QR code placeholder */
 #live-sample-qr-code {
     position: absolute;
-    top: 53%;
-    left: 50.6%;
-    width: 58.1%;
-    height: 43.6%;
-    /* aspect-ratio: 1 / 1; height: auto; */
-    transform: translate(-50%, -50%) rotate(0deg);
+    top: 53%;    /* QR Top */
+    left: 50.6%;  /* QR Left */
+    width: 58.1%; /* QR Width */
+    height: 43.6%;/* QR Height */
+    transform: translate(-50%, -50%); /* Center QR on its anchor point */
     background-color: transparent;
     border: none;
 }
@@ -345,207 +345,116 @@ section { padding: 40px 20px; }
     height: 100% !important;
     display: block;
 }
+
+/* --- NEW Styles for Transposed Text --- */
+.transposed-text { /* Common styles for name and phone */
+    position: absolute;
+    /* --- Positioning based on QR code --- */
+    left: 50.6%;     /* Same horizontal anchor as QR */
+    width: 58.1%;    /* Same width as QR */
+    transform: translateX(-50%); /* Horizontally center the text box */
+    /* --- Font & Text Styling --- */
+    font-family: 'Manrope', sans-serif; /* Use Manrope font */
+    color: #000000; /* Black text */
+    text-align: center; /* Center text within the box */
+    /* --- Prevent text overflowing the container --- */
+    overflow: hidden;
+    /* --- Optional: Add padding if text touches edges --- */
+    /* padding: 0 2px; */
+}
+
+#live-sample-name {
+    /* --- Vertical position BELOW QR --- */
+    /* Adjust percentage as needed. */
+    top: 76%;
+    /* --- Font Specifics --- */
+    font-size: 14px; /* Adjust value as needed */
+    font-weight: 600; /* Bold */
+    line-height: 1.3;
+}
+
+#live-sample-phone {
+    /* --- Vertical position BELOW name --- */
+    /* Adjust percentage as needed */
+    top: 81%;
+    /* --- Font Specifics --- */
+    font-size: 12px; /* Slightly smaller than name */
+    font-weight: normal; /* Normal weight */
+    line-height: 1.2;
+    white-space: nowrap; /* Keep on one line */
+    text-overflow: ellipsis; /* Add ... if too long */
+}
+/* --- END New Styles --- */
+
+
 /* Style for the scan prompt text */
 .scan-action-text {
-    font-size: 0.9rem; /* Slightly smaller font size */
-    color: var(--text-light); /* Lighter text color */
-    font-weight: 500; /* Normal or medium weight, not bold */
-    margin-top: 0; /* Remove top margin */
-    margin-bottom: 1.5rem; /* Add space below before the image */
-    text-align: center; /* Ensure it's centered */
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 /* Style for the descriptive paragraph below live sample */
 .live-sample-description {
     font-size: 1rem;
-    color: var(--text-dark); /* Darker text for readability */
+    color: var(--text-dark);
     line-height: 1.6;
-    max-width: 500px; /* Constrain width */
-    margin: 0 auto 1.5rem auto; /* Top and bottom margin */
+    max-width: 500px;
+    margin: 0 auto 1.5rem auto;
 }
 /* Style for the Get Started button below live sample */
 .live-sample-cta {
-    margin-top: 0; /* Remove default top margin if needed */
-    font-size: 1.1rem; /* Slightly larger maybe */
-    padding: 14px 28px; /* Match preview box button */
-}
-
-
-/* --- Offer Preview Box Styles --- */
-.offer-preview-section {
-    background-color: var(--white);
-    padding: 30px 20px;
-    border-bottom: 1px solid var(--border-color);
-}
-.offer-preview-box {
-    background-color: var(--bonus-background);
-    border: 1px solid var(--bonus-border);
-    border-left: 4px solid var(--primary-color);
-    padding: 1.5rem;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-.offer-preview-box h3 {
     margin-top: 0;
-    margin-bottom: 0.75rem;
-    font-size: 1.3rem;
-    color: var(--text-dark);
-}
-.offer-preview-box p {
-    color: var(--text-light);
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-    line-height: 1.6; /* Ensure consistent line height */
-}
-/* Style for bonus text within preview box */
-.offer-preview-box .bonus-reserved-text {
-    margin-top: 0; /* Adjust spacing */
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-/* Style for countdown within preview box */
-.offer-preview-box .countdown-timer {
-    margin-bottom: 1.5rem; /* Add space before button */
-    display: flex; /* Ensure timer elements are properly laid out */
-    justify-content: center;
-    gap: 1rem;
-}
-.offer-preview-box .timer-box {
-    background: var(--white);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    border: 1px solid var(--border-color);
-}
-.offer-preview-box .timer-time {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    line-height: 1;
-}
-.offer-preview-box .timer-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    color: var(--text-light);
-    margin-top: 0.25rem;
-    display: block;
-}
-.offer-preview-box .btn {
     font-size: 1.1rem;
     padding: 14px 28px;
 }
 
 
+/* --- Offer Preview Box Styles --- */
+/* ... (Offer preview styles remain the same) ... */
+.offer-preview-section { background-color: var(--white); padding: 30px 20px; border-bottom: 1px solid var(--border-color); }
+.offer-preview-box { background-color: var(--bonus-background); border: 1px solid var(--bonus-border); border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.offer-preview-box h3 { margin-top: 0; margin-bottom: 0.75rem; font-size: 1.3rem; color: var(--text-dark); }
+.offer-preview-box p { color: var(--text-light); margin-bottom: 1.5rem; font-size: 1rem; line-height: 1.6; }
+.offer-preview-box .bonus-reserved-text { margin-top: 0; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600; }
+.offer-preview-box .countdown-timer { margin-bottom: 1.5rem; display: flex; justify-content: center; gap: 1rem; }
+.offer-preview-box .timer-box { background: var(--white); padding: 0.5rem 1rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+.offer-preview-box .timer-time { font-size: 2.5rem; font-weight: 700; color: var(--text-dark); line-height: 1; }
+.offer-preview-box .timer-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-light); margin-top: 0.25rem; display: block; }
+.offer-preview-box .btn { font-size: 1.1rem; padding: 14px 28px; }
+
+
 /* --- SOCIAL PROOF SECTION --- */
-.social-proof-section {
-    background-color: var(--primary-dark);
-    color: var(--white);
-    padding: 60px 20px;
-    text-align: center;
-}
-.social-proof-section h2 {
-    font-size: 2rem;
-    margin-bottom: 3.5rem;
-}
-.metrics-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-    justify-content: center;
-    align-items: center;
-}
+/* ... (Social proof styles remain the same) ... */
+.social-proof-section { background-color: var(--primary-dark); color: var(--white); padding: 60px 20px; text-align: center; }
+.social-proof-section h2 { font-size: 2rem; margin-bottom: 3.5rem; }
+.metrics-container { display: flex; flex-direction: column; gap: 2.5rem; justify-content: center; align-items: center; }
 .metric-display { max-width: 400px; }
-.metric-number {
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 4rem;
-    line-height: 1.1;
-    color: var(--white);
-}
-.metric-label-proof {
-    margin-top: 0.75rem;
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.8);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-}
+.metric-number { font-family: var(--font-heading); font-weight: 700; font-size: 4rem; line-height: 1.1; color: var(--white); }
+.metric-label-proof { margin-top: 0.75rem; font-size: 1rem; color: rgba(255, 255, 255, 0.8); text-transform: uppercase; letter-spacing: 1.5px; }
 
 /* --- Smart Features Section --- */
-.smart-features-section {
-    background-color: var(--white); /* Or var(--background-light) */
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-}
-.smart-features-section .section-header {
-    margin-bottom: 3rem; /* Adjust spacing */
-}
-.smart-features-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Default to single column for mobile */
-    gap: 2.5rem; /* Space between items */
-    margin-bottom: 3rem; /* Space before dashboard visual */
-    max-width: 900px; /* Constrain width */
-    margin-left: auto;
-    margin-right: auto;
-}
-.smart-feature-item {
-    text-align: center;
-}
-.smart-feature-icon {
-    font-size: 2.5rem; /* Adjust icon size */
-    margin-bottom: 1rem;
-    color: var(--primary-color);
-    line-height: 1;
-}
-.smart-feature-item h3 {
-    margin-bottom: 0.5rem;
-    font-size: 1.25rem;
-}
-.smart-feature-item p {
-    color: var(--text-light);
-    max-width: 400px; /* Limit paragraph width */
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6; /* Ensure consistent line height */
-    margin-bottom: 0; /* Remove default margin */
-}
-/* Adjust dashboard visual spacing within this section */
-.smart-dashboard-visual {
-    margin-top: 0; /* Remove default top margin if needed */
-    margin-bottom: 1rem; /* Space before caption */
-    max-width: 500px; /* Slightly larger maybe? */
-    margin-left: auto; /* Center */
-    margin-right: auto; /* Center */
-}
-/* Style for the dashboard caption */
-.dashboard-caption {
-    font-size: 0.95rem;
-    color: var(--text-light);
-    text-align: center;
-    max-width: 450px;
-    margin: 0 auto; /* Center caption */
-    line-height: 1.6; /* Ensure consistent line height */
-}
+/* ... (Smart features styles remain the same) ... */
+.smart-features-section { background-color: var(--white); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+.smart-features-section .section-header { margin-bottom: 3rem; }
+.smart-features-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; margin-bottom: 3rem; max-width: 900px; margin-left: auto; margin-right: auto; }
+.smart-feature-item { text-align: center; }
+.smart-feature-icon { font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-color); line-height: 1; }
+.smart-feature-item h3 { margin-bottom: 0.5rem; font-size: 1.25rem; }
+.smart-feature-item p { color: var(--text-light); max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.6; margin-bottom: 0; }
+.smart-dashboard-visual { margin-top: 0; margin-bottom: 1rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+.dashboard-caption { font-size: 0.95rem; color: var(--text-light); text-align: center; max-width: 450px; margin: 0 auto; line-height: 1.6; }
 
 /* --- PROCESS FLOW SECTION --- */
-.section-header {
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto 3.5rem auto;
-}
-.section-header h2 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-.section-header p {
-    font-size: 1.1rem;
-    color: var(--text-light);
-    line-height: 1.6; /* Ensure consistent line height */
-}
+/* ... (Process flow styles remain the same) ... */
+.section-header { text-align: center; max-width: 600px; margin: 0 auto 3.5rem auto; }
+.section-header h2 { font-size: 2rem; margin-bottom: 0.5rem; }
+.section-header p { font-size: 1.1rem; color: var(--text-light); line-height: 1.6; }
 
-/* --- DASHBOARD PREVIEW MODULE (within Smart Features section now) --- */
-/* ... (No changes needed here) ... */
+/* --- DASHBOARD PREVIEW MODULE --- */
+/* ... (Dashboard preview styles remain the same) ... */
 .dashboard-preview-container { background: linear-gradient(145deg, var(--white) 0%, #fcfdff 100%); border: 1px solid var(--border-color); border-radius: 18px; box-shadow: 0 10px 35px rgba(0, 85, 150, 0.08); margin: 1.5rem auto 0; max-width: 450px; padding: 0; overflow: hidden; }
 .dashboard-header { padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border-color); background-color: transparent; }
 .sample-label { font-family: var(--font-heading); font-size: 0.8rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
@@ -572,12 +481,11 @@ section { padding: 40px 20px; }
 .share-button:hover .share-icon { transform: scale(1.15) rotate(-5deg); }
 .share-icon { margin-bottom: 0.5rem; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); color: var(--primary-color); }
 .share-icon svg { width: 32px; height: 32px; }
-/* dashboard-disclaimer removed */
-/* Optional Style for Static Dashboard Image */
 .dashboard-static-image { max-width: 100%; width: 450px; height: auto; display: block; margin: 1.5rem auto 0; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
 
 
 /* --- FINAL CTA SECTION --- */
+/* ... (Final CTA styles remain the same) ... */
 .cta-section { text-align: center; padding-top: 60px; padding-bottom: 60px; }
 .final-offer-card { background: var(--white); border: 1px solid var(--border-color); box-shadow: 0 8px 30px rgba(0,0,0,0.08); border-radius: 16px; padding: 2rem; text-align: center; position: relative; overflow: hidden; }
 .plan-badge { position: absolute; top: -1px; right: -1px; background-color: var(--success-green); color: var(--white); padding: 6px 100px; font-size: 0.9rem; font-weight: 700; transform: rotate(45deg) translate(25%, -55%); transform-origin: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -590,103 +498,51 @@ section { padding: 40px 20px; }
 .features-list { list-style: none; padding: 0; margin: 0 auto 1rem; display: inline-block; text-align: left; }
 .features-list li { font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
 .features-list li svg { width: 20px; height: 20px; color: var(--success-green); flex-shrink: 0;}
-
 .bonus-highlight-box { background-color: var(--background-light); border: 1px solid var(--border-color); border-left: 4px solid var(--primary-color); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; text-align: center; }
 .bonus-highlight-box h3 { margin-top: 0; margin-bottom: 0.5rem; color: var(--text-dark); font-size: 1.2rem; }
 .bonus-highlight-box p { color: var(--text-light); font-size: 0.95rem; max-width: 400px; margin-left: auto; margin-right: auto; margin-bottom: 1.5rem; line-height: 1.6;}
 .bonus-highlight-box p strong { color: var(--primary-dark); }
-
-/* --- Countdown Timer Styles (within bonus box) --- */
-.countdown-prompt {
-    font-weight: 600;
-    color: var(--text-dark);
-    margin-top: 1.5rem; /* Add space above */
-    margin-bottom: 0.75rem; /* Add space below before timer */
-    font-size: 0.95rem;
-}
-.countdown-timer {
-    display: flex; /* Ensure timer elements are properly laid out */
-    justify-content: center;
-    gap: 0.75rem; /* Space between boxes */
-    margin-bottom: 0; /* Remove bottom margin if inside bonus box */
-}
-.timer-box {
-    background: var(--white);
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    border: 1px solid var(--border-color);
-    text-align: center;
-    min-width: 50px; /* Ensure boxes have a minimum width */
-}
-.timer-time {
-    font-size: 1.8rem; /* Slightly smaller */
-    font-weight: 700;
-    color: var(--text-dark);
-    line-height: 1;
-    display: block; /* Ensure it takes full width */
-}
-.timer-label {
-    font-size: 0.7rem; /* Smaller label */
-    text-transform: uppercase;
-    color: var(--text-light);
-    margin-top: 0.25rem;
-    display: block;
-}
-
-.bonus-image-container { position: relative; max-width: 280px; width: 100%; margin: 1.5rem auto 0; /* Adjusted margin-top */ aspect-ratio: 2475 / 2247; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden; }
+.countdown-prompt { font-weight: 600; color: var(--text-dark); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 0.95rem; }
+.countdown-timer { display: flex; justify-content: center; gap: 0.75rem; margin-bottom: 0; }
+.timer-box { background: var(--white); padding: 0.5rem 0.75rem; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); text-align: center; min-width: 50px; }
+.timer-time { font-size: 1.8rem; font-weight: 700; color: var(--text-dark); line-height: 1; display: block; }
+.timer-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-light); margin-top: 0.25rem; display: block; }
+.bonus-image-container { position: relative; max-width: 280px; width: 100%; margin: 1.5rem auto 0; aspect-ratio: 2475 / 2247; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden; }
 .bonus-image-container .bonus-background-img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .bonus-image-container .bonus-qr-code { position: absolute; top: 54.5%; left: 35.4%; transform: translate(-50%, -50%) rotate(-2deg); width: 26.8%; height: auto; aspect-ratio: 1 / 1; background-color: transparent; border: none; }
 .bonus-qr-code canvas, .bonus-qr-code img { width: 100% !important; height: 100% !important; display: block; }
 .risk-free-text { margin-top: 1rem; font-size: 0.9rem; color: var(--text-light); }
 
+
 /* --- FOOTER --- */
+/* ... (Footer styles remain the same) ... */
 footer { background-color: var(--text-dark); color: var(--background-light); text-align: center; padding: 2rem; }
 
 /* --- MOBILE-ONLY STYLES --- */
+/* ... (Mobile styles remain the same) ... */
 @media (max-width: 767px) {
-    .mobile-cta-bar {
-        display: flex;
-    }
-    body {
-        padding-bottom: 80px;
-    }
-
-    .header {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-    }
-    .preview-title-container {
-         margin-top: 0.75rem;
-    }
-    .preview-business-name {
-        font-size: 1.6rem;
-        line-height: 1.2;
-    }
-
+    .mobile-cta-bar { display: flex; }
+    body { padding-bottom: 80px; }
+    .header { padding-top: 1rem; padding-bottom: 1rem; }
+    .preview-title-container { margin-top: 0.75rem; }
+    .preview-business-name { font-size: 1.6rem; line-height: 1.2; }
     section { padding: 30px 15px; }
     .welcome-section { padding: 30px 15px 40px; }
     .live-sample-section { padding: 30px 15px; }
     .offer-preview-section { padding: 25px 15px; }
-    .smart-features-section { padding: 30px 15px; } /* Added */
+    .smart-features-section { padding: 30px 15px; }
     .cta-section { padding-top: 40px; padding-bottom: 40px; }
     .social-proof-section { padding: 40px 15px; }
-
     h1 { font-size: 1.8rem; }
     h2 { font-size: 1.5rem; }
-
     .final-offer-card { padding: 1.5rem; }
     .price-trial .price-main { font-size: 3rem; }
     .btn-success { font-size: 1.1rem; padding: 14px 24px; }
     .live-sample-image-container { width: 90%; max-width: 320px;}
-
-    /* Smart Features Mobile */
     .smart-features-section .section-header { margin-bottom: 2rem; }
     .smart-features-grid { gap: 2rem; margin-bottom: 2rem; }
     .smart-feature-item h3 { font-size: 1.15rem; }
     .smart-dashboard-visual { max-width: 100%; }
-
-    /* Adjust timer size on mobile inside bonus box */
     .timer-time { font-size: 1.5rem; }
     .timer-box { padding: 0.4rem 0.6rem; min-width: 45px;}
     .countdown-timer { gap: 0.5rem; }
@@ -694,34 +550,18 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
 }
 
 /* --- DESKTOP STYLES --- */
+/* ... (Desktop styles remain the same) ... */
 @media (min-width: 768px) {
     h1 { font-size: 2.5rem; }
     h2 { font-size: 2rem; }
     section { padding: 60px 40px; }
-
-    /* Smart Features Desktop Grid */
-     .smart-features-grid {
-        grid-template-columns: 1fr 1fr; /* Two columns on desktop */
-        gap: 3rem;
-        align-items: start; /* Align items to the top */
-    }
-
-    .metric-flow-grid {
-        flex-direction: row;
-    }
-    .flow-arrow {
-        display: block;
-        align-self: center;
-        font-size: 2rem;
-        color: #cbd5e0;
-        font-weight: 600;
-    }
-
+    .smart-features-grid { grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .metric-flow-grid { flex-direction: row; }
+    .flow-arrow { display: block; align-self: center; font-size: 2rem; color: #cbd5e0; font-weight: 600; }
     .social-proof-section h2 { font-size: 2.25rem; }
     .metrics-container { flex-direction: row; gap: 0; }
     .metric-display { flex: 1; padding: 0 2rem; }
     .metric-display + .metric-display { border-left: 1px solid rgba(255, 255, 255, 0.2); }
     .metric-number { font-size: 4.5rem; }
-
     .final-offer-card { padding: 2.5rem; }
 }
