@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return await response.json();
         } catch (error) {
             console.error("Error fetching latest signup data:", error);
-            // Display error to user? Or fallback gracefully?
+            // Display error to user
             document.body.innerHTML = `<p style="color: red; text-align: center; padding: 20px;">Error loading sample data: ${error.message}. Please try again.</p>`;
             return null; // Indicate failure
         }
@@ -48,7 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.business-name-preview').textContent = nameToDisplay;
         }
 
-        // --- Populate Google Snapshot ---
+        // --- Populate Google Snapshot (Removed from HTML, so code can be removed/commented) ---
+        /*
         const rating = parseFloat(signupData.googleRating); // Use fetched rating
         const reviews = parseInt(signupData.googleReviewCountCurrent || signupData.googleReviewCount || '0', 10); // Use current count if available
 
@@ -58,30 +59,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Logic for snapshot display
         if (!reviews || reviews === 0 || isNaN(reviews)) {
-            if(ratingValueEl) ratingValueEl.textContent = 'No reviews yet';
-            if(starContainer) starContainer.innerHTML = ''; // Hide stars
-            if(reviewCountEl) reviewCountEl.textContent = ''; // Hide count link text
-            if(reviewCountEl && reviewCountEl.tagName === 'A') { /* Disable link styling */
-                reviewCountEl.style.pointerEvents = 'none'; reviewCountEl.style.color = 'inherit'; reviewCountEl.style.textDecoration = 'none';
-            }
+            // ... (Snapshot zero review logic) ...
         } else {
-            if(ratingValueEl && !isNaN(rating)) { ratingValueEl.textContent = rating.toFixed(1); }
-            else if (ratingValueEl) { ratingValueEl.textContent = 'N/A'; }
-
-            if(reviewCountEl) reviewCountEl.textContent = `(${reviews.toLocaleString()})`;
-
-            if (starContainer && !isNaN(rating)) { /* Generate Stars */
-                starContainer.innerHTML = ''; const fullStars = Math.floor(rating);
-                for (let i = 0; i < 5; i++) { if (i < fullStars) { starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Star Rating</title><path fill="#fbbc05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>'; } else { starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d8d8d8" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>'; } }
-            } else if (starContainer) { /* Show empty stars if rating invalid */
-                 starContainer.innerHTML = ''; for (let i = 0; i < 5; i++) { starContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d8d8d8" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>'; }
-            }
+            // ... (Snapshot normal logic with rating and stars) ...
         }
+        */
 
         // --- Populate Transposed Text on Card ---
         const nameElement = document.getElementById('live-sample-name');
         const phoneElement = document.getElementById('live-sample-phone');
-        const phoneToDisplay = signupData.customPhoneNumber || ''; // Use saved custom phone if exists
+        // Use saved custom phone if exists, otherwise empty string
+        const phoneToDisplay = signupData.customPhoneNumber || '';
 
         if (nameElement) {
             nameElement.textContent = nameToDisplay;
@@ -93,10 +81,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Set Google Review Links ---
         // Uses the correct googlePlaceId from fetched data
-        reviewUrl = `https://search.google.com/local/writereview?placeid=${signupData.googlePlaceId}`;
-        const googleReviewPageLink = document.getElementById('google-review-page-link');
-        if (googleReviewPageLink) {
-            googleReviewPageLink.href = reviewUrl;
+        if (signupData.googlePlaceId) {
+            reviewUrl = `https://search.google.com/local/writereview?placeid=${signupData.googlePlaceId}`;
+            const googleReviewPageLink = document.getElementById('google-review-page-link');
+            if (googleReviewPageLink) {
+                googleReviewPageLink.href = reviewUrl;
+            }
+        } else {
+            console.error("googlePlaceId missing from fetched data. Cannot set review links.");
+            reviewUrl = ''; // Ensure reviewUrl is empty if placeId is missing
+            const googleReviewPageLink = document.getElementById('google-review-page-link');
+            if (googleReviewPageLink) {
+                 googleReviewPageLink.style.pointerEvents = 'none';
+                 googleReviewPageLink.style.color = 'var(--text-light)';
+                 googleReviewPageLink.removeAttribute('href');
+            }
+        }
+
+
+        // --- Set Edit Button Link ---
+        const editButton = document.getElementById('edit-card-btn');
+        if (editButton && signupData) { // Check if button and data exist
+            const builderUrl = new URL('card-builder.html', window.location.origin);
+            // Pass all necessary original data back
+            builderUrl.searchParams.set('placeId', signupData.googlePlaceId);
+            builderUrl.searchParams.set('email', signupData.email); // Use fetched email
+            builderUrl.searchParams.set('googleName', signupData.googlePlaceName);
+            builderUrl.searchParams.set('rating', signupData.googleRating ? signupData.googleRating.toString() : '0');
+            builderUrl.searchParams.set('reviews', signupData.googleReviewCount ? signupData.googleReviewCount.toString() : '0');
+            // Pass the CURRENTLY displayed name and phone back
+            builderUrl.searchParams.set('displayName', nameToDisplay);
+            if (phoneToDisplay) { // Only pass if it exists and isn't empty
+                builderUrl.searchParams.set('phoneNumber', phoneToDisplay);
+            }
+            editButton.href = builderUrl.toString();
+        } else if (editButton) {
+            // Disable button if data fetch failed or button doesn't exist
+            editButton.style.display = 'none';
         }
 
         // --- Re-initialize QR Codes with correct reviewUrl ---
@@ -115,19 +136,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Function to generate QR Codes (now uses global reviewUrl) ---
     const generateQRCodes = () => {
         if (!reviewUrl) {
-             console.error("Cannot generate QR codes: reviewUrl is not set.");
+             console.error("Cannot generate QR codes: reviewUrl is not set (likely missing placeId).");
              return;
         }
         const bonusQrContainer = document.getElementById('bonus-qr-code-container');
         if (bonusQrContainer) {
              bonusQrContainer.innerHTML = '';
              new QRCode(bonusQrContainer, { text: reviewUrl, width: 75, height: 75, colorDark: "#282a2e", colorLight: "#d7d5d1", correctLevel: QRCode.CorrectLevel.H });
-        }
+        } else { console.warn("Bonus QR container not found."); }
+
         const liveSampleQrContainer = document.getElementById('live-sample-qr-code');
         if (liveSampleQrContainer) {
             liveSampleQrContainer.innerHTML = '';
             new QRCode(liveSampleQrContainer, { text: reviewUrl, width: 800, height: 800, colorDark: "#191718", colorLight: "#E6E8E7", correctLevel: QRCode.CorrectLevel.H });
-        }
+        } else { console.warn("Live sample QR container not found."); }
     };
 
     // --- Function to initialize Countdown (now accepts data) ---
@@ -143,17 +165,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (countdownPromptEl) countdownPromptEl.style.display = 'none';
         };
 
-        if (!fetchedSignupData || !hoursEl || !minutesEl || !secondsEl || !countdownTimerEl || !countdownPromptEl) {
-             console.log("Countdown prerequisites not met (missing data or elements). Hiding timer.");
+        if (!fetchedSignupData || !fetchedSignupData.timestamp || !hoursEl || !minutesEl || !secondsEl || !countdownTimerEl || !countdownPromptEl) {
+             console.log("Countdown prerequisites not met (missing data, timestamp or elements). Hiding timer.");
              hideTimer();
              return;
         }
 
         try {
-            // Use the timestamp from the passed data
             const data = fetchedSignupData;
 
-            if (!data.timestamp || typeof data.timestamp._seconds !== 'number') {
+            if (typeof data.timestamp._seconds !== 'number') {
                 throw new Error('Invalid or missing timestamp format for countdown.');
             }
 
@@ -187,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Other Init Functions (Tabs, Footer, Checkout, Scroll) ---
-    // (These remain mostly the same, initCheckoutLinks updated slightly)
     const initDashboardTabs = () => { /* ... unchanged ... */
         const tabsContainer = document.querySelector('.dashboard-tabs'); if (!tabsContainer) return; const panels = document.querySelectorAll('.dashboard-panel'); const tabs = document.querySelectorAll('.dashboard-tab'); tabsContainer.addEventListener('click', (e) => { const clickedTab = e.target.closest('.dashboard-tab'); if (!clickedTab || clickedTab.classList.contains('active')) return; tabs.forEach(t => t.classList.remove('active')); panels.forEach(p => p.classList.remove('active')); clickedTab.classList.add('active'); const targetPanelId = clickedTab.dataset.tab; const targetPanel = document.getElementById(targetPanelId); if (targetPanel) targetPanel.classList.add('active'); });
     };
@@ -200,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!placeId || !emailFromUrl) {
                 console.error("Missing placeId or email for checkout links.");
                 checkoutButtons.forEach(button => { button.style.pointerEvents = 'none'; button.style.opacity = '0.5'; button.textContent = 'Info Missing'; });
-                return;
+                return; // Stop if essential info is missing from URL
             }
             const checkoutUrl = `/checkout.html?placeId=${placeId}&email=${encodeURIComponent(emailFromUrl)}`;
             checkoutButtons.forEach(button => { button.href = checkoutUrl; });
