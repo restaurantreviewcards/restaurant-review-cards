@@ -98,7 +98,7 @@ section { padding: 40px 20px; }
     color: var(--white);
     box-shadow: 0 4px 15px rgba(40,167,69,0.3);
     font-size: 1.2rem;
-    padding: 14px 36px; /* Adjusted padding */
+    padding: 14px 36px;
     margin-top: 1.5rem;
 }
 .btn-success:hover {
@@ -146,7 +146,6 @@ section { padding: 40px 20px; }
     font-weight: 600;
     font-size: 1rem;
     transition: background-color 0.2s ease;
-
     position: sticky;
     top: 0;
     z-index: 900;
@@ -236,25 +235,13 @@ section { padding: 40px 20px; }
     background-color: transparent;
 }
 
-
-/* --- WELCOME SECTION (REMOVED CONTENT BUT KEEP CLASS FOR MARGINS/PADDING) --- */
+/* --- WELCOME SECTION (REMOVED CONTENT) --- */
 .welcome-section {
-    /* Kept for potential spacing consistency, but content removed */
      padding: 40px 20px 0; /* Reduced padding-bottom */
      background-color: var(--white);
      border-bottom: 1px solid var(--border-color);
-     min-height: 10px; /* Prevent collapsing if empty */
+     min-height: 10px; /* Prevent collapsing */
 }
-/* Styles for snapshot elements below are no longer needed if section removed */
-/* .welcome-section .subtitle { ... } */
-/* .google-snapshot-card { ... } */
-/* .google-icon { ... } */
-/* .google-rating-info { ... } */
-/* .rating-value { ... } */
-/* .star-rating { ... } */
-/* .star-rating svg { ... } */
-/* .review-count-link { ... } */
-/* .review-count-link:hover { ... } */
 
 /* --- Live Sample Image Section --- */
 .live-sample-section {
@@ -264,15 +251,15 @@ section { padding: 40px 20px; }
     text-align: center;
 }
 .live-sample-section h2 {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem; /* Reduced margin */
 }
-/* Section subtext and scan action text removed */
+/* Removed .section-subtext and .scan-action-text styles */
 
 .live-sample-image-container {
     position: relative; /* NEEDED */
     max-width: 400px;
     width: 70%;
-    margin: 0 auto 1.5rem auto; /* Adjusted margin */
+    margin: 1rem auto 1.5rem auto; /* Adjusted top margin */
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     border-radius: 8px;
     overflow: hidden;
@@ -283,56 +270,65 @@ section { padding: 40px 20px; }
     height: auto;
 }
 
-/* Positioning and sizing the QR code placeholder */
+/* --- Reverted QR code positioning and sizing --- */
 #live-sample-qr-code {
     position: absolute;
-    top: 29%;    /* Adjusted Top */
-    left: 50%;   /* Adjusted Left */
-    width: 28%;  /* Original Width */
-    height: auto;/* Auto Height */
-    transform: translateX(-50%); /* Center Horizontally */
+    top: 53%;    /* Original Top */
+    left: 50.6%;  /* Original Left */
+    width: 58.1%; /* Original Width */
+    height: 43.6%;/* Original Height */
+    transform: translate(-50%, -50%); /* Original Centering */
     background-color: transparent;
     border: none;
-    padding: 0;
-    display: flex; /* Center child */
+    /* Added flex centering for content */
+    display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0;
 }
+/* Ensure QR contents scale within the container */
 #live-sample-qr-code canvas,
 #live-sample-qr-code img {
-    max-width: 100%; /* Ensure QR fits container */
-    height: auto;
+    max-width: 100%; /* Changed from width */
+    max-height: 100%; /* Added max-height */
+    height: auto; /* Allow auto height */
+    width: auto; /* Allow auto width */
     display: block;
 }
+
 
 /* --- Styles for Transposed Text --- */
 .transposed-text {
     position: absolute;
-    left: 50%;     /* Center Horizontally */
-    width: 100%;   /* Use full width for centering calc */
-    transform: translateX(-50%);
+    left: 50.6%;     /* Match QR horizontal anchor */
+    width: 58.1%;    /* Match QR width */
+    transform: translateX(-50%); /* Center text box relative to anchor */
     font-family: 'Manrope', sans-serif;
-    color: #404040; /* Darker Text */
+    color: #000000; /* Black text */
     text-align: center;
     overflow: hidden;
-    padding: 0 10%; /* Optional padding */
     box-sizing: border-box;
-    white-space: nowrap; /* Keep single line */
-    text-overflow: ellipsis; /* Add ... if too long */
-    font-weight: 700; /* Bolder as per prev example */
+    padding: 0 2px; /* Minimal padding */
 }
 
 #live-sample-name {
-    font-size: 1.1em; /* Larger Size */
-    top: 59%;       /* Shifted Down */
-    line-height: 1.2;
+    /* --- Shifted Down Significantly --- */
+    top: 80%; /* Adjust percentage as needed */
+    font-size: 14px; /* Back to original size suggestion, adjust if needed */
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: normal; /* Allow wrapping for longer names */
+    max-height: 2.6em; /* Limit to roughly 2 lines */
 }
 
 #live-sample-phone {
-    font-size: 0.85em;/* Larger Size */
-    top: 64%;       /* Shifted Down */
+    /* --- Shifted Down Significantly --- */
+    top: 85%; /* Adjust percentage relative to name */
+    font-size: 12px; /* Back to original size suggestion, adjust if needed */
+    font-weight: normal;
     line-height: 1.2;
-    font-weight: normal; /* Normal weight for phone */
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 /* --- END Transposed Text Styles --- */
 
@@ -454,11 +450,9 @@ section { padding: 40px 20px; }
 
 
 /* --- FOOTER --- */
-/* ... (Footer styles remain the same) ... */
 footer { background-color: var(--text-dark); color: var(--background-light); text-align: center; padding: 2rem; }
 
 /* --- MOBILE-ONLY STYLES --- */
-/* ... (Mobile styles remain the same, but you might need to adjust transposed text/QR styles further inside the media query if needed) ... */
 @media (max-width: 767px) {
     .mobile-cta-bar { display: flex; }
     body { padding-bottom: 80px; }
@@ -466,7 +460,7 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     .preview-title-container { margin-top: 0.75rem; }
     .preview-business-name { font-size: 1.6rem; line-height: 1.2; }
     section { padding: 30px 15px; }
-    .welcome-section { padding: 30px 15px 0; } /* Adjusted padding */
+    .welcome-section { padding: 30px 15px 0; }
     .live-sample-section { padding: 30px 15px; }
     .offer-preview-section { padding: 25px 15px; }
     .smart-features-section { padding: 30px 15px; }
@@ -478,11 +472,15 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     .price-trial .price-main { font-size: 3rem; }
     .btn-success { font-size: 1.1rem; padding: 14px 24px; }
     .live-sample-image-container { width: 90%; max-width: 320px;}
+
     /* Consider mobile adjustments for transposed text if needed */
-    /* .transposed-text { font-size: smaller; ... } */
+    /* .transposed-text { font-size: ... } */
     /* #live-sample-name { top: new%; font-size: ... } */
     /* #live-sample-phone { top: new%; font-size: ... } */
-    /* #live-sample-qr-code { top: new%; ... } */
+    /* #live-sample-qr-code styling reverts to original values, */
+    /* but further mobile-specific tweaks might be needed here */
+    /* depending on visual outcome. */
+
     .smart-features-section .section-header { margin-bottom: 2rem; }
     .smart-features-grid { gap: 2rem; margin-bottom: 2rem; }
     .smart-feature-item h3 { font-size: 1.15rem; }
@@ -494,7 +492,6 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
 }
 
 /* --- DESKTOP STYLES --- */
-/* ... (Desktop styles remain the same) ... */
 @media (min-width: 768px) {
     h1 { font-size: 2.5rem; }
     h2 { font-size: 2rem; }
