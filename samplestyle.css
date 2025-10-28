@@ -242,7 +242,6 @@ section { padding: 40px 20px; }
      border-bottom: 1px solid var(--border-color);
      min-height: 10px; /* Prevent collapsing */
 }
-/* Snapshot styles (.google-snapshot-card, etc.) removed */
 
 /* --- Live Sample Image Section --- */
 .live-sample-section {
@@ -252,7 +251,7 @@ section { padding: 40px 20px; }
     text-align: center;
 }
 .live-sample-section h2 {
-    margin-bottom: 1rem; /* Added slightly more space below heading */
+    margin-bottom: 1rem; /* Adjusted space below heading */
 }
 /* Removed .section-subtext and .scan-action-text */
 
@@ -281,11 +280,13 @@ section { padding: 40px 20px; }
     transform: translate(-50%, -50%); /* Original Centering */
     background-color: transparent;
     border: none;
+    /* Added flex centering for content */
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 0;
 }
+/* Ensure QR contents scale within the container */
 #live-sample-qr-code canvas,
 #live-sample-qr-code img {
     max-width: 100%;
@@ -295,39 +296,49 @@ section { padding: 40px 20px; }
     display: block;
 }
 
-
-/* --- Styles for Transposed Text --- */
-.transposed-text {
+/* --- NEW Styles for Text Container --- */
+#live-sample-text-container {
     position: absolute;
-    width: 62%; /* Widened */
-    left: 50.6%; /* Keep anchor or adjust to 50% if needed */
-    transform: translateX(-50%); /* Center */
+    /* --- Position container below QR --- */
+    top: 76%; /* Adjust this percentage visually */
+    left: 50.6%;  /* Match QR horizontal anchor */
+    width: 62%;   /* Match desired text width */
+    transform: translateX(-50%); /* Center the container */
+    /* --- Flexbox to stack name and phone --- */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center text horizontally */
+    /* --- Other styles --- */
     font-family: 'Manrope', sans-serif;
     color: #000000;
     text-align: center;
-    overflow: hidden;
-    box-sizing: border-box;
-    padding: 0 2px;
+    overflow: hidden; /* Hide potential overflow */
 }
 
 #live-sample-name {
-    top: 80%; /* Shifted Down */
-    font-size: 16px; /* Increased */
+    /* --- Remove positioning styles --- */
+    font-size: 16px; /* Updated */
     font-weight: 600;
     line-height: 1.3;
-    white-space: normal;
-    max-height: 2.6em;
+    white-space: normal; /* Allow wrapping */
+    max-height: 2.6em; /* Limit to 2 lines */
+    overflow: hidden; /* Hide overflow beyond max-height */
+    /* --- Add margin for spacing --- */
+    margin-bottom: 4px; /* Space between name and phone (adjust as needed) */
+    max-width: 100%; /* Prevent exceeding container width */
 }
 
 #live-sample-phone {
-    top: 85%; /* Shifted Down */
-    font-size: 14px; /* Increased */
+    /* --- Remove positioning styles --- */
+    font-size: 14px; /* Updated */
     font-weight: normal;
     line-height: 1.2;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    white-space: nowrap; /* Keep phone on one line */
+    text-overflow: ellipsis; /* Add ... if too long */
+    /* --- No margin-bottom needed usually --- */
+    max-width: 100%; /* Prevent exceeding container width */
 }
-/* --- END Transposed Text Styles --- */
+/* --- END New/Modified Styles --- */
 
 /* --- Edit Button Styling --- */
 .btn-edit-subtle {
@@ -344,8 +355,8 @@ section { padding: 40px 20px; }
     margin-top: 0.5rem; /* Space above */
     margin-bottom: 1.5rem; /* Space below */
     transition: all 0.2s ease;
-    border-radius: 6px; /* Added subtle rounding */
-    cursor: pointer; /* Ensure cursor changes */
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 .btn-edit-subtle svg {
@@ -502,7 +513,7 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     /* .transposed-text { font-size: ...; } */
     /* #live-sample-name { top: ...; font-size: ...; } */
     /* #live-sample-phone { top: ...; font-size: ...; } */
-    /* #live-sample-qr-code might need mobile size adjustments too */
+    /* #live-sample-qr-code might need mobile size/pos adjustments too */
 
     .smart-features-section .section-header { margin-bottom: 2rem; }
     .smart-features-grid { gap: 2rem; margin-bottom: 2rem; }
