@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // --- NEW: Function to populate the header snapshot ---
+    // --- Function to populate the header snapshot ---
     const populateHeaderSnapshot = () => {
         const ratingValueSpan = document.getElementById('header-rating-value');
         const starContainer = document.getElementById('header-star-container');
@@ -65,10 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             for (let i = 0; i < 5; i++) {
                 if (i < fullStars) {
-                    // Full star
                     starContainer.innerHTML += '<svg viewBox="0 0 24 24"><path fill="#FBBC05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
                 } else {
-                    // Empty star
                     starContainer.innerHTML += '<svg viewBox="0 0 24 24"><path fill="#d1d5db" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
                 }
             }
@@ -82,42 +80,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- MODIFIED: Function to populate page elements including new inputs ---
+    // --- Function to populate all page elements ---
     const populatePageElements = () => {
         const nameToDisplay = displayNameFromUrl || googleNameFromUrl || 'Business Name';
         const phoneToDisplay = phoneNumberFromUrl || '';
 
-        // Populate Headers and Mobile Bar
         document.getElementById('business-name-header').textContent = nameToDisplay;
         document.querySelector('.business-name-preview').textContent = nameToDisplay;
         
-        // Populate Live Preview Text on Card
         document.getElementById('live-sample-name').textContent = nameToDisplay;
         document.getElementById('live-sample-phone').textContent = phoneToDisplay;
 
-        // Populate the input fields themselves with the correct initial values
         document.getElementById('display-name').value = nameToDisplay;
         document.getElementById('phone-number').value = phoneToDisplay;
 
-        // Set Google Review Links
         if (placeId) {
             reviewUrl = `https://search.google.com/local/writereview?placeid=${placeId}`;
         }
         
-        // Call the function to populate the header snapshot
         populateHeaderSnapshot();
-
-        // Initialize QR Codes, Countdown, and other UI elements
         generateQRCodes();
         initCountdown();
         initDashboardTabs();
         initFooter();
         initEarlyCtaScroll();
-        
-        // Initialize the live preview event listeners
         initLivePreviewUpdates();
-        
-        // This function now attaches smart click handlers instead of static links
         initSmartCheckoutLinks();
     };
 
@@ -154,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- All other helper functions remain largely unchanged ---
     const generateQRCodes = () => {
         if (!reviewUrl) return;
         const bonusQrContainer = document.getElementById('bonus-qr-code-container');
@@ -222,6 +208,48 @@ document.addEventListener('DOMContentLoaded', () => {
         const scrollButtons = document.querySelectorAll('.js-scroll-to-cta'); const targetSection = document.getElementById('cta-section'); if (!targetSection) return; if (scrollButtons.length > 0) { scrollButtons.forEach(button => { button.addEventListener('click', (event) => { event.preventDefault(); targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }); }); }
     };
 
+    const initNumberAnimation = () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const restaurantsEl = document.getElementById('restaurants-served-metric');
+                    const reviewsEl = document.getElementById('reviews-generated-metric');
+
+                    animateValue(restaurantsEl, 0, 51275, 2000);
+                    animateValue(reviewsEl, 0, 6, 2000, " Million+");
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const socialProofSection = document.querySelector('.social-proof-section');
+        if (socialProofSection) {
+            observer.observe(socialProofSection);
+        }
+    };
+
+    const animateValue = (obj, start, end, duration, suffix = "") => {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            let currentValue = Math.floor(progress * (end - start) + start);
+            
+            // Special handling for the "Million+" value
+            if (suffix.includes("Million")) {
+                 obj.innerHTML = end + suffix; // Just set the final text for this one
+                 if(progress < 1) window.requestAnimationFrame(step); // let it complete to unobserve
+            } else {
+                 obj.innerHTML = currentValue.toLocaleString() + suffix;
+                 if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                 }
+            }
+        };
+        window.requestAnimationFrame(step);
+    };
+
     // --- Main Initialization Logic ---
     const initializePage = () => {
         if (!placeId) {
@@ -231,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         populatePageElements();
+        initNumberAnimation();
     };
 
     initializePage(); // Start the process
