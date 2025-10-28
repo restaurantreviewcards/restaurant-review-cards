@@ -13,6 +13,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let reviewUrl = '';
 
+    // --- Function to Trigger Welcome Email ---
+    const triggerWelcomeEmail = (pId) => {
+        if (!pId) return;
+
+        fetch('/.netlify/functions/trigger-welcome-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ placeId: pId })
+        })
+        .then(response => response.json())
+        .then(data => console.log('Welcome email trigger status:', data.message))
+        .catch(error => console.error('Error triggering welcome email:', error));
+    };
+
     // --- Function to Trigger Background Save ---
     const saveCustomDetailsInBackground = (pId, dispName, phoneNum) => {
         if (!pId) return;
@@ -236,10 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
             let currentValue = Math.floor(progress * (end - start) + start);
             
-            // Special handling for the "Million+" value
             if (suffix.includes("Million")) {
-                 obj.innerHTML = end + suffix; // Just set the final text for this one
-                 if(progress < 1) window.requestAnimationFrame(step); // let it complete to unobserve
+                 obj.innerHTML = end + suffix;
+                 if(progress < 1) window.requestAnimationFrame(step);
             } else {
                  obj.innerHTML = currentValue.toLocaleString() + suffix;
                  if (progress < 1) {
@@ -257,6 +270,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Error: Missing required information to load this page.</p>';
             return;
         }
+        
+        // Trigger the welcome email as soon as the user lands on this page
+        triggerWelcomeEmail(placeId);
         
         populatePageElements();
         initNumberAnimation();
