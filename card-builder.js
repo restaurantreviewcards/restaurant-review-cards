@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const initialData = {
         placeId: params.get('placeId'),
         email: params.get('email'),
+        // Use 'googleName' param passed from generate-sample.js
         googleName: params.get('googleName'),
         rating: parseFloat(params.get('rating') || '0'), // Parse rating to float
         reviews: parseInt(params.get('reviews') || '0', 10) // Parse reviews to int
@@ -27,33 +28,83 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Error handling if essential data is missing ---
     if (!initialData.placeId || !initialData.email || !initialData.googleName) {
         console.error("Missing essential data (Place ID, Email, or Google Name) in URL parameters.");
+        // Display an error message to the user in the UI
         document.body.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Error: Could not load required information. Please go back and try again.</p>';
         return; // Stop script execution
     }
 
+
     // --- Populate initial values ---
-    // (Welcome, Snapshot, Link, Inputs, Preview Name/Phone)
-    if (welcomeBusinessNameSpan) { welcomeBusinessNameSpan.textContent = initialData.googleName; }
-    if (snapshotRatingValueSpan) { /* ... Snapshot rating logic ... */
-        if (initialData.reviews > 0 && !isNaN(initialData.rating)) { snapshotRatingValueSpan.textContent = initialData.rating.toFixed(1); } else { snapshotRatingValueSpan.textContent = 'No rating yet'; }
+
+    // Welcome message
+    if (welcomeBusinessNameSpan) {
+        welcomeBusinessNameSpan.textContent = initialData.googleName;
     }
-    if (snapshotReviewCountSpan) { /* ... Snapshot review count logic ... */
-        if (initialData.reviews > 0) { snapshotReviewCountSpan.textContent = `(${initialData.reviews.toLocaleString()} reviews)`; } else { snapshotReviewCountSpan.textContent = '(0 reviews)'; }
+
+    // Snapshot
+    if (snapshotRatingValueSpan) {
+        if (initialData.reviews > 0 && !isNaN(initialData.rating)) {
+            snapshotRatingValueSpan.textContent = initialData.rating.toFixed(1);
+        } else {
+            snapshotRatingValueSpan.textContent = 'No rating yet';
+        }
     }
-    if (snapshotStarContainer) { /* ... Star generation logic ... */
-        snapshotStarContainer.innerHTML = ''; const ratingValue = initialData.rating; const reviewCount = initialData.reviews;
-        if (reviewCount > 0 && !isNaN(ratingValue)) { const fullStars = Math.floor(ratingValue); for (let i = 0; i < 5; i++) { if (i < fullStars) { snapshotStarContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Star Rating</title><path fill="#fbbc05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>'; } else { snapshotStarContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d1d5db" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>'; } } } else { for (let i = 0; i < 5; i++) { snapshotStarContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d1d5db" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>'; } }
+    if (snapshotReviewCountSpan) {
+         if (initialData.reviews > 0) {
+            snapshotReviewCountSpan.textContent = `(${initialData.reviews.toLocaleString()} reviews)`;
+         } else {
+             snapshotReviewCountSpan.textContent = '(0 reviews)';
+         }
     }
-    if (googleReviewLinkBuilder && initialData.placeId) { googleReviewLinkBuilder.href = `https://search.google.com/local/writereview?placeid=${initialData.placeId}`; } else if (googleReviewLinkBuilder) { googleReviewLinkBuilder.style.pointerEvents = 'none'; googleReviewLinkBuilder.style.color = 'var(--text-light)'; googleReviewLinkBuilder.style.textDecoration = 'none'; googleReviewLinkBuilder.removeAttribute('href'); }
-    if (displayNameInput && previewNameDiv) { displayNameInput.value = initialData.googleName; previewNameDiv.textContent = initialData.googleName; }
-    if (phoneNumberInput && previewPhoneDiv) { previewPhoneDiv.textContent = phoneNumberInput.value; }
+    // Generate Stars
+    if (snapshotStarContainer) {
+        snapshotStarContainer.innerHTML = ''; // Clear previous stars
+        const ratingValue = initialData.rating;
+        const reviewCount = initialData.reviews;
+
+        if (reviewCount > 0 && !isNaN(ratingValue)) {
+            const fullStars = Math.floor(ratingValue);
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    snapshotStarContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Star Rating</title><path fill="#fbbc05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+                } else {
+                    snapshotStarContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d1d5db" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+                }
+            }
+        } else {
+             for (let i = 0; i < 5; i++) {
+                 snapshotStarContainer.innerHTML += '<svg viewBox="0 0 24 24"><title>Empty Star</title><path fill="#d1d5db" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+             }
+        }
+    }
+
+    // Set the Google Review Link in explanation
+    if (googleReviewLinkBuilder && initialData.placeId) {
+        googleReviewLinkBuilder.href = `https://search.google.com/local/writereview?placeid=${initialData.placeId}`;
+    } else if (googleReviewLinkBuilder) {
+        // Disable link if no placeId
+        googleReviewLinkBuilder.style.pointerEvents = 'none';
+        googleReviewLinkBuilder.style.color = 'var(--text-light)';
+        googleReviewLinkBuilder.style.textDecoration = 'none';
+        googleReviewLinkBuilder.removeAttribute('href');
+    }
+
+    // Inputs & Live Preview Name/Phone
+    if (displayNameInput && previewNameDiv) {
+        displayNameInput.value = initialData.googleName; // Pre-fill input with Google Name
+        previewNameDiv.textContent = initialData.googleName; // Initial preview update
+    }
+
+    if (phoneNumberInput && previewPhoneDiv) {
+         previewPhoneDiv.textContent = phoneNumberInput.value; // Initially empty
+    }
 
     // --- Generate QR Code ---
     // (Using real Place ID now for QR destination)
     if (qrCodeContainer && initialData.placeId) {
         new QRCode(qrCodeContainer, {
             text: `https://search.google.com/local/writereview?placeid=${initialData.placeId}`,
-            width: 168,
+            width: 168, // Match Desktop CSS size
             height: 168,
             colorDark: "#333333",
             colorLight: "#ffffff",
@@ -65,23 +116,34 @@ document.addEventListener('DOMContentLoaded', () => {
         if (qrElement) { qrElement.style.width = '100%'; qrElement.style.height = '100%'; qrElement.style.display = 'block'; }
     }
 
+
     // --- Add event listeners for live preview updates ---
-    if (displayNameInput) { displayNameInput.addEventListener('input', () => { previewNameDiv.textContent = displayNameInput.value || initialData.googleName; }); }
-    if (phoneNumberInput) { phoneNumberInput.addEventListener('input', () => { previewPhoneDiv.textContent = phoneNumberInput.value; }); }
+    if (displayNameInput) {
+        displayNameInput.addEventListener('input', () => {
+            // Update preview, fallback to original Google name if input is empty
+            previewNameDiv.textContent = displayNameInput.value || initialData.googleName;
+        });
+    }
+
+    if (phoneNumberInput) {
+        phoneNumberInput.addEventListener('input', () => {
+            previewPhoneDiv.textContent = phoneNumberInput.value;
+        });
+    }
 
     // --- Add event listener for the 'Next' button ---
     if (nextButton) {
         nextButton.addEventListener('click', async () => { // Make the handler async
             // Disable button during save/redirect
             nextButton.disabled = true;
-            nextButton.textContent = 'Saving...';
+            nextButton.textContent = 'Saving...'; // Use textContent for plain text
 
             // Get the final values from the input fields
             const finalDisplayName = displayNameInput.value || initialData.googleName;
             const finalPhoneNumber = phoneNumberInput.value;
 
             try {
-                // --- NEW: Call the update function ---
+                // --- Call the update function AND WAIT for it ---
                 const response = await fetch('/.netlify/functions/update-signup-details', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -92,15 +154,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                 });
 
+                // --- Check if the save was successful BEFORE redirecting ---
                 if (!response.ok) {
                     // Handle error if save fails
-                    console.error('Failed to save custom details:', await response.text());
-                    alert('Could not save customizations. Please try again.');
-                    nextButton.disabled = false; // Re-enable button
-                    nextButton.innerHTML = '🎁 Next: Finalize Sample & View Activation Gift'; // Restore text
-                    return; // Stop redirect
+                    const errorText = await response.text(); // Get error details if possible
+                    console.error('Failed to save custom details:', errorText);
+                    alert('Could not save customizations. Please check your connection and try again.');
+                    // --- Re-enable button on error ---
+                    nextButton.disabled = false;
+                    nextButton.textContent = '🎁 Next: Finalize Sample & View Activation Gift'; // Restore text
+                    return; // Stop execution, DO NOT redirect
                 }
-                // --- END NEW CALL ---
+                // --- Save was successful, proceed with redirect ---
 
                 // Construct the simplified URL for sample.html
                 const sampleUrl = new URL('sample.html', window.location.origin);
@@ -115,10 +180,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = sampleUrl.toString();
 
             } catch (error) {
+                // --- Handle network or other errors during fetch ---
                 console.error('Error during save or redirect:', error);
-                alert('An error occurred. Please try again.');
-                nextButton.disabled = false; // Re-enable button
-                nextButton.innerHTML = '🎁 Next: Finalize Sample & View Activation Gift'; // Restore text
+                alert('An error occurred while saving. Please check your connection and try again.');
+                // --- Re-enable button on error ---
+                nextButton.disabled = false;
+                nextButton.textContent = '🎁 Next: Finalize Sample & View Activation Gift'; // Restore text
             }
         });
     }
