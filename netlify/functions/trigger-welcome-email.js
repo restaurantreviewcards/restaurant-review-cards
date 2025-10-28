@@ -37,7 +37,6 @@ exports.handler = async (event) => {
 
     if (snapshot.empty) {
       console.warn(`Welcome email trigger: Signup data not found for placeId ${placeId}.`);
-      // Return success even if not found to prevent client-side errors
       return { statusCode: 200, body: JSON.stringify({ message: 'Signup not found, email not sent.' }) };
     }
 
@@ -50,15 +49,12 @@ exports.handler = async (event) => {
       return { statusCode: 200, body: JSON.stringify({ message: 'Email previously sent.' }) };
     }
 
-    // --- CHANGE: Construct the sample.html link using ONLY basic, original data ---
     const sampleLink = new URL('https://restaurantreviewcards.com/sample.html');
     sampleLink.searchParams.set('placeId', signupData.googlePlaceId);
     sampleLink.searchParams.set('email', signupData.email);
-    // Use the original Google Name, NOT a customDisplayName field
     sampleLink.searchParams.set('name', signupData.googlePlaceName);
     sampleLink.searchParams.set('rating', signupData.googleRating ? signupData.googleRating.toString() : '0');
     sampleLink.searchParams.set('reviews', signupData.googleReviewCount ? signupData.googleReviewCount.toString() : '0');
-    // DO NOT add displayName or phoneNumber here
 
     // Prepare the welcome email content
     const customerMsg = {
@@ -69,18 +65,22 @@ exports.handler = async (event) => {
         name: 'Jake from RRC'
       },
       subject: `Your Welcome Kit for ${signupData.googlePlaceName} is Ready to Ship`,
+      // --- THE CHANGE IS IN THE HTML BLOCK BELOW ---
       html: `
-        <div style="font-family: sans-serif; padding: 20px; color: #333;">
+        <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+          <h2 style="color: #005596;">Your Custom Sample is Ready!</h2>
           <p>Hi there,</p>
           <p>Your sample for <strong>${signupData.googlePlaceName}</strong> is ready!</p>
-
           <p>Follow the link below to view your sample and access your <strong>FREE Welcome Kit</strong> offer, including <strong>250 Smart Review Cards</strong> and <strong>2 Counter Stands</strong>.</p>
-
           <a href="${sampleLink.toString()}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px; font-weight: bold;">
             View Sample & Get Started
           </a>
-          <p>Let me know if you have questions!</p>
+          <p>Let me know if you have any questions!</p>
           <p>Cheers,<br>Jake</p>
+          
+          <p style="margin-top: 25px; font-size: 12px; color: #718096; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+            P.S. If you have any questions, just hit reply. I read and respond to every email personally.
+          </p>
         </div>
       `,
     };
@@ -98,7 +98,6 @@ exports.handler = async (event) => {
 
   } catch (error) {
     console.error('Error in trigger-welcome-email function:', error);
-    // Log detailed error but return generic message to client
     return { statusCode: 500, body: JSON.stringify({ error: 'Failed to process welcome email request.' }) };
   }
 };
