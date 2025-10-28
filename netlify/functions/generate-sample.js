@@ -21,7 +21,7 @@ const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
 
 function parseAddressComponents(components) {
   const address = {};
-  if (!components) return { line1: '', city: '', state: '', zip: '' }; // Handle missing components
+  if (!components) return { line1: '', city: '', state: '', zip: '' };
   components.forEach(component => {
     const types = component.types;
     if (types.includes('street_number')) address.streetNumber = component.long_name;
@@ -42,13 +42,13 @@ exports.handler = async (event) => {
   const formData = new URLSearchParams(event.body);
   const placeId = formData.get('place_id');
   const email = formData.get('email');
-  const submittedName = formData.get('restaurant-name'); // Keep for potential fallback
+  const submittedName = formData.get('restaurant-name');
 
   if (!placeId || !email || !googleApiKey) {
     return { statusCode: 400, body: 'Missing required information.' };
   }
 
-  let name = submittedName; // Use submitted name as initial fallback
+  let name = submittedName;
   let rating = 'N/A';
   let user_ratings_total = 0;
   let url = 'N/A';
@@ -70,7 +70,6 @@ exports.handler = async (event) => {
       console.warn(`Could not retrieve full restaurant details from Google for placeId: ${placeId}. Status: ${placeData.status}`);
     }
 
-    // Save signup data
     await db.collection('signups').add({
       email: email,
       submittedName: submittedName,
@@ -84,22 +83,17 @@ exports.handler = async (event) => {
       googleAddressState: parsedAddress.state,
       googleAddressZip: parsedAddress.zip,
       timestamp: new Date(),
-      // --- CHANGE 1: Added welcomeEmailSent flag ---
       welcomeEmailSent: false
     });
 
-    // --- CHANGE 2: Redirect URL points to card-builder.html with basic params ---
-    const redirectUrl = new URL('https://restaurantreviewcards.com/card-builder.html');
+    // --- UPDATED REDIRECT URL ---
+    const redirectUrl = new URL('https://restaurantreviewcards.com/sample.html');
     redirectUrl.searchParams.set('placeId', placeId);
     redirectUrl.searchParams.set('email', email);
-    redirectUrl.searchParams.set('googleName', name); // Pass fetched name
+    redirectUrl.searchParams.set('name', name);
     redirectUrl.searchParams.set('rating', rating.toString());
     redirectUrl.searchParams.set('reviews', user_ratings_total.toString());
-
-    // --- CHANGE 3: Customer Email (customerMsg) REMOVED ---
-    // const customerMsg = { ... };
-
-    // --- Internal Notification Email to You - Link updated ---
+    
     const internalMsg = {
         to: 'jake@restaurantreviewcards.com',
         from: { email: 'jake@restaurantreviewcards.com', name: 'New Sample Lead' },
@@ -115,16 +109,14 @@ exports.handler = async (event) => {
                     <li><strong>Current Rating:</strong> ${rating} (${user_ratings_total} reviews)</li>
                 </ul>
                 <a href="${redirectUrl.toString()}" style="background-color: #28a745; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px;">
-                    View Their Custom Builder Page
+                    View Their Custom Sample Page
                 </a>
             </div>
         `,
     };
-
-    // --- CHANGE 4: Send ONLY the internal email ---
+    
     await sgMail.send(internalMsg);
 
-    // Perform the redirect
     return {
       statusCode: 302,
       headers: {
@@ -135,16 +127,15 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error('Error in generate-sample function:', error);
 
-    // --- CHANGE 5: Fallback Redirect also points to card-builder.html ---
-    const fallbackRedirectUrl = new URL('https://restaurantreviewcards.com/card-builder.html');
-    fallbackRedirectUrl.searchParams.set('placeId', placeId); // Still need placeId
-    fallbackRedirectUrl.searchParams.set('email', email);     // Still need email
-    fallbackRedirectUrl.searchParams.set('googleName', submittedName); // Use submitted name
+    // --- UPDATED FALLBACK REDIRECT URL ---
+    const fallbackRedirectUrl = new URL('https://restaurantreviewcards.com/sample.html');
+    fallbackRedirectUrl.searchParams.set('placeId', placeId);
+    fallbackRedirectUrl.searchParams.set('email', email);
+    fallbackRedirectUrl.searchParams.set('name', submittedName);
     fallbackRedirectUrl.searchParams.set('rating', 'N/A');
     fallbackRedirectUrl.searchParams.set('reviews', '0');
     fallbackRedirectUrl.searchParams.set('error', 'details_fetch_failed');
 
-    // Attempt to send internal notification on error
     try {
       const errorMsg = {
         to: 'jake@restaurantreviewcards.com',

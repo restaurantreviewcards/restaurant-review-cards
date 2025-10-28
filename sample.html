@@ -10,6 +10,54 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="samplestyle.css">
+    
+    <style>
+        .customization-section {
+            max-width: 500px;
+            margin: 2rem auto 2rem;
+            text-align: left;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background-color: #f9fafb;
+        }
+        .customization-section h3 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        .customization-section .subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #718096;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .char-limit-note {
+            display: block;
+            text-align: right;
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 4px;
+        }
+    </style>
 </head>
 <body>
 
@@ -55,13 +103,22 @@
                         <div id="live-sample-phone"></div>
                     </div>
                 </div>
-                <a href="#" id="edit-card-btn" class="btn btn-edit-subtle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                    </svg>
-                    Edit Card Details
-                </a>
+
+                <div class="customization-section">
+                    <h3>Customize Your Card</h3>
+                    <p class="subtitle">Make any desired adjustments below. Your changes will appear live on the card preview above.</p>
+                    <div class="form-group">
+                        <label for="display-name">Display Name</label>
+                        <input type="text" id="display-name" value="Restaurant Name Loading..." maxlength="25">
+                        <span class="char-limit-note">Max 25 characters</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone-number">Phone Number (Optional)</label>
+                        <input type="text" id="phone-number" placeholder="(Optional) e.g., (555) 123-4567" maxlength="20">
+                        <span class="char-limit-note">Max 20 characters</span>
+                    </div>
+                </div>
+
                 <p class="live-sample-description">
                     Activate your free trial, and we'll ship <strong>250 custom Smart Review Cards</strong> (standard 3.5" x 2" size) <strong>immediately</strong>. Hand them out to customers to easily boost your <strong>5-star <span class="google-word-inline"><span class="google-g-blue">G</span><span class="google-o-red">o</span><span class="google-o-yellow">o</span><span class="google-g-blue">g</span><span class="google-l-green">l</span><span class="google-e-red">e</span></span> reviews</strong>.
                 </p>
@@ -199,6 +256,7 @@
                 <p class="risk-free-text">No contract. Cancel anytime.</p>
             </div>
         </section>
+        
         <section class="social-proof-section">
             <div class="container-centered">
                 <h2>Join a Community of Successful Restaurants</h2>
@@ -214,7 +272,7 @@
                 </div>
             </div>
         </section>
-        </main>
+    </main>
 
     <footer class="footer">
         <p>&copy; <span id="copyright-year">2025</span> Restaurant Review Cards. All rights reserved.</p>

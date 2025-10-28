@@ -5,127 +5,133 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const placeId = params.get('placeId');
     const emailFromUrl = params.get('email');
-    const googleNameFromUrl = params.get('name'); // Original Google name
+    const googleNameFromUrl = params.get('name');
     const ratingFromUrl = parseFloat(params.get('rating') || '0');
     const reviewsFromUrl = parseInt(params.get('reviews') || '0', 10);
-    const displayNameFromUrl = params.get('displayName'); // Potentially customized name
-    const phoneNumberFromUrl = params.get('phoneNumber'); // Potentially customized phone
+    const displayNameFromUrl = params.get('displayName');
+    const phoneNumberFromUrl = params.get('phoneNumber');
 
-    let reviewUrl = ''; // Initialize review URL
+    let reviewUrl = '';
 
     // --- Function to Trigger Background Save ---
     const saveCustomDetailsInBackground = (pId, dispName, phoneNum) => {
-        // Only proceed if there's potentially custom data to save
-        if (!dispName && !phoneNum) return; // Nothing custom entered
+        // This function can still be used, but we'll call it just before checkout.
+        if (!pId) return;
 
         fetch('/.netlify/functions/update-signup-details', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 placeId: pId,
-                displayName: dispName || '', // Send even if only phone changed
-                phoneNumber: phoneNum || '' // Send empty string if cleared
+                displayName: dispName || '',
+                phoneNumber: phoneNum || ''
             })
         })
         .then(response => response.json())
         .then(data => console.log('Background save status:', data.message))
         .catch(error => console.error('Error saving details in background:', error));
     };
+    
+    // --- NEW: Function to handle live preview updates ---
+    const initLivePreviewUpdates = () => {
+        const displayNameInput = document.getElementById('display-name');
+        const phoneNumberInput = document.getElementById('phone-number');
+        const liveSampleName = document.getElementById('live-sample-name');
+        const liveSamplePhone = document.getElementById('live-sample-phone');
 
-    // --- Function to Trigger Welcome Email ---
-    const triggerWelcomeEmail = (pId) => {
-        fetch('/.netlify/functions/trigger-welcome-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ placeId: pId })
-        })
-        .then(response => response.json())
-        .then(data => console.log('Welcome email trigger status:', data.message))
-        .catch(error => console.error('Error triggering welcome email:', error));
+        if (displayNameInput && liveSampleName) {
+            displayNameInput.addEventListener('input', () => {
+                liveSampleName.textContent = displayNameInput.value;
+            });
+        }
+        if (phoneNumberInput && liveSamplePhone) {
+            phoneNumberInput.addEventListener('input', () => {
+                liveSamplePhone.textContent = phoneNumberInput.value;
+            });
+        }
     };
 
-    // --- Function to populate page elements using URL data ---
+    // --- MODIFIED: Function to populate page elements including new inputs ---
     const populatePageElements = () => {
-        // Determine Name to Display (prioritize displayName from URL)
         const nameToDisplay = displayNameFromUrl || googleNameFromUrl || 'Business Name';
-        const phoneToDisplay = phoneNumberFromUrl || ''; // Use phone from URL if present
+        const phoneToDisplay = phoneNumberFromUrl || '';
 
         // Populate Headers and Mobile Bar
-        if (document.getElementById('business-name-header')) {
-            document.getElementById('business-name-header').textContent = nameToDisplay;
-        }
-        if (document.querySelector('.business-name-preview')) {
-            document.querySelector('.business-name-preview').textContent = nameToDisplay;
-        }
+        document.getElementById('business-name-header').textContent = nameToDisplay;
+        document.querySelector('.business-name-preview').textContent = nameToDisplay;
+        
+        // Populate Live Preview Text on Card
+        document.getElementById('live-sample-name').textContent = nameToDisplay;
+        document.getElementById('live-sample-phone').textContent = phoneToDisplay;
 
-        // --- Populate Transposed Text on Card ---
-        const nameElement = document.getElementById('live-sample-name');
-        const phoneElement = document.getElementById('live-sample-phone');
+        // NEW: Populate the input fields themselves with the correct initial values
+        document.getElementById('display-name').value = nameToDisplay;
+        document.getElementById('phone-number').value = phoneToDisplay;
 
-        if (nameElement) {
-            nameElement.textContent = nameToDisplay;
-        }
-        if (phoneElement) {
-            phoneElement.textContent = phoneToDisplay;
-            // Optionally hide if empty: phoneElement.style.display = phoneToDisplay ? '' : 'none';
-        }
-
-        // --- Set Google Review Links (using placeId from URL) ---
+        // Set Google Review Links
         if (placeId) {
             reviewUrl = `https://search.google.com/local/writereview?placeid=${placeId}`;
-            const googleReviewPageLink = document.getElementById('google-review-page-link');
-            if (googleReviewPageLink) {
-                googleReviewPageLink.href = reviewUrl;
-            }
-        } else {
-            // Disable link if placeId missing (should have been caught earlier)
-            const googleReviewPageLink = document.getElementById('google-review-page-link');
-            if (googleReviewPageLink) {
-                 googleReviewPageLink.style.pointerEvents = 'none';
-                 googleReviewPageLink.style.color = 'var(--text-light)';
-                 googleReviewPageLink.removeAttribute('href');
-            }
         }
 
-        // --- Set Edit Button Link ---
-        const editButton = document.getElementById('edit-card-btn');
-        if (editButton && placeId && emailFromUrl && googleNameFromUrl) {
-            const builderUrl = new URL('card-builder.html', window.location.origin);
-            builderUrl.searchParams.set('placeId', placeId);
-            builderUrl.searchParams.set('email', emailFromUrl);
-            builderUrl.searchParams.set('googleName', googleNameFromUrl); // Original name
-            builderUrl.searchParams.set('rating', ratingFromUrl.toString());
-            builderUrl.searchParams.set('reviews', reviewsFromUrl.toString());
-            // Pass the CURRENTLY displayed name and phone back
-            builderUrl.searchParams.set('displayName', nameToDisplay);
-            if (phoneToDisplay) {
-                builderUrl.searchParams.set('phoneNumber', phoneToDisplay);
-            }
-            editButton.href = builderUrl.toString();
-        } else if (editButton) {
-            editButton.style.display = 'none'; // Hide if essential info missing
-        }
-
-        // --- Initialize QR Codes (uses global reviewUrl) ---
+        // Initialize QR Codes, Countdown, and other UI elements
         generateQRCodes();
-
-        // --- Initialize Checkout Links (uses global placeId and emailFromUrl) ---
-        initCheckoutLinks();
-
-        // --- Initialize Countdown (now fetches its own data) ---
         initCountdown();
+        initDashboardTabs();
+        initFooter();
+        initEarlyCtaScroll();
+        
+        // NEW: Initialize the live preview event listeners
+        initLivePreviewUpdates();
+        
+        // MODIFIED: This function now attaches smart click handlers instead of static links
+        initSmartCheckoutLinks();
     };
 
-    // --- Function to generate QR Codes ---
-    const generateQRCodes = () => {
-        if (!reviewUrl) {
-             console.error("Cannot generate QR codes: reviewUrl is not set.");
-             return;
+    // --- MODIFIED: This function now builds the URL on click with the latest data ---
+    const initSmartCheckoutLinks = () => {
+        const checkoutButtons = document.querySelectorAll('.js-get-started-link');
+        const displayNameInput = document.getElementById('display-name');
+        const phoneNumberInput = document.getElementById('phone-number');
+        
+        if (!placeId || !emailFromUrl) {
+            console.error("Missing placeId or email for checkout links.");
+            checkoutButtons.forEach(button => {
+                button.style.pointerEvents = 'none';
+                button.style.opacity = '0.5';
+            });
+            return;
         }
+
+        checkoutButtons.forEach(button => {
+            // Use a click event listener instead of just setting href
+            button.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent the default link behavior
+                
+                // Get the final, current values from the input fields
+                const finalDisplayName = displayNameInput.value;
+                const finalPhoneNumber = phoneNumberInput.value;
+
+                // Save latest customizations in the background right before leaving
+                saveCustomDetailsInBackground(placeId, finalDisplayName, finalPhoneNumber);
+                
+                // Construct the checkout URL
+                const checkoutUrl = new URL('checkout.html', window.location.origin);
+                checkoutUrl.searchParams.set('placeId', placeId);
+                checkoutUrl.searchParams.set('email', emailFromUrl);
+                
+                // Navigate to the checkout page
+                window.location.href = checkoutUrl.toString();
+            });
+        });
+    };
+
+    // --- All other helper functions remain largely unchanged ---
+    const generateQRCodes = () => {
+        if (!reviewUrl) return;
         const bonusQrContainer = document.getElementById('bonus-qr-code-container');
         if (bonusQrContainer) {
-             bonusQrContainer.innerHTML = '';
-             new QRCode(bonusQrContainer, { text: reviewUrl, width: 75, height: 75, colorDark: "#282a2e", colorLight: "#d7d5d1", correctLevel: QRCode.CorrectLevel.H });
+            bonusQrContainer.innerHTML = '';
+            new QRCode(bonusQrContainer, { text: reviewUrl, width: 75, height: 75, colorDark: "#282a2e", colorLight: "#d7d5d1", correctLevel: QRCode.CorrectLevel.H });
         }
         const liveSampleQrContainer = document.getElementById('live-sample-qr-code');
         if (liveSampleQrContainer) {
@@ -134,115 +140,73 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Function to initialize Countdown (fetches its own data) ---
     const initCountdown = async () => {
         const hoursEl = document.getElementById('hours');
         const minutesEl = document.getElementById('minutes');
         const secondsEl = document.getElementById('seconds');
         const countdownTimerEl = document.querySelector('.countdown-timer');
         const countdownPromptEl = document.querySelector('.countdown-prompt');
-
         const hideTimer = () => {
             if (countdownTimerEl) countdownTimerEl.style.display = 'none';
             if (countdownPromptEl) countdownPromptEl.style.display = 'none';
         };
-
-        // Use the globally read placeId
-        if (!placeId || !hoursEl || !minutesEl || !secondsEl || !countdownTimerEl || !countdownPromptEl) {
-             console.log("Countdown prerequisites not met (missing placeId or elements). Hiding timer.");
-             hideTimer();
-             return;
+        if (!placeId || !hoursEl || !minutesEl || !secondsEl) {
+            hideTimer();
+            return;
         }
-
         try {
-            // Fetch data specifically for countdown
             const response = await fetch(`/.netlify/functions/get-signup-data?placeId=${placeId}`);
-            if (!response.ok) throw new Error('Failed to fetch signup data for countdown');
+            if (!response.ok) throw new Error('Failed to fetch signup data');
             const data = await response.json();
-
             if (!data.timestamp || typeof data.timestamp._seconds !== 'number') {
-                throw new Error('Invalid or missing timestamp format for countdown.');
+                throw new Error('Invalid timestamp');
             }
-
-            const signupTime = new Date(data.timestamp._seconds * 1000);
-            const targetTime = signupTime.getTime() + 12 * 60 * 60 * 1000; // 12 hours
-            const formatTimeUnit = (unit) => String(unit).padStart(2, '0');
-
-            let updateTimerInterval;
+            const targetTime = new Date(data.timestamp._seconds * 1000).getTime() + 12 * 60 * 60 * 1000;
             const updateTimer = () => {
                 const distance = targetTime - Date.now();
-                if (distance < 0) { clearInterval(updateTimerInterval); hideTimer(); return; }
-                const hours = Math.floor(distance / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                hoursEl.textContent = formatTimeUnit(hours);
-                minutesEl.textContent = formatTimeUnit(minutes);
-                secondsEl.textContent = formatTimeUnit(seconds);
+                if (distance < 0) {
+                    clearInterval(updateTimerInterval);
+                    hideTimer();
+                    return;
+                }
+                hoursEl.textContent = String(Math.floor(distance / (1000 * 60 * 60))).padStart(2, '0');
+                minutesEl.textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                secondsEl.textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
             };
             updateTimer();
-            updateTimerInterval = setInterval(updateTimer, 1000);
-
+            var updateTimerInterval = setInterval(updateTimer, 1000);
         } catch (error) {
             console.error("Countdown Error:", error.message);
             hideTimer();
         }
     };
-
-    // --- Other Init Functions (Tabs, Footer, Checkout, Scroll) ---
-    const initDashboardTabs = () => { /* ... unchanged ... */
+    
+    const initDashboardTabs = () => {
         const tabsContainer = document.querySelector('.dashboard-tabs'); if (!tabsContainer) return; const panels = document.querySelectorAll('.dashboard-panel'); const tabs = document.querySelectorAll('.dashboard-tab'); tabsContainer.addEventListener('click', (e) => { const clickedTab = e.target.closest('.dashboard-tab'); if (!clickedTab || clickedTab.classList.contains('active')) return; tabs.forEach(t => t.classList.remove('active')); panels.forEach(p => p.classList.remove('active')); clickedTab.classList.add('active'); const targetPanelId = clickedTab.dataset.tab; const targetPanel = document.getElementById(targetPanelId); if (targetPanel) targetPanel.classList.add('active'); });
     };
-    const initFooter = () => { /* ... unchanged ... */
+
+    const initFooter = () => {
         const yearSpan = document.getElementById('copyright-year'); if (yearSpan) yearSpan.textContent = new Date().getFullYear();
     };
-    const initCheckoutLinks = () => { /* Uses global placeId and emailFromUrl */
-        const checkoutButtons = document.querySelectorAll('.js-get-started-link');
-        if (checkoutButtons.length > 0) {
-            if (!placeId || !emailFromUrl) {
-                console.error("Missing placeId or email for checkout links.");
-                checkoutButtons.forEach(button => { button.style.pointerEvents = 'none'; button.style.opacity = '0.5'; button.textContent = 'Info Missing'; });
-                return;
-            }
-            const checkoutUrl = `/checkout.html?placeId=${placeId}&email=${encodeURIComponent(emailFromUrl)}`;
-            checkoutButtons.forEach(button => { button.href = checkoutUrl; });
-        }
+    
+    const initEarlyCtaScroll = () => {
+        const scrollButtons = document.querySelectorAll('.js-scroll-to-cta'); const targetSection = document.getElementById('cta-section'); if (!targetSection) return; if (scrollButtons.length > 0) { scrollButtons.forEach(button => { button.addEventListener('click', (event) => { event.preventDefault(); targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }); }); }
     };
-    const initEarlyCtaScroll = () => { /* ... unchanged ... */
-        const scrollButtons = document.querySelectorAll('.js-scroll-to-cta'); const targetSection = document.getElementById('cta-section'); if (!targetSection) { console.log("Target CTA section not found"); return; } if (scrollButtons.length > 0) { scrollButtons.forEach(button => { button.addEventListener('click', (event) => { event.preventDefault(); targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }); }); } else { console.log("No scroll-to-cta buttons found"); }
-    };
-
 
     // --- Main Initialization Logic ---
     const initializePage = () => {
-        // Basic check for essential ID at the start
         if (!placeId) {
             console.error("Cannot initialize page: Place ID missing from URL.");
             document.body.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Error: Missing required information to load this page.</p>';
-            // Disable specific elements that rely on placeId early
-             const googleReviewPageLink = document.getElementById('google-review-page-link');
-             if (googleReviewPageLink) { googleReviewPageLink.style.display = 'none';}
-             const editButton = document.getElementById('edit-card-btn');
-             if (editButton) { editButton.style.display = 'none'; }
-             initCheckoutLinks(); // This will disable checkout links internally if needed
             return;
         }
+        
+        // This single function now handles setting up almost the entire page.
+        populatePageElements();
 
-        // 1. Populate page immediately using URL parameters
-        populatePageElements(); // Handles snapshot (removed), text, links, QR, checkout, countdown
-
-        // 2. Trigger background save using URL parameters
-        // Pass displayNameFromUrl and phoneNumberFromUrl
-        saveCustomDetailsInBackground(placeId, displayNameFromUrl, phoneNumberFromUrl);
-
-        // 3. Trigger Welcome Email (only needs placeId)
-        triggerWelcomeEmail(placeId);
-
-        // 4. Initialize remaining UI elements
-        initDashboardTabs();
-        initFooter();
-        initEarlyCtaScroll();
+        // The background email trigger is no longer needed here, as it's better handled
+        // after a successful checkout.
     };
 
     initializePage(); // Start the process
-
 });
