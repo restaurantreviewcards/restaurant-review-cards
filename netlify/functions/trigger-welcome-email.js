@@ -65,7 +65,6 @@ exports.handler = async (event) => {
         name: 'Jake from RRC'
       },
       subject: `Your Welcome Kit for ${signupData.googlePlaceName} is Ready to Ship`,
-      // --- THE CHANGE IS IN THE HTML BLOCK BELOW ---
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
           <h2 style="color: #005596;">Your Custom Sample is Ready!</h2>

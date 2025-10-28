@@ -30,21 +30,12 @@ exports.handler = async (event) => {
             return { statusCode: 400, body: JSON.stringify({ error: 'Missing required parameters.' }) };
         }
 
-        // Attach the payment method to the customer
-        await stripe.paymentMethods.attach(paymentMethodId, {
-            customer: customerId,
-        });
-
-        // Set this as the default payment method for the customer's future invoices
+        await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId });
         await stripe.customers.update(customerId, {
-            invoice_settings: {
-                default_payment_method: paymentMethodId,
-            },
+            invoice_settings: { default_payment_method: paymentMethodId },
         });
 
         const priceId = process.env.STRIPE_PRICE_ID;
-
-        // Create the subscription with a 30-day free trial
         const subscription = await stripe.subscriptions.create({
             customer: customerId,
             items: [{ price: priceId }],
@@ -53,7 +44,6 @@ exports.handler = async (event) => {
             expand: ['latest_invoice.payment_intent'],
         });
 
-        // Find the most recent signup document to get the full business details
         const signupsRef = db.collection('signups');
         const signupSnapshot = await signupsRef.where('googlePlaceId', '==', placeId).orderBy('timestamp', 'desc').limit(1).get();
 
@@ -62,7 +52,6 @@ exports.handler = async (event) => {
         }
         const signupData = signupSnapshot.docs[0].data();
 
-        // Create the final customer data object
         const customerData = {
             userId: customerId,
             email: email.toLowerCase(),
@@ -76,12 +65,32 @@ exports.handler = async (event) => {
             lastRedemptionDate: null,
         };
 
-        // Create the final customer record in Firestore
         await db.collection('customers').doc(customerId).set(customerData);
 
         const dashboardUrl = `https://restaurantreviewcards.com/dashboard.html?placeId=${customerData.googlePlaceId}`;
 
-        // Send the internal notification email to you
+        // --- THIS IS THE NEW EMAIL FOR THE CUSTOMER ---
+        const welcomeMsg = {
+            to: customerData.email,
+            bcc: 'jake@restaurantreviewcards.com',
+            from: { email: 'jake@restaurantreviewcards.com', name: 'Jake from ReviewCards' },
+            subject: `Welcome to your free trial, ${customerData.googlePlaceName}!`,
+            html: `
+                <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                    <h2 style="color: #005596;">Welcome! Your Free Trial is Active</h2>
+                    <p>Hi there,</p>
+                    <p>Thank you for starting your free trial! Your welcome kit, including 250 Smart Review Cards and 2 free stands, is now being processed for shipment.</p>
+                    <p>You can access your Smart Dashboard immediately. Click the button below to log in:</p>
+                    <a href="${dashboardUrl}" style="background-color: #005596; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px; margin-bottom: 20px; font-weight: bold;">
+                        Go to My Dashboard
+                    </a>
+                    <p>If you have any questions, just reply to this email.</p>
+                    <p>Cheers,<br>Jake</p>
+                </div>
+            `
+        };
+
+        // This is the existing internal notification for you
         const internalNotificationMsg = {
             to: 'jake@restaurantreviewcards.com',
             from: { email: 'jake@restaurantreviewcards.com', name: 'New Trial Signup' },
@@ -89,11 +98,9 @@ exports.handler = async (event) => {
             html: `
                 <div style="font-family: sans-serif; padding: 20px; color: #333;">
                     <h2 style="color: #28a745;">New Free Trial Started!</h2>
-                    
                     <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 25px;">Print Details:</h3>
                     <p><strong>Display Name:</strong> ${customerData.customDisplayName || customerData.googlePlaceName}</p>
                     <p><strong>Phone Number:</strong> ${customerData.customPhoneNumber || 'N/A'}</p>
-
                     <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 25px;">Account Details:</h3>
                     <p><strong>Official Name:</strong> ${customerData.googlePlaceName}</p>
                     <p><strong>Email:</strong> ${customerData.email}</p>
@@ -113,8 +120,11 @@ exports.handler = async (event) => {
             `
         };
 
-        // Send only the internal notification
-        await sgMail.send(internalNotificationMsg);
+        // --- UPDATED: Send both emails simultaneously ---
+        await Promise.all([
+            sgMail.send(welcomeMsg),
+            sgMail.send(internalNotificationMsg)
+        ]);
 
         return {
             statusCode: 200,
