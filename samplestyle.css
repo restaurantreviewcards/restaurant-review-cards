@@ -157,7 +157,7 @@ section { padding: 40px 20px; }
 
 /* --- HEADER --- */
 .header {
-    padding: 1.25rem 1.5rem;
+    padding: 1.25rem 1.5rem 0.5rem; /* Reduced bottom padding */
     background-color: var(--white);
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     text-align: center;
@@ -189,13 +189,57 @@ section { padding: 40px 20px; }
     font-weight: 700;
     color: var(--text-dark);
     line-height: 1.2;
+    margin-bottom: 0.75rem; /* Space below name, above new bar */
 }
 
-/* --- Special Google Word Styling --- */
-.google-word {
-    font-family: 'Manrope', sans-serif;
-    font-weight: 700;
+/* --- NEW HEADER GOOGLE SNAPSHOT BAR --- */
+#google-header-snapshot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem; /* Tight spacing */
+    max-width: 400px;
+    margin: 0 auto 0.75rem auto; /* Space above/below */
+    font-family: var(--font-google);
+    font-size: 1rem;
+    color: var(--text-dark);
 }
+
+.google-icon-sm {
+    width: 18px; /* Small icon size */
+    height: 18px;
+    margin-right: 0.1rem;
+}
+
+#google-header-snapshot .rating-value {
+    font-weight: 700;
+    color: var(--google-text);
+}
+
+#google-header-snapshot .star-rating {
+    display: flex;
+    margin-right: 0.25rem;
+}
+
+#google-header-snapshot .star-rating svg {
+    width: 14px; /* Small stars */
+    height: 14px;
+}
+
+#google-header-snapshot .review-count-link {
+    font-size: 0.9rem;
+    color: var(--text-light); /* Subtle link color */
+    font-weight: 500;
+    text-decoration: underline;
+}
+#google-header-snapshot .review-count-link:hover {
+    color: var(--primary-color);
+}
+/* --- END NEW HEADER SNAPSHOT BAR --- */
+
+
+/* --- Special Google Word Styling (Kept for site-wide consistency) --- */
+.google-word { font-family: 'Manrope', sans-serif; font-weight: 700; }
 .google-g-blue { color: #4285F4; }
 .google-o-red { color: #EA4335; }
 .google-o-yellow { color: #FBBC05; }
@@ -203,11 +247,7 @@ section { padding: 40px 20px; }
 .google-e-red { color: #EA4335; }
 
 /* --- Style for inline Google word --- */
-.google-word-inline {
-    font-family: 'Manrope', sans-serif;
-    font-weight: 700;
-    white-space: nowrap;
-}
+.google-word-inline { font-family: 'Manrope', sans-serif; font-weight: 700; white-space: nowrap; }
 .google-word-inline .google-g-blue { color: #4285F4; }
 .google-word-inline .google-o-red { color: #EA4335; }
 .google-word-inline .google-o-yellow { color: #FBBC05; }
@@ -237,11 +277,12 @@ section { padding: 40px 20px; }
 
 /* --- WELCOME SECTION (REMOVED CONTENT) --- */
 .welcome-section {
-      padding: 40px 20px 0; /* Reduced padding-bottom */
-      background-color: var(--white);
-      border-bottom: 1px solid var(--border-color);
-      min-height: 10px; /* Prevent collapsing */
+     padding: 0; /* Set padding to zero as content is moved/removed */
+     background-color: var(--white);
+     border-bottom: 0; /* Remove border */
+     min-height: 0;
 }
+/* Removed other snapshot/welcome styles */
 
 /* --- Live Sample Image Section --- */
 .live-sample-section {
@@ -251,14 +292,14 @@ section { padding: 40px 20px; }
     text-align: center;
 }
 .live-sample-section h2 {
-    margin-bottom: 1rem; /* Adjusted space below heading */
+    margin-bottom: 1rem;
 }
 
 .live-sample-image-container {
-    position: relative; /* NEEDED */
+    position: relative;
     max-width: 400px;
     width: 70%;
-    margin: 0 auto 0.5rem auto; /* Reduced bottom margin */
+    margin: 0 auto 0.5rem auto; /* Space above edit button */
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     border-radius: 8px;
     overflow: hidden;
@@ -269,7 +310,7 @@ section { padding: 40px 20px; }
     height: auto;
 }
 
-/* --- QR code positioning and sizing --- */
+/* --- Reverted QR code positioning and sizing --- */
 #live-sample-qr-code {
     position: absolute;
     top: 53%;    /* Original Top */
@@ -293,14 +334,13 @@ section { padding: 40px 20px; }
     display: block;
 }
 
-/* --- UPDATED Styles for Text Container --- */
+/* --- Styles for Transposed Text Container --- */
 #live-sample-text-container {
     position: absolute;
-    /* --- MODIFIED: Increased top value to move text down --- */
-    top: 81%; /* Was 76%. Increase to move down, decrease to move up. */
-    left: 50.6%;
-    width: 62%;
-    transform: translateX(-50%);
+    top: 78%; /* Shifted Down */
+    left: 50.6%; /* Match QR horizontal anchor */
+    width: 62%; /* Widened */
+    transform: translateX(-50%); /* Center the container */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -308,28 +348,30 @@ section { padding: 40px 20px; }
     color: #000000;
     text-align: center;
     overflow: hidden;
+    box-sizing: border-box;
+    padding: 0 2px;
 }
 
 #live-sample-name {
-    font-size: 16px;
+    font-size: 16px; /* Updated */
     font-weight: 600;
     line-height: 1.3;
     white-space: normal;
-    max-height: 2.6em;
+    max-height: 2.6em; /* Limit to 2 lines */
     overflow: hidden;
-    margin-bottom: 4px;
+    margin-bottom: 4px; /* Space between name and phone */
     max-width: 100%;
 }
 
 #live-sample-phone {
-    font-size: 14px;
+    font-size: 14px; /* Updated */
     font-weight: normal;
     line-height: 1.2;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 100%;
 }
-/* --- END New/Modified Styles --- */
+/* --- END Transposed Text Styles --- */
 
 /* --- Edit Button Styling --- */
 .btn-edit-subtle {
@@ -363,6 +405,8 @@ section { padding: 40px 20px; }
     text-decoration: none;
     outline: none;
 }
+/* --- END Edit Button --- */
+
 
 .live-sample-description {
     font-size: 1rem;
@@ -377,6 +421,7 @@ section { padding: 40px 20px; }
     padding: 14px 28px;
 }
 
+
 /* --- Offer Preview Box Styles --- */
 .offer-preview-section { background-color: var(--white); padding: 30px 20px; border-bottom: 1px solid var(--border-color); }
 .offer-preview-box { background-color: var(--bonus-background); border: 1px solid var(--bonus-border); border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -388,6 +433,7 @@ section { padding: 40px 20px; }
 .offer-preview-box .timer-time { font-size: 2.5rem; font-weight: 700; color: var(--text-dark); line-height: 1; }
 .offer-preview-box .timer-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-light); margin-top: 0.25rem; display: block; }
 .offer-preview-box .btn { font-size: 1.1rem; padding: 14px 28px; }
+
 
 /* --- SOCIAL PROOF SECTION --- */
 .social-proof-section { background-color: var(--primary-dark); color: var(--white); padding: 60px 20px; text-align: center; }
@@ -442,6 +488,7 @@ section { padding: 40px 20px; }
 .share-icon svg { width: 32px; height: 32px; }
 .dashboard-static-image { max-width: 100%; width: 450px; height: auto; display: block; margin: 1.5rem auto 0; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
 
+
 /* --- FINAL CTA SECTION --- */
 .cta-section { text-align: center; padding-top: 60px; padding-bottom: 60px; }
 .final-offer-card { background: var(--white); border: 1px solid var(--border-color); box-shadow: 0 8px 30px rgba(0,0,0,0.08); border-radius: 16px; padding: 2rem; text-align: center; position: relative; overflow: hidden; }
@@ -470,6 +517,7 @@ section { padding: 40px 20px; }
 .bonus-qr-code canvas, .bonus-qr-code img { width: 100% !important; height: 100% !important; display: block; }
 .risk-free-text { margin-top: 1rem; font-size: 0.9rem; color: var(--text-light); }
 
+
 /* --- FOOTER --- */
 footer { background-color: var(--text-dark); color: var(--background-light); text-align: center; padding: 2rem; }
 
@@ -493,7 +541,6 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     .price-trial .price-main { font-size: 3rem; }
     .btn-success { font-size: 1.1rem; padding: 14px 24px; }
     .live-sample-image-container { width: 90%; max-width: 320px;}
-
     .smart-features-section .section-header { margin-bottom: 2rem; }
     .smart-features-grid { gap: 2rem; margin-bottom: 2rem; }
     .smart-feature-item h3 { font-size: 1.15rem; }
