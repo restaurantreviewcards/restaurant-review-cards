@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Function to Trigger Background Save ---
     const saveCustomDetailsInBackground = (pId, dispName, phoneNum) => {
-        // This function can still be used, but we'll call it just before checkout.
         if (!pId) return;
 
         fetch('/.netlify/functions/update-signup-details', {
@@ -31,8 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => console.log('Background save status:', data.message))
         .catch(error => console.error('Error saving details in background:', error));
     };
-    
-    // --- NEW: Function to handle live preview updates ---
+
+    // --- Function to handle live preview updates ---
     const initLivePreviewUpdates = () => {
         const displayNameInput = document.getElementById('display-name');
         const phoneNumberInput = document.getElementById('phone-number');
@@ -50,6 +49,38 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     };
+    
+    // --- NEW: Function to populate the header snapshot ---
+    const populateHeaderSnapshot = () => {
+        const ratingValueSpan = document.getElementById('header-rating-value');
+        const starContainer = document.getElementById('header-star-container');
+        const reviewCountSpan = document.getElementById('header-review-count');
+
+        if (reviewsFromUrl > 0 && !isNaN(ratingFromUrl)) {
+            ratingValueSpan.textContent = ratingFromUrl.toFixed(1);
+            reviewCountSpan.textContent = `(${reviewsFromUrl.toLocaleString()} reviews)`;
+
+            starContainer.innerHTML = ''; // Clear previous stars
+            const fullStars = Math.floor(ratingFromUrl);
+            
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    // Full star
+                    starContainer.innerHTML += '<svg viewBox="0 0 24 24"><path fill="#FBBC05" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+                } else {
+                    // Empty star
+                    starContainer.innerHTML += '<svg viewBox="0 0 24 24"><path fill="#d1d5db" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+                }
+            }
+        } else {
+            ratingValueSpan.textContent = 'No rating';
+            reviewCountSpan.textContent = '(0 reviews)';
+            starContainer.innerHTML = '';
+             for (let i = 0; i < 5; i++) {
+                starContainer.innerHTML += '<svg viewBox="0 0 24 24"><path fill="#d1d5db" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+             }
+        }
+    };
 
     // --- MODIFIED: Function to populate page elements including new inputs ---
     const populatePageElements = () => {
@@ -64,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('live-sample-name').textContent = nameToDisplay;
         document.getElementById('live-sample-phone').textContent = phoneToDisplay;
 
-        // NEW: Populate the input fields themselves with the correct initial values
+        // Populate the input fields themselves with the correct initial values
         document.getElementById('display-name').value = nameToDisplay;
         document.getElementById('phone-number').value = phoneToDisplay;
 
@@ -72,6 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (placeId) {
             reviewUrl = `https://search.google.com/local/writereview?placeid=${placeId}`;
         }
+        
+        // Call the function to populate the header snapshot
+        populateHeaderSnapshot();
 
         // Initialize QR Codes, Countdown, and other UI elements
         generateQRCodes();
@@ -80,14 +114,14 @@ document.addEventListener('DOMContentLoaded', () => {
         initFooter();
         initEarlyCtaScroll();
         
-        // NEW: Initialize the live preview event listeners
+        // Initialize the live preview event listeners
         initLivePreviewUpdates();
         
-        // MODIFIED: This function now attaches smart click handlers instead of static links
+        // This function now attaches smart click handlers instead of static links
         initSmartCheckoutLinks();
     };
 
-    // --- MODIFIED: This function now builds the URL on click with the latest data ---
+    // --- This function now builds the URL on click with the latest data ---
     const initSmartCheckoutLinks = () => {
         const checkoutButtons = document.querySelectorAll('.js-get-started-link');
         const displayNameInput = document.getElementById('display-name');
@@ -103,23 +137,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         checkoutButtons.forEach(button => {
-            // Use a click event listener instead of just setting href
             button.addEventListener('click', (event) => {
-                event.preventDefault(); // Prevent the default link behavior
+                event.preventDefault(); 
                 
-                // Get the final, current values from the input fields
                 const finalDisplayName = displayNameInput.value;
                 const finalPhoneNumber = phoneNumberInput.value;
 
-                // Save latest customizations in the background right before leaving
                 saveCustomDetailsInBackground(placeId, finalDisplayName, finalPhoneNumber);
                 
-                // Construct the checkout URL
                 const checkoutUrl = new URL('checkout.html', window.location.origin);
                 checkoutUrl.searchParams.set('placeId', placeId);
                 checkoutUrl.searchParams.set('email', emailFromUrl);
                 
-                // Navigate to the checkout page
                 window.location.href = checkoutUrl.toString();
             });
         });
@@ -173,8 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 minutesEl.textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
                 secondsEl.textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
             };
-            updateTimer();
             var updateTimerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
         } catch (error) {
             console.error("Countdown Error:", error.message);
             hideTimer();
@@ -201,11 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // This single function now handles setting up almost the entire page.
         populatePageElements();
-
-        // The background email trigger is no longer needed here, as it's better handled
-        // after a successful checkout.
     };
 
     initializePage(); // Start the process
