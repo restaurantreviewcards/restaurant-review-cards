@@ -147,13 +147,12 @@ section { padding: 40px 20px; }
     font-size: 1rem;
     transition: background-color 0.2s ease;
 
-    /* Makes the bar "stick" to the top as the user scrolls */
     position: sticky;
     top: 0;
-    z-index: 900; /* Below the mobile cta bar but above other content */
+    z-index: 900;
 }
 .welcome-bar:hover {
-    background-color: #002a4e; /* A slightly darker hover state */
+    background-color: #002a4e;
     color: var(--white);
 }
 
@@ -207,10 +206,9 @@ section { padding: 40px 20px; }
 /* --- Style for inline Google word --- */
 .google-word-inline {
     font-family: 'Manrope', sans-serif;
-    font-weight: 700; /* Match the heading style */
-    white-space: nowrap; /* Prevent the word from breaking */
+    font-weight: 700;
+    white-space: nowrap;
 }
-/* Ensure existing color classes apply correctly within the inline span */
 .google-word-inline .google-g-blue { color: #4285F4; }
 .google-word-inline .google-o-red { color: #EA4335; }
 .google-word-inline .google-o-yellow { color: #FBBC05; }
@@ -219,105 +217,62 @@ section { padding: 40px 20px; }
 
 /* --- Inline Link Style --- */
 .inline-link {
-    color: var(--primary-color); /* Use brand color for the link */
-    text-decoration: none; /* No underline by default */
-    font-weight: 600; /* Make it slightly bolder */
-    border-bottom: 1px dotted var(--primary-color); /* Subtle dotted underline */
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px dotted var(--primary-color);
     transition: all 0.2s ease;
 }
 .inline-link:hover,
-.inline-link:focus { /* Add focus state for accessibility */
-    color: var(--primary-dark); /* Darken on hover */
-    border-bottom-style: solid; /* Solid underline on hover */
-    background-color: #f0f6fc; /* Very light background highlight on hover */
-    outline: none; /* Remove default focus outline if you handle it elsewhere */
+.inline-link:focus {
+    color: var(--primary-dark);
+    border-bottom-style: solid;
+    background-color: #f0f6fc;
+    outline: none;
 }
-/* Ensure nested Google word styles still apply */
 .inline-link .google-word-inline {
-    /* Inherit color styling from parent spans */
-    font-weight: inherit; /* Inherit font-weight from link */
-    border-bottom: none; /* Prevent double underline */
-    background-color: transparent; /* Prevent background highlight */
+    font-weight: inherit;
+    border-bottom: none;
+    background-color: transparent;
 }
 
 
-/* --- WELCOME SECTION --- */
+/* --- WELCOME SECTION (REMOVED CONTENT BUT KEEP CLASS FOR MARGINS/PADDING) --- */
 .welcome-section {
-    text-align: center;
-    padding: 40px 20px 50px;
-    background-color: var(--white);
-    border-bottom: 1px solid var(--border-color);
+    /* Kept for potential spacing consistency, but content removed */
+     padding: 40px 20px 0; /* Reduced padding-bottom */
+     background-color: var(--white);
+     border-bottom: 1px solid var(--border-color);
+     min-height: 10px; /* Prevent collapsing if empty */
 }
-.welcome-section .subtitle {
-    font-size: 1.2rem;
-    color: var(--text-dark);
-}
-
-/* --- GOOGLE REPUTATION SNAPSHOT --- */
-.google-snapshot-card {
-    font-family: var(--font-google);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    background: var(--white);
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.07);
-    max-width: 400px;
-    margin: 1.5rem auto 0;
-    border: 1px solid var(--border-color);
-}
-.google-icon { width: 28px; height: 28px; }
-.google-rating-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-.rating-value {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--google-text);
-}
-.star-rating { display: flex; }
-.star-rating svg {
-    width: 18px;
-    height: 18px;
-}
-.review-count-link {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--google-blue);
-    text-decoration: none;
-}
-.review-count-link:hover { text-decoration: underline; }
+/* Styles for snapshot elements below are no longer needed if section removed */
+/* .welcome-section .subtitle { ... } */
+/* .google-snapshot-card { ... } */
+/* .google-icon { ... } */
+/* .google-rating-info { ... } */
+/* .rating-value { ... } */
+/* .star-rating { ... } */
+/* .star-rating svg { ... } */
+/* .review-count-link { ... } */
+/* .review-count-link:hover { ... } */
 
 /* --- Live Sample Image Section --- */
 .live-sample-section {
     padding: 40px 20px;
-    background-color: var(--white); /* White background */
+    background-color: var(--white);
     border-bottom: 1px solid var(--border-color);
-    text-align: center; /* Center align content */
+    text-align: center;
 }
 .live-sample-section h2 {
-    margin-bottom: 0.5rem; /* Space below header */
+    margin-bottom: 0.5rem;
 }
-.live-sample-section .section-subtext { /* Style for the subtext */
-    font-size: 1.1rem;
-    color: var(--text-light);
-    margin-bottom: 1rem; /* Reduced Space below subtext */
-    max-width: 500px; /* Constrain width */
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6; /* Ensure good line height */
-}
+/* Section subtext and scan action text removed */
+
 .live-sample-image-container {
-    position: relative; /* NEEDED for absolute positioning of children */
+    position: relative; /* NEEDED */
     max-width: 400px;
-    width: 70%; /* Adjust width for mobile */
-    margin: 0 auto 1.5rem auto;
+    width: 70%;
+    margin: 0 auto 1.5rem auto; /* Adjusted margin */
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     border-radius: 8px;
     overflow: hidden;
@@ -331,72 +286,57 @@ section { padding: 40px 20px; }
 /* Positioning and sizing the QR code placeholder */
 #live-sample-qr-code {
     position: absolute;
-    top: 53%;    /* QR Top */
-    left: 50.6%;  /* QR Left */
-    width: 58.1%; /* QR Width */
-    height: 43.6%;/* QR Height */
-    transform: translate(-50%, -50%); /* Center QR on its anchor point */
+    top: 29%;    /* Adjusted Top */
+    left: 50%;   /* Adjusted Left */
+    width: 28%;  /* Original Width */
+    height: auto;/* Auto Height */
+    transform: translateX(-50%); /* Center Horizontally */
     background-color: transparent;
     border: none;
+    padding: 0;
+    display: flex; /* Center child */
+    justify-content: center;
+    align-items: center;
 }
 #live-sample-qr-code canvas,
 #live-sample-qr-code img {
-    width: 100% !important;
-    height: 100% !important;
+    max-width: 100%; /* Ensure QR fits container */
+    height: auto;
     display: block;
 }
 
-/* --- NEW Styles for Transposed Text --- */
-.transposed-text { /* Common styles for name and phone */
+/* --- Styles for Transposed Text --- */
+.transposed-text {
     position: absolute;
-    /* --- Positioning based on QR code --- */
-    left: 50.6%;     /* Same horizontal anchor as QR */
-    width: 58.1%;    /* Same width as QR */
-    transform: translateX(-50%); /* Horizontally center the text box */
-    /* --- Font & Text Styling --- */
-    font-family: 'Manrope', sans-serif; /* Use Manrope font */
-    color: #000000; /* Black text */
-    text-align: center; /* Center text within the box */
-    /* --- Prevent text overflowing the container --- */
+    left: 50%;     /* Center Horizontally */
+    width: 100%;   /* Use full width for centering calc */
+    transform: translateX(-50%);
+    font-family: 'Manrope', sans-serif;
+    color: #404040; /* Darker Text */
+    text-align: center;
     overflow: hidden;
-    /* --- Optional: Add padding if text touches edges --- */
-    /* padding: 0 2px; */
+    padding: 0 10%; /* Optional padding */
+    box-sizing: border-box;
+    white-space: nowrap; /* Keep single line */
+    text-overflow: ellipsis; /* Add ... if too long */
+    font-weight: 700; /* Bolder as per prev example */
 }
 
 #live-sample-name {
-    /* --- Vertical position BELOW QR --- */
-    /* Adjust percentage as needed. */
-    top: 76%;
-    /* --- Font Specifics --- */
-    font-size: 14px; /* Adjust value as needed */
-    font-weight: 600; /* Bold */
-    line-height: 1.3;
+    font-size: 1.1em; /* Larger Size */
+    top: 59%;       /* Shifted Down */
+    line-height: 1.2;
 }
 
 #live-sample-phone {
-    /* --- Vertical position BELOW name --- */
-    /* Adjust percentage as needed */
-    top: 81%;
-    /* --- Font Specifics --- */
-    font-size: 12px; /* Slightly smaller than name */
-    font-weight: normal; /* Normal weight */
+    font-size: 0.85em;/* Larger Size */
+    top: 64%;       /* Shifted Down */
     line-height: 1.2;
-    white-space: nowrap; /* Keep on one line */
-    text-overflow: ellipsis; /* Add ... if too long */
+    font-weight: normal; /* Normal weight for phone */
 }
-/* --- END New Styles --- */
+/* --- END Transposed Text Styles --- */
 
 
-/* Style for the scan prompt text */
-.scan-action-text {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    font-weight: 500;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
-/* Style for the descriptive paragraph below live sample */
 .live-sample-description {
     font-size: 1rem;
     color: var(--text-dark);
@@ -404,7 +344,6 @@ section { padding: 40px 20px; }
     max-width: 500px;
     margin: 0 auto 1.5rem auto;
 }
-/* Style for the Get Started button below live sample */
 .live-sample-cta {
     margin-top: 0;
     font-size: 1.1rem;
@@ -519,7 +458,7 @@ section { padding: 40px 20px; }
 footer { background-color: var(--text-dark); color: var(--background-light); text-align: center; padding: 2rem; }
 
 /* --- MOBILE-ONLY STYLES --- */
-/* ... (Mobile styles remain the same) ... */
+/* ... (Mobile styles remain the same, but you might need to adjust transposed text/QR styles further inside the media query if needed) ... */
 @media (max-width: 767px) {
     .mobile-cta-bar { display: flex; }
     body { padding-bottom: 80px; }
@@ -527,7 +466,7 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     .preview-title-container { margin-top: 0.75rem; }
     .preview-business-name { font-size: 1.6rem; line-height: 1.2; }
     section { padding: 30px 15px; }
-    .welcome-section { padding: 30px 15px 40px; }
+    .welcome-section { padding: 30px 15px 0; } /* Adjusted padding */
     .live-sample-section { padding: 30px 15px; }
     .offer-preview-section { padding: 25px 15px; }
     .smart-features-section { padding: 30px 15px; }
@@ -539,6 +478,11 @@ footer { background-color: var(--text-dark); color: var(--background-light); tex
     .price-trial .price-main { font-size: 3rem; }
     .btn-success { font-size: 1.1rem; padding: 14px 24px; }
     .live-sample-image-container { width: 90%; max-width: 320px;}
+    /* Consider mobile adjustments for transposed text if needed */
+    /* .transposed-text { font-size: smaller; ... } */
+    /* #live-sample-name { top: new%; font-size: ... } */
+    /* #live-sample-phone { top: new%; font-size: ... } */
+    /* #live-sample-qr-code { top: new%; ... } */
     .smart-features-section .section-header { margin-bottom: 2rem; }
     .smart-features-grid { gap: 2rem; margin-bottom: 2rem; }
     .smart-feature-item h3 { font-size: 1.15rem; }
