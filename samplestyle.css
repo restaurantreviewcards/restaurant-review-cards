@@ -388,6 +388,32 @@ section { padding: 40px 20px; }
     margin-top: 4px;
 }
 
+/* --- Customization Tip Box --- */
+.customization-tip {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f0f6fc; /* Subtle blue-gray */
+    border-left: 3px solid var(--primary-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.customization-tip p {
+    color: var(--text-light);
+    margin: 0;
+}
+.customization-tip strong {
+    color: var(--text-dark);
+}
+.customization-tip a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+}
+.customization-tip a:hover {
+    text-decoration: underline;
+}
+
 /* --- Smart Features & Dashboard Preview --- */
 .smart-features-section { background-color: var(--white); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
 .smart-features-section .section-header { margin-bottom: 3rem; }
